@@ -1,27 +1,23 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Alert } from 'react-native';
 import AuthContent from '../components/Auth/AuthContent';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { AuthContext } from '../store/auth-context';
-import { createUser } from '../util/auth';
 
 function SignupScreen() {
-  const [isLoading, setIsLoading] = useState(false);
   const authContext = useContext(AuthContext);
 
-  async function signupHandler({ email, password }) {
+  async function signupHandler({ email, password, name, om }) {
     try {
-      const token = await createUser(email, password);
-      authContext.authenticate(token);
+      await authContext.signup(email, password, name, om);
     } catch (error) {
-      Alert.alert('User creation failed', 'Could not create user.');
-      setIsLoading(false);
+      Alert.alert('Criação de usuário falhou.', error.message);
       return;
     }
   }
 
-  if (isLoading) {
-    return <LoadingOverlay message='Creating user...' />;
+  if (authContext.isLoading) {
+    return <LoadingOverlay message='Criando Usuário...' />;
   }
 
   return <AuthContent onAuthenticate={signupHandler} />;
