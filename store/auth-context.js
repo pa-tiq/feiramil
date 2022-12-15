@@ -1,6 +1,7 @@
+import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useState } from 'react';
 import { URLs } from '../constants/URLs';
+import useHttp from '../hooks/use-http';
 
 export const AuthContext = createContext({
   token: '',

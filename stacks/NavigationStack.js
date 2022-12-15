@@ -10,7 +10,7 @@ import AuthenticatedStack from './AuthenticatedStack';
 export default function NavigationStack() {
   const authContext = useContext(AuthContext);
 
-  if (isLoading) {
+  if (authContext.isLoading) {
     return <LoadingOverlay />;
   }
 
