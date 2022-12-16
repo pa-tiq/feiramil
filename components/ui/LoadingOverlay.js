@@ -1,4 +1,5 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../../constants/styles';
 
 function LoadingOverlay({ message }) {
   return (
@@ -17,6 +18,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
+    backgroundColor: Colors.primary700
   },
   message: {
     fontSize: 16,

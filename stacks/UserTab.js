@@ -27,6 +27,7 @@ export default function UserTab() {
             onPress={authContext.logout}
           />
         ),
+        title: 'Usuário'
       }}
     />
   );

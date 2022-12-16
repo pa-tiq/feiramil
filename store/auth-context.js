@@ -1,14 +1,13 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
 
 export const AuthContext = createContext({
   token: '',
-  userId: null,
   isAuthenticated: false,
   isLoading: false,
-  authenticate: () =>{},
+  authenticate: () => {},
   login: async () => {},
   signup: async () => {},
   logout: () => {},
@@ -20,14 +19,24 @@ const AuthContextProvider = ({ children }) => {
   const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    async function getToken(){
+      setIsLoading(true);
+      const storedToken = await AsyncStorage.getItem('token');
+      setIsLoading(false);
+      setAuthToken(storedToken);
+    }
+    getToken();
+  }, []);
+
   const authenticate = (token) => {
     setAuthToken(token);
     AsyncStorage.setItem('token', token);
-  }
+  };
 
   const login = async (email, password) => {
     const postConfig = {
-      url: URLs.backend_login_url,
+      url: URLs.login_url,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,7 +65,7 @@ const AuthContextProvider = ({ children }) => {
   };
   const signup = async (email, password, name, om) => {
     const putConfig = {
-      url: URLs.backend_signup_url,
+      url: URLs.signup_url,
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +89,6 @@ const AuthContextProvider = ({ children }) => {
 
   const value = {
     token: authToken,
-    userId: userId,
     isAuthenticated: !!authToken,
     isLoading: isLoading,
     authenticate: authenticate,

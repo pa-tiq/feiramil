@@ -1,12 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../constants/styles';
+import { useIsFocused } from '@react-navigation/native';
+import { useContext, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import UserData from '../components/User/UserData';
+import { UserContext } from '../store/user-context';
 
 function UserScreen() {
+  const [loadedUser, setLoadedUser] = useState({});
+  const isFocused = useIsFocused();
+  const userContext = useContext(UserContext);
+
+  useEffect(() => {
+    async function loadUser() {
+      const user = await userContext.fetchUser();
+      setLoadedUser(user);
+    }
+    if (isFocused) {
+      loadUser();
+    }
+  }, [isFocused]);
 
   return (
-    <View style={styles.rootContainer}>
-      <Text style={styles.title}>User!</Text>
-    </View>
+    <ScrollView>
+      <View style={styles.rootContainer}>
+        <UserData user={loadedUser} />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -15,14 +33,15 @@ export default UserScreen;
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    flexDirection: 'column',
     padding: 32,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: 'white'
+    color: 'white',
   },
 });
