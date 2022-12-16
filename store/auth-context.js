@@ -8,6 +8,7 @@ export const AuthContext = createContext({
   userId: null,
   isAuthenticated: false,
   isLoading: false,
+  authenticate: () =>{},
   login: async () => {},
   signup: async () => {},
   logout: () => {},
@@ -17,18 +18,12 @@ const AuthContextProvider = ({ children }) => {
   const httpObj = useHttp();
   const [authToken, setAuthToken] = useState();
   const [userId, setUserId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    async function fetchToken() {
-      const storedToken = await AsyncStorage.getItem('token');
-      if (storedToken) {
-        setAuthToken(token);
-      }
-      setIsLoading(false);
-    }
-    fetchToken();
-  }, []);
+  const authenticate = (token) => {
+    setAuthToken(token);
+    AsyncStorage.setItem('token', token);
+  }
 
   const login = async (email, password) => {
     const postConfig = {
@@ -46,19 +41,19 @@ const AuthContextProvider = ({ children }) => {
       setAuthToken(response.token);
       setUserId(response.userId);
       AsyncStorage.setItem('token', response.token);
-    }
+    };
     setIsLoading(true);
     await httpObj.sendRequest(postConfig, createTask);
     setIsLoading(false);
-    if(httpObj.error){
+    if (httpObj.error) {
       throw new Error(httpObj.error);
     }
     return;
-  }
+  };
   const logout = async () => {
     setAuthToken(null);
     AsyncStorage.removeItem('token');
-  }
+  };
   const signup = async (email, password, name, om) => {
     const putConfig = {
       url: URLs.backend_signup_url,
@@ -77,18 +72,18 @@ const AuthContextProvider = ({ children }) => {
     setIsLoading(true);
     await httpObj.sendRequest(putConfig, createTask);
     setIsLoading(false);
-    if(httpObj.error){
+    if (httpObj.error) {
       throw new Error(httpObj.error);
     }
     return;
   };
-
 
   const value = {
     token: authToken,
     userId: userId,
     isAuthenticated: !!authToken,
     isLoading: isLoading,
+    authenticate: authenticate,
     login: login,
     signup: signup,
     logout: logout,

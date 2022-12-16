@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../store/auth-context";
 import * as Notifications from 'expo-notifications';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import { Colors } from '../constants/styles';
+import IconButton from '../components/ui/IconButton';
 
 const Stack = createNativeStackNavigator();
 

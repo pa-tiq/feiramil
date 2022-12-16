@@ -14,7 +14,6 @@ const useHttp = () => {
         headers: requestConfig.headers ? requestConfig.headers : {},
       });
       if (!response.ok) {
-        console.log(response);
         if(requestConfig.method === 'POST'){
           if (response.status === 422) {
             throw new Error(
@@ -34,7 +33,6 @@ const useHttp = () => {
         }
         throw new Error('A requisição falhou.');
       }
-      console.log(response);
       const data = await response.json();
       functionToUse(data);
     } catch (err) {
