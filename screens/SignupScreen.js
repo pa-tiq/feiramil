@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Alert } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import AuthContent from '../components/Auth/AuthContent';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { AuthContext } from '../store/auth-context';
@@ -20,7 +20,7 @@ function SignupScreen() {
     return <LoadingOverlay message='Criando Usuário...' />;
   }
 
-  return <AuthContent onAuthenticate={signupHandler} />;
+  return <ScrollView><AuthContent onAuthenticate={signupHandler} /></ScrollView>;
 }
 
 export default SignupScreen;

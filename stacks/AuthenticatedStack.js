@@ -1,13 +1,17 @@
-import { useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../store/auth-context";
-import * as Notifications from 'expo-notifications';
-import WelcomeScreen from '../screens/WelcomeScreen';
-import { Colors } from '../constants/styles';
-import IconButton from '../components/ui/IconButton';
+import { useContext, useEffect } from 'react';
 
-const Stack = createNativeStackNavigator();
+import { useNavigation } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import * as Notifications from 'expo-notifications';
+import { Ionicons } from '@expo/vector-icons';
+
+import { AuthContext } from '../store/auth-context';
+import MainTab from './MainTab';
+import { Colors } from '../constants/styles';
+import UserTab from './UserTab';
+
+const BottomTab = createBottomTabNavigator();
 
 export default function AuthenticatedStack() {
   const authContext = useContext(AuthContext);
@@ -31,32 +35,35 @@ export default function AuthenticatedStack() {
     };
   }, []);
 
-  const welcomeStackScreen = (
-    <Stack.Screen
-      name='Welcome'
-      component={WelcomeScreen}
-      options={{
-        headerRight: ({ tintColor }) => (
-          <IconButton
-            icon='exit'
-            color={tintColor}
-            size={24}
-            onPress={authContext.logout}
-          />
-        ),
-      }}
-    />
-  );
-
   return (
-    <Stack.Navigator
+    <BottomTab.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: Colors.primary700 },
-        headerTintColor: 'white',
-        contentStyle: { backgroundColor: Colors.primary100 },
+        headerShown: false,
+        tabBarStyle: { backgroundColor: Colors.primary500, borderTopColor: Colors.primary700},
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: Colors.primary200
       }}
     >
-      {welcomeStackScreen}
-    </Stack.Navigator>
+      <BottomTab.Screen
+        name='MainTab'
+        component={MainTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='home-outline' color={color} size={size} />
+          ),
+          tabBarShowLabel: false,
+        }}
+      />
+      <BottomTab.Screen
+        name='UserTab'
+        component={UserTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='person-outline' color={color} size={size} />
+          ),
+          tabBarShowLabel: false,
+        }}
+      />
+    </BottomTab.Navigator>
   );
 }

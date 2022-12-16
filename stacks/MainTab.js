@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import ProductsScreen from '../screens/ProductsScreen';
 import { Colors } from '../constants/styles';
-import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignupScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function AuthStack() {
+export default function MainTab() {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -14,8 +14,7 @@ export default function AuthStack() {
         contentStyle: { backgroundColor: Colors.primary700 },
       }}
     >
-      <Stack.Screen name='Login' component={LoginScreen} />
-      <Stack.Screen name='Signup' component={SignupScreen} />
+      <Stack.Screen name='Poducts' component={ProductsScreen} />
     </Stack.Navigator>
   );
 }
