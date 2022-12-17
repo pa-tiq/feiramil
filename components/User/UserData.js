@@ -3,10 +3,21 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
+import ImagePicker from '../Device/ImagePicker';
 import UserDataForm from './UserDataForm';
 
 function UserData() {
   const userContext = useContext(UserContext);
+  const [selectedImage, setSelectedImage] = useState();
+
+  function imageTakenHandler(image) {
+    async function updatePhoto(){
+      const response = await userContext.updatePhoto(image);
+      console.log(response);
+    }
+    updatePhoto();
+    setSelectedImage(image);
+  }
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
@@ -73,12 +84,17 @@ function UserData() {
   }
 
   return (
-    <View style={styles.authContent}>
-      <UserDataForm
-        onSubmit={submitHandler}
-        credentialsInvalid={credentialsInvalid}
-      />
-    </View>
+    <>
+      <View style={styles.authContent}>
+        <ImagePicker onImageTaken={imageTakenHandler} />
+      </View>
+      <View style={styles.authContent}>
+        <UserDataForm
+          onSubmit={submitHandler}
+          credentialsInvalid={credentialsInvalid}
+        />
+      </View>
+    </>
   );
 }
 
@@ -90,6 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: Colors.primary800,
     elevation: 2,
+    marginBottom: 10,
     shadowColor: 'black',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.35,

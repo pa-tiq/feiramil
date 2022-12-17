@@ -5,4 +5,5 @@ export const URLs = {
   signup_url : `${baseURL}/auth/signup`, 
   get_user_url : `${baseURL}/user/user`, 
   update_user_url : `${baseURL}/user/user`, 
+  update_user_photo_url : `${baseURL}/user/photo`, 
 }

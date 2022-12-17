@@ -11,7 +11,7 @@ function IconTextButton({ children, onPress, icon }) {
       <Ionicons
         style={styles.icon}
         name={icon}
-        color={Colors.primary800}
+        color={'white'}
         size={18}
       />
       <Text style={styles.buttonText}>{children}</Text>
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.primary800,
+    borderColor: 'white',
   },
   pressed: {
     opacity: 0.7,
@@ -40,6 +40,6 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   buttonText: {
-    color: Colors.primary800,
+    color: 'white',
   },
 });
