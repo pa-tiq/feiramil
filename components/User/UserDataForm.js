@@ -15,6 +15,7 @@ function UserDataForm(props) {
   const [enteredPhone, setEnteredPhone] = useState('');
 
   const [editForm, setEditForm] = useState(false);
+  const [error, setError] = useState(null)
 
   function editFormHandler() {
     setEditForm(true);
@@ -71,12 +72,16 @@ function UserDataForm(props) {
     });
   }
 
+  function deleteErrorHandler(){
+    setError(null);
+  }
+
   if (userContext.isLoading) {
     return <LoadingOverlay />;
   }
 
-  if (!userContext.isLoading && userContext.error) {
-    return <ErrorOverlay message={userContext.error} />;
+  if (!userContext.isLoading && error) {
+    return <ErrorOverlay message={userContext.error} reload={deleteErrorHandler}/>;
   }
 
   return (

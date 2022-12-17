@@ -5,6 +5,7 @@ import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
 import ImagePicker from '../Device/ImagePicker';
 import UserDataForm from './UserDataForm';
+import * as MediaLibrary from 'expo-media-library';
 
 function UserData() {
   const userContext = useContext(UserContext);
@@ -12,8 +13,14 @@ function UserData() {
 
   function imageTakenHandler(image) {
     async function updatePhoto(){
-      const response = await userContext.updatePhoto(image);
-      console.log(response);
+      try{
+        const photo = await MediaLibrary.createAssetAsync(image.uri);
+        const response = await userContext.updatePhoto(photo);
+        console.log(response);
+      }
+      catch(err){
+        console.log(err);
+      }
     }
     updatePhoto();
     setSelectedImage(image);

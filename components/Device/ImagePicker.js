@@ -13,6 +13,7 @@ import { useContext, useState } from 'react';
 import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
+import LoadingOverlay from '../ui/LoadingOverlay';
 
 const ImagePicker = (props) => {
   const userContext = useContext(UserContext);
@@ -61,6 +62,7 @@ const ImagePicker = (props) => {
     if (!hasPermission) return;
     const result = await launchCameraAsync({
       allowsEditing: true,
+      base64: false,
       aspect: [4, 3],
       quality: 0.5,
     });
@@ -75,6 +77,7 @@ const ImagePicker = (props) => {
     if (!hasPermission) return;
     const result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
+      base64: false,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.5,
@@ -104,6 +107,10 @@ const ImagePicker = (props) => {
 
   if (image) {
     imagePreview = <Image style={styles.image} source={{ uri: image.uri }} />;
+  }
+
+  if (userContext.isLoading) {
+    return <LoadingOverlay />;
   }
 
   return (
