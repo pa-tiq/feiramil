@@ -1,26 +1,41 @@
-import { useLayoutEffect, useState } from 'react';
+import { useContext, useLayoutEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import Button from '../ui/Button';
 import Input from '../Auth/Input';
+import { UserContext } from '../../store/user-context';
 
 function UserDataForm(props) {
-  const [enteredEmail, setEnteredEmail] = useState(props.user.email);
+  const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
-  const [enteredName, setEnteredName] = useState(props.user.name);
-  const [enteredOm, setEnteredOm] = useState(props.user.om);
+  const [enteredName, setEnteredName] = useState('');
+  const [enteredOm, setEnteredOm] = useState('');
+  const [enteredPhone, setEnteredPhone] = useState('');
+
+  const [editForm, setEditForm] = useState(false);
+
+  function editFormHandler() {
+    setEditForm(true);
+  }
+  function cancelEditFormHandler() {
+    setEditForm(false);
+  }
+
+  const { user } = useContext(UserContext);
 
   useLayoutEffect(() => {
-    setEnteredEmail(props.user.email);
-    setEnteredName(props.user.name);
-    setEnteredOm(props.user.om);
-  }, []);
+    setEnteredEmail(user.email);
+    setEnteredName(user.name);
+    setEnteredOm(user.om);
+    setEnteredPhone(user.phone);
+  }, [user]);
 
   const {
     email: emailIsInvalid,
     password: passwordIsInvalid,
     name: nameIsInvalid,
     om: omIsInvalid,
+    phone: phoneIsInvalid,
   } = props.credentialsInvalid;
 
   function updateInputValueHandler(inputType, enteredValue) {
@@ -37,6 +52,9 @@ function UserDataForm(props) {
       case 'om':
         setEnteredOm(enteredValue);
         break;
+      case 'phone':
+        setEnteredPhone(enteredValue);
+        break;
     }
   }
 
@@ -46,6 +64,7 @@ function UserDataForm(props) {
       password: enteredPassword,
       name: enteredName,
       om: enteredOm,
+      phone: enteredPhone,
     });
   }
 
@@ -58,6 +77,7 @@ function UserDataForm(props) {
           value={enteredEmail}
           keyboardType='email-address'
           isInvalid={emailIsInvalid}
+          editable={editForm}
         />
         <Input
           label='Senha'
@@ -65,6 +85,7 @@ function UserDataForm(props) {
           secure
           value={enteredPassword}
           isInvalid={passwordIsInvalid}
+          editable={editForm}
         />
         <Input
           label='Nome'
@@ -72,6 +93,7 @@ function UserDataForm(props) {
           value={enteredName}
           keyboardType='text'
           isInvalid={nameIsInvalid}
+          editable={editForm}
         />
         <Input
           label='Organização Militar'
@@ -79,9 +101,29 @@ function UserDataForm(props) {
           value={enteredOm}
           keyboardType='text'
           isInvalid={omIsInvalid}
+          editable={editForm}
+        />
+        <Input
+          label='Número de celular'
+          onUpdateValue={updateInputValueHandler.bind(this, 'phone')}
+          value={enteredPhone}
+          keyboardType='phone-pad'
+          isInvalid={phoneIsInvalid}
+          editable={editForm}
         />
         <View style={styles.buttons}>
-          <Button onPress={submitHandler}>{'Salvar'}</Button>
+          {!editForm ? (
+            <Button onPress={editFormHandler}>{'Editar'}</Button>
+          ) : (
+            <View style={styles.buttons_row}>
+              <View style={styles.buttonLeft}>
+                <Button onPress={cancelEditFormHandler}>{'Cancelar'}</Button>
+              </View>
+              <View style={styles.buttonRight}>
+                <Button onPress={submitHandler}>{'Salvar'}</Button>
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -93,5 +135,19 @@ export default UserDataForm;
 const styles = StyleSheet.create({
   buttons: {
     marginTop: 12,
+  },  
+  buttonLeft: {
+    flex: 1,
+    marginRight: 2
+  },  
+  buttonRight: {
+    flex: 1,
+    marginLeft: 2
+  },
+  buttons_row: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
   },
 });

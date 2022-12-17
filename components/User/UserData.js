@@ -4,7 +4,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { Colors } from '../../constants/styles';
 import UserDataForm from './UserDataForm';
 
-function UserData(props) {
+function UserData() {
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
@@ -23,7 +23,7 @@ function UserData(props) {
 
     const emailIsValid = email.includes('@');
     const passwordIsValid = password.length > 6;
-    const nameIsValid = name.length > 4;
+    const nameIsValid = name.length > 2;
     const omIsValid = om.length > 1;
 
     if (
@@ -46,7 +46,6 @@ function UserData(props) {
   return (
     <View style={styles.authContent}>
       <UserDataForm
-        user={props.user}
         onSubmit={submitHandler}
         credentialsInvalid={credentialsInvalid}
       />

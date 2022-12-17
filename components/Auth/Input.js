@@ -11,6 +11,7 @@ function Input({
   onUpdateValue,
   value,
   isInvalid,
+  editable,
 }) {
 
   const [viewSecure, setViewSecure] = useState(false);
@@ -32,6 +33,7 @@ function Input({
           keyboardType={keyboardType}
           secureTextEntry={secure && !viewSecure}
           onChangeText={onUpdateValue}
+          editable={editable}
           value={value}
         />
         {secure && <IconButton

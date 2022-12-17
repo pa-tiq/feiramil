@@ -32,6 +32,7 @@ const UserContextProvider = (props) => {
         password: response.user.password,
         name: response.user.name,
         om: response.user.om,
+        phone: response.user.phone,
       }
       setUser(loadedUser);
     };

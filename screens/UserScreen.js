@@ -1,6 +1,7 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import LoadingOverlay from '../components/ui/LoadingOverlay';
 import UserData from '../components/User/UserData';
 import { UserContext } from '../store/user-context';
 
@@ -19,10 +20,14 @@ function UserScreen() {
     }
   }, [isFocused]);
 
+  if (userContext.isLoading) {
+    return <LoadingOverlay />;
+  }
+
   return (
     <ScrollView>
       <View style={styles.rootContainer}>
-        <UserData user={loadedUser} />
+        <UserData />
       </View>
     </ScrollView>
   );
