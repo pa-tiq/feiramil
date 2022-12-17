@@ -10,6 +10,7 @@ import { AuthContext } from '../store/auth-context';
 import MainTab from './MainTab';
 import { Colors } from '../constants/styles';
 import UserTab from './UserTab';
+import UserProductsTab from './UserProductsTab';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -41,9 +42,21 @@ export default function AuthenticatedStack() {
         headerShown: false,
         tabBarStyle: { backgroundColor: Colors.primary500, borderTopColor: Colors.primary700},
         tabBarActiveTintColor: 'white',
-        tabBarInactiveTintColor: Colors.primary200
+        tabBarInactiveTintColor: Colors.primary200,
+        tabBarHideOnKeyboard: true
       }}
+      initialRouteName='MainTab'
     >
+      <BottomTab.Screen
+        name='UserProductsTab'
+        component={UserProductsTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='layers-outline' color={color} size={size} />
+          ),
+          tabBarShowLabel: false,
+        }}
+      />
       <BottomTab.Screen
         name='MainTab'
         component={MainTab}

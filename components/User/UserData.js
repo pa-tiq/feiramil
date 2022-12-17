@@ -1,46 +1,75 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
+import { UserContext } from '../../store/user-context';
 import UserDataForm from './UserDataForm';
 
 function UserData() {
+  const userContext = useContext(UserContext);
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
     password: false,
     name: false,
     om: false,
+    phone: false,
   });
 
-  function submitHandler(credentials) {
-    let { email, password, name, om } = credentials;
+  async function submitHandler(credentials) {
+    let { email, password, name, om, phone } = credentials;
 
     email = email.trim();
     password = password.trim();
-    name = password.trim();
+    name = name.trim();
     om = om.trim();
+    phone = phone.trim();
 
     const emailIsValid = email.includes('@');
-    const passwordIsValid = password.length > 6;
+    const passwordIsValid = password.length > 6 || password.length === 0;
     const nameIsValid = name.length > 2;
     const omIsValid = om.length > 1;
+    const phoneIsValid = phone.length > 9;
 
     if (
       !emailIsValid ||
       !passwordIsValid ||
       !nameIsValid ||
-      !omIsValid
+      !omIsValid ||
+      !phoneIsValid
     ) {
       Alert.alert('Dados inválidos', 'Por favor verifique os dados inseridos.');
       setCredentialsInvalid({
         email: !emailIsValid,
         password: !passwordIsValid,
         name: !nameIsValid,
-        om: !omIsValid
+        om: !omIsValid,
+        phone: !phoneIsValid,
       });
       return;
     }
+    const updatedUser =
+      password.length === 0
+        ? {
+            email: email,
+            name: name,
+            om: om,
+            phone: phone,
+          }
+        : {
+            email: email,
+            name: name,
+            password: password,
+            om: om,
+            phone: phone,
+          };
+    const response = await userContext.updateUser({
+      email: email,
+      password: password,
+      name: name,
+      om: om,
+      phone: phone,
+    });
   }
 
   return (
@@ -57,8 +86,7 @@ export default UserData;
 
 const styles = StyleSheet.create({
   authContent: {
-    marginTop: 10,
-    padding: 16,
+    padding: 14,
     borderRadius: 8,
     backgroundColor: Colors.primary800,
     elevation: 2,

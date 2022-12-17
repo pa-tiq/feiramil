@@ -31,7 +31,7 @@ const useHttp = () => {
             );
           }
         }
-        throw new Error('A requisição falhou.');
+        throw new Error('Erro: Problema de conexão.');
       }
       const data = await response.json();
       functionToUse(data);

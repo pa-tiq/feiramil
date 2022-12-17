@@ -1,6 +1,7 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import ErrorOverlay from '../components/ui/ErrorOverlay';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import UserData from '../components/User/UserData';
 import { UserContext } from '../store/user-context';
@@ -12,17 +13,15 @@ function UserScreen() {
 
   useEffect(() => {
     async function loadUser() {
-      const user = await userContext.fetchUser();
-      setLoadedUser(user);
+      try {
+        const user = await userContext.fetchUser();
+        setLoadedUser(user);
+      } catch (err) {}
     }
     if (isFocused) {
       loadUser();
     }
   }, [isFocused]);
-
-  if (userContext.isLoading) {
-    return <LoadingOverlay />;
-  }
 
   return (
     <ScrollView>
@@ -41,7 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'stretch',
     flexDirection: 'column',
-    padding: 32,
+    padding: 20,
   },
   title: {
     fontSize: 20,

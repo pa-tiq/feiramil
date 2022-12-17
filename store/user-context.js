@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import useHttp from '../hooks/use-http';
 import { URLs } from '../constants/URLs';
 import { AuthContext } from './auth-context';
@@ -9,18 +9,24 @@ export const UserContext = createContext({
   error: null,
   fetchUser: async () => {},
   removeUser: (userId) => {},
-  updateUser: (user) => {},
+  updateUser: async (user) => {},
 });
 
 const UserContextProvider = (props) => {
   const httpObj = useHttp();
   const authContext = useContext(AuthContext);
   const [user, setUser] = useState({});
+  const [userChanged, setUserChanged] = useState(false);
+
+  useEffect(()=>{
+    fetchUser();
+    setUserChanged(false);
+  },[userChanged])
 
   const fetchUser = async () => {
     let loadedUser = {};
     const getConfig = {
-      url: URLs.getuser_url,
+      url: URLs.get_user_url,
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + authContext.token,
@@ -45,7 +51,28 @@ const UserContextProvider = (props) => {
 
   const removeUser = async (userId) => {};
 
-  const updateUser = async (user) => {};
+  const updateUser = async (user) => {
+      let loadedUser = {};
+      const getConfig = {
+        url: URLs.update_user_url,
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: 'Bearer ' + authContext.token,
+        },
+        body: user
+      };
+      const createTask = (response) => {
+        if(response.changedRows > 0){
+          setUserChanged(true);
+        }
+      };
+      await httpObj.sendRequest(getConfig, createTask);
+      if (httpObj.error) {
+        throw new Error(httpObj.error);
+      }
+      return loadedUser;
+  };
 
   return (
     <UserContext.Provider

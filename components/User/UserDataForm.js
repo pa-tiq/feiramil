@@ -4,6 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import Button from '../ui/Button';
 import Input from '../Auth/Input';
 import { UserContext } from '../../store/user-context';
+import LoadingOverlay from '../ui/LoadingOverlay';
+import ErrorOverlay from '../ui/ErrorOverlay';
 
 function UserDataForm(props) {
   const [enteredEmail, setEnteredEmail] = useState('');
@@ -21,7 +23,8 @@ function UserDataForm(props) {
     setEditForm(false);
   }
 
-  const { user } = useContext(UserContext);
+  const userContext = useContext(UserContext);
+  const { user } = userContext;
 
   useLayoutEffect(() => {
     setEnteredEmail(user.email);
@@ -68,63 +71,70 @@ function UserDataForm(props) {
     });
   }
 
+  if (userContext.isLoading) {
+    return <LoadingOverlay />;
+  }
+
+  if (!userContext.isLoading && userContext.error) {
+    return <ErrorOverlay message={userContext.error} />;
+  }
+
   return (
     <View style={styles.form}>
-      <View>
-        <Input
-          label='E-mail'
-          onUpdateValue={updateInputValueHandler.bind(this, 'email')}
-          value={enteredEmail}
-          keyboardType='email-address'
-          isInvalid={emailIsInvalid}
-          editable={editForm}
-        />
-        <Input
-          label='Senha'
-          onUpdateValue={updateInputValueHandler.bind(this, 'password')}
-          secure
-          value={enteredPassword}
-          isInvalid={passwordIsInvalid}
-          editable={editForm}
-        />
-        <Input
-          label='Nome'
-          onUpdateValue={updateInputValueHandler.bind(this, 'name')}
-          value={enteredName}
-          keyboardType='text'
-          isInvalid={nameIsInvalid}
-          editable={editForm}
-        />
-        <Input
-          label='Organização Militar'
-          onUpdateValue={updateInputValueHandler.bind(this, 'om')}
-          value={enteredOm}
-          keyboardType='text'
-          isInvalid={omIsInvalid}
-          editable={editForm}
-        />
-        <Input
-          label='Número de celular'
-          onUpdateValue={updateInputValueHandler.bind(this, 'phone')}
-          value={enteredPhone}
-          keyboardType='phone-pad'
-          isInvalid={phoneIsInvalid}
-          editable={editForm}
-        />
-        <View style={styles.buttons}>
-          {!editForm ? (
-            <Button onPress={editFormHandler}>{'Editar'}</Button>
-          ) : (
-            <View style={styles.buttons_row}>
-              <View style={styles.buttonLeft}>
-                <Button onPress={cancelEditFormHandler}>{'Cancelar'}</Button>
-              </View>
-              <View style={styles.buttonRight}>
-                <Button onPress={submitHandler}>{'Salvar'}</Button>
-              </View>
+      <Input
+        label='E-mail'
+        onUpdateValue={updateInputValueHandler.bind(this, 'email')}
+        value={enteredEmail}
+        keyboardType='email-address'
+        isInvalid={emailIsInvalid}
+        editable={editForm}
+      />
+      <Input
+        label='Senha'
+        onUpdateValue={updateInputValueHandler.bind(this, 'password')}
+        secure
+        value={enteredPassword}
+        isInvalid={passwordIsInvalid}
+        editable={editForm}
+        placeholder={'Edite para trocar de senha'}
+      />
+      <Input
+        label='Nome'
+        onUpdateValue={updateInputValueHandler.bind(this, 'name')}
+        value={enteredName}
+        keyboardType='text'
+        isInvalid={nameIsInvalid}
+        editable={editForm}
+      />
+      <Input
+        label='Organização Militar'
+        onUpdateValue={updateInputValueHandler.bind(this, 'om')}
+        value={enteredOm}
+        keyboardType='text'
+        isInvalid={omIsInvalid}
+        editable={editForm}
+      />
+      <Input
+        label='Número de celular'
+        onUpdateValue={updateInputValueHandler.bind(this, 'phone')}
+        value={enteredPhone}
+        keyboardType='phone-pad'
+        isInvalid={phoneIsInvalid}
+        editable={editForm}
+      />
+      <View style={styles.buttons}>
+        {!editForm ? (
+          <Button onPress={editFormHandler}>{'Editar'}</Button>
+        ) : (
+          <View style={styles.buttons_row}>
+            <View style={styles.buttonLeft}>
+              <Button onPress={cancelEditFormHandler}>{'Cancelar'}</Button>
             </View>
-          )}
-        </View>
+            <View style={styles.buttonRight}>
+              <Button onPress={submitHandler}>{'Salvar'}</Button>
+            </View>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -135,14 +145,14 @@ export default UserDataForm;
 const styles = StyleSheet.create({
   buttons: {
     marginTop: 12,
-  },  
+  },
   buttonLeft: {
     flex: 1,
-    marginRight: 2
-  },  
+    marginRight: 2,
+  },
   buttonRight: {
     flex: 1,
-    marginLeft: 2
+    marginLeft: 2,
   },
   buttons_row: {
     flex: 1,

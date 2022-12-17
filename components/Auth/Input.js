@@ -12,6 +12,7 @@ function Input({
   value,
   isInvalid,
   editable,
+  placeholder
 }) {
 
   const [viewSecure, setViewSecure] = useState(false);
@@ -33,6 +34,7 @@ function Input({
           keyboardType={keyboardType}
           secureTextEntry={secure && !viewSecure}
           onChangeText={onUpdateValue}
+          placeholder={placeholder}
           editable={editable}
           value={value}
         />
