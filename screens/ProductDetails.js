@@ -10,10 +10,12 @@ import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import useFileSystem from '../hooks/use-FileSystem';
 import { UserContext } from '../store/user-context';
+import Button from '../components/ui/Button';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [fetchedProduct, setFetchedProduct] = useState();
+  const [currentUser, setCurrentUser] = useState();
   const [downloadedUserImageURI, setDowloadedUserImageURI] = useState(null);
   const [downloadedProductImageURI, setDowloadedProductImageURI] =
     useState(null);
@@ -37,6 +39,7 @@ const ProductDetails = ({ route, navigation }) => {
           title: product.title,
         });
         const currentUser = await userContext.fetchUser();
+        setCurrentUser(currentUser);
         if (product.userId === currentUser.id) {
           navigation.setOptions({
             headerRight: ({ tintColor }) => (
@@ -115,6 +118,14 @@ const ProductDetails = ({ route, navigation }) => {
     );
   }
 
+  let editButton = ( <> </> );
+
+  if (currentUser.id === fetchedProduct.userId) {
+    editButton = (
+      <Button icon='create-outline'>Editar</Button>
+    );
+  }
+
   return (
     <ScrollView style={styles.rootComponent}>
       <View style={styles.productImageContainer}>
@@ -159,6 +170,7 @@ const ProductDetails = ({ route, navigation }) => {
           </Text>
         </View>
       </View>
+      {editButton}
     </ScrollView>
   );
 };

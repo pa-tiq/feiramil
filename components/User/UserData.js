@@ -31,7 +31,7 @@ function UserData() {
           }
         );
         const result = JSON.parse(uploadResult.body);
-        const response = await userContext.updatePhoto({
+        const response = await userContext.updatePhotoPath({
           path: result.path.substring(1, result.path.length),
           oldpath: userContext.user.photo,
         });

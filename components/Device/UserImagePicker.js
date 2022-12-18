@@ -55,7 +55,6 @@ const UserImagePicker = (props) => {
         console.log(error);
       }
     }
-
     findFileOrDownloadFile();
   }, [user]);
 

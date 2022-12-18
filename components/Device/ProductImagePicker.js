@@ -31,6 +31,34 @@ const ProductImagePicker = (props) => {
   const { user } = userContext;
   const fileSystemObj = useFileSystem();
 
+  useLayoutEffect(() => {
+    async function findFileOrDownloadFile() {
+      try {
+        if (!user.photo) return;
+        const userProfilePicturePath = URLs.base_url + user.photo;
+        const fileName = user.photo.split('/')[2];
+        const fileInfo = await FileSystem.getInfoAsync(
+          FileSystem.documentDirectory + fileName
+        );
+        if (fileInfo.exists) {
+          setDowloadedImageURI(fileInfo.uri);
+        } else {
+          const createTask = (uri) => {
+            setDowloadedImageURI(uri);
+          };
+          fileSystemObj.downloadImage(
+            userProfilePicturePath,
+            fileName,
+            createTask
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if(props.isEdit) findFileOrDownloadFile();
+  }, [user]);
+
   // needed only for iOS
   async function verifyCameraPermissions() {
     if (cameraPermissionInformation.status === PermissionStatus.UNDETERMINED) {
@@ -76,6 +104,7 @@ const ProductImagePicker = (props) => {
     if (!result.canceled) {
       setNewImage(result.assets[0]);
       setNewImagePicked(true);
+      props.imagePicked(result.assets[0]);
     }
   }
 
@@ -92,16 +121,8 @@ const ProductImagePicker = (props) => {
     if (!result.canceled) {
       setNewImage(result.assets[0]);
       setNewImagePicked(true);
+      props.imagePicked(result.assets[0]);
     }
-  }
-
-  function submitFormHandler() {
-    props.onImageTaken(newImage);
-    setNewImagePicked(false);
-  }
-
-  function cancelEditFormHandler() {
-    setNewImagePicked(false);
   }
 
   let imagePreview = (
@@ -136,22 +157,14 @@ const ProductImagePicker = (props) => {
       </View>
       <View style={styles.imageButtonsContainer}>
         <View style={styles.buttonLeft}>
-          {newImagePicked ? (
-            <Button onPress={cancelEditFormHandler}>{'Cancelar'}</Button>
-          ) : (
-            <Button icon='camera' onPress={takeImageHandler}>
-              Tirar foto
-            </Button>
-          )}
+          <Button icon='camera' onPress={takeImageHandler}>
+            Tirar foto
+          </Button>
         </View>
         <View style={styles.buttonRight}>
-          {newImagePicked ? (
-            <Button onPress={submitFormHandler}>{'Salvar'}</Button>
-          ) : (
-            <Button icon='document' onPress={getFileHandler}>
-              Escolher foto
-            </Button>
-          )}
+          <Button icon='document' onPress={getFileHandler}>
+            Escolher foto
+          </Button>
         </View>
       </View>
     </View>

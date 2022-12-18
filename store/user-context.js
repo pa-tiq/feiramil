@@ -10,7 +10,7 @@ export const UserContext = createContext({
   fetchUser: async () => {},
   removeUser: (userId) => {},
   updateUser: async (user) => {},
-  updatePhoto: async (user) => {},
+  updatePhotoPath: async (user) => {},
 });
 
 const UserContextProvider = (props) => {
@@ -78,7 +78,7 @@ const UserContextProvider = (props) => {
     return responseStatus
   };
 
-  const updatePhoto = async (paths) => {
+  const updatePhotoPath = async (paths) => {
     let loadedUser = {};
     const putConfig = {
       url: URLs.update_user_photo_url,
@@ -113,7 +113,7 @@ const UserContextProvider = (props) => {
         fetchUser: fetchUser,
         removeUser: removeUser,
         updateUser: updateUser,
-        updatePhoto: updatePhoto,
+        updatePhotoPath: updatePhotoPath,
       }}
     >
       {props.children}

@@ -22,15 +22,14 @@ const ProductForm = (props) => {
 
   function imageTakenHandler(imageUri) {
     setSelectedImage(imageUri);
-  }
-  function locationPickedHandler(location) {
-    setPickedLocation(location);
-  }
+  };
+
   function saveProductHandler() {
     const productData = {
       title:enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
+      image: selectedImage
     }
     props.onCreateProduct(productData);
   }
@@ -60,7 +59,7 @@ const ProductForm = (props) => {
           keyboardType={'number-pad'}
         />
       </View>
-      <ProductImagePicker onImageTaken={imageTakenHandler} />
+      <ProductImagePicker imagePicked={imageTakenHandler} />
       <View style={styles.buttonContainer}>
         <Button onPress={saveProductHandler}>Adicionar Produto</Button>
       </View>

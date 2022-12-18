@@ -9,6 +9,7 @@ export const ProductContext = createContext({
   isLoading: false,
   error: null,
   addProduct: async (product) => {},
+  addProductImagePath: async (data) => {},
   removeProduct: (productId) => {},
   updateProduct: async (productId) => {},
   fetchProducts: async () => {},
@@ -30,6 +31,7 @@ const ProductContextProvider = (props) => {
 
   const addProduct = async (product) => {
     let price;
+    let productInsertId;
     if (product.price.length === 0) {
       price = null;
     } else {
@@ -49,13 +51,41 @@ const ProductContextProvider = (props) => {
       },
     };
     const createTask = (response) => {
-      if(response && response[0].insertId > 0) setProductsChanged(true);
+      if(response && response.result[0]){
+        setProductsChanged(true);
+        productInsertId = parseInt(response.result[0].insertId);
+      } 
     };
     await httpObj.sendRequest(postConfig, createTask);
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return;
+    return productInsertId;
+  };
+  
+  const addProductImagePath = async (data) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.add_product_image_url + `/${data.productId}`,
+      method: 'POST',
+      body: {
+        'path': data.path,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',       
+      },
+    };
+    const createTask = (response) => {
+      if (response.changedRows > 0) {
+        setUserChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
   };
 
   const removeProduct = async (productId) => {};
@@ -108,6 +138,7 @@ const ProductContextProvider = (props) => {
         isLoading: httpObj.isLoading,
         error: httpObj.error,
         addProduct: addProduct,
+        addProductImagePath: addProductImagePath,
         removeProduct: removeProduct,
         updateProduct: updateProduct,
         fetchProducts: fetchProducts,
