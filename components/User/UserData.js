@@ -6,17 +6,28 @@ import { UserContext } from '../../store/user-context';
 import ImagePicker from '../Device/ImagePicker';
 import UserDataForm from './UserDataForm';
 import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import { URLs } from '../../constants/URLs';
+import { AuthContext } from '../../store/auth-context';
 
 function UserData() {
+  const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
   const [selectedImage, setSelectedImage] = useState();
 
   function imageTakenHandler(image) {
     async function updatePhoto(){
       try{
-        const photo = await MediaLibrary.createAssetAsync(image.uri);
-        const response = await userContext.updatePhoto(photo);
-        console.log(response);
+        const uploadResult = await FileSystem.uploadAsync(URLs.update_user_photo_url, image.uri, {
+          fieldName: 'userphoto',
+          httpMethod: 'PATCH',
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,  
+          headers: {
+            Authorization: 'Bearer ' + authContext.token,
+          }        
+        });
+        const result = JSON.parse(uploadResult.body);
+        const response = await userContext.updatePhoto(result.path);
       }
       catch(err){
         console.log(err);

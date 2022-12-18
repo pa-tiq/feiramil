@@ -29,14 +29,14 @@ const createFormData = (uri) => {
 
 const createFormData2 = (photo) => {
   //console.log(photo);
-  //console.log(
-  //  'nome: ',
-  //  photo.filename,
-  //  'tipo: ',
-  //  `image/${photo.filename.split('.').pop()}`,
-  //  'uri: ',
-  //  photo.uri
-  //);
+  console.log(
+    'nome: ',
+    photo.filename,
+    'tipo: ',
+    `image/${photo.filename.split('.').pop()}`,
+    'uri: ',
+    photo.uri
+  );
   const formData = new FormData();
   formData.append('image', {
     uri: photo.uri,
@@ -109,16 +109,30 @@ const UserContextProvider = (props) => {
     return loadedUser;
   };
 
-  const updatePhoto = async (photo) => {
-    const body = createFormData2(photo);
+  const createFormData = (uri) => {
+    const fileName = uri.split('/').pop();
+    const fileType = fileName.split('.').pop();
+    const formData = new FormData();
+    console.log('nome: ', fileName, 'tipo: ', `image/${fileType}`, 'uri: ', uri);
+    formData.append('image', {
+      uri,
+      name: fileName,
+      type: `image/${fileType}`,
+    });
+    return formData;
+  };
+
+  const updatePhoto = async (path) => {
     let loadedUser = {};
     const putConfig = {
       url: URLs.update_user_photo_url,
       method: 'PUT',
-      body: body,
+      body: {
+        'path': path,
+      },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
-        "Content-Type": `multipart/form-data;`
+        'Content-Type': 'application/json',       
       },
     };
     const createTask = (response) => {
