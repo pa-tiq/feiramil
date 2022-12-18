@@ -1,15 +1,23 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../constants/styles';
+import { useIsFocused } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import ProductsList from '../components/Products/ProductsList';
 
-function UserProductsScreen() {
-
-  return (
-    <View style={styles.rootContainer}>
-      <Text style={styles.title}>Oie!</Text>
-      <Text style={styles.title}>You authenticated successfully!</Text>
-    </View>
-  );
-}
+const UserProductsScreen = () => {
+  const [loadedProducts, setLoadedProducts] = useState([]);
+  const isFocused = useIsFocused();
+  
+  //useEffect(() => {
+  //  async function loadPlaces(){
+  //    const places = await fetchPlaces();
+  //    setLoadedPlaces(places);
+  //  }
+  //  if (isFocused) {
+  //    loadPlaces();
+  //  }
+  //}, [isFocused]);
+  return <ProductsList products={loadedProducts}/>;
+};
 
 export default UserProductsScreen;
 
@@ -18,12 +26,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: 'white'
   },
 });

@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
-import ImagePicker from '../Device/ImagePicker';
+import UserImagePicker from '../Device/UserImagePicker';
 import UserDataForm from './UserDataForm';
 import * as FileSystem from 'expo-file-system';
 import { URLs } from '../../constants/URLs';
@@ -109,7 +109,7 @@ function UserData() {
   return (
     <>
       <View style={styles.authContent}>
-        <ImagePicker onImageTaken={imageTakenHandler} />
+        <UserImagePicker onImageTaken={imageTakenHandler} />
       </View>
       <View style={styles.authContent}>
         <UserDataForm

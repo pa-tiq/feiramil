@@ -148,6 +148,9 @@ function UserDataForm(props) {
 export default UserDataForm;
 
 const styles = StyleSheet.create({
+  form:{
+    paddingHorizontal:5,
+  },
   buttons: {
     marginTop: 12,
   },

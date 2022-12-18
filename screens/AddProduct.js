@@ -1,15 +1,15 @@
 import { StyleSheet, Text } from 'react-native';
+import ProductForm from '../components/Products/ProductForm';
 
 const AddProduct = ({ navigation }) => {
 
-  //async function createPlaceHandler(place) {
+  async function createPlaceHandler(place) {
   //  const insertedPlace = await insertPlace(place);
   //  sendPushNotification(insertedPlace);   
   //  navigation.navigate('AllPlaces');
-  //}
+  }
   
-  //return <PlaceForm onCreatePlace={createPlaceHandler} />;
-  return <Text style={styles.title}>User!</Text>;
+  return <ProductForm onCreatePlace={createPlaceHandler} />;
 };
 
 export default AddProduct;

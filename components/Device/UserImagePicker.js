@@ -18,7 +18,7 @@ import LoadingOverlay from '../ui/LoadingOverlay';
 import { URLs } from '../../constants/URLs';
 import useFileSystem from '../../hooks/use-FileSystem';
 
-const ImagePicker = (props) => {
+const UserImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
   const [newImage, setNewImage] = useState(null);
   const [downloadedImageURI, setDowloadedImageURI] = useState(null);
@@ -32,8 +32,7 @@ const ImagePicker = (props) => {
   const fileSystemObj = useFileSystem();
 
   useLayoutEffect(() => {
-    const userProfilePicturePath =
-      URLs.base_url + user.photo;
+    const userProfilePicturePath = URLs.base_url + user.photo;
     const fileName = user.photo.split('/')[2];
     async function findFileOrDownloadFile() {
       const fileInfo = await FileSystem.getInfoAsync(
@@ -44,8 +43,12 @@ const ImagePicker = (props) => {
       } else {
         const createTask = (uri) => {
           setDowloadedImageURI(uri);
-        }
-        fileSystemObj.downloadImage(userProfilePicturePath, fileName, createTask);
+        };
+        fileSystemObj.downloadImage(
+          userProfilePicturePath,
+          fileName,
+          createTask
+        );
       }
     }
 
@@ -135,7 +138,9 @@ const ImagePicker = (props) => {
   );
 
   if (newImage) {
-    imagePreview = <Image style={styles.image} source={{ uri: newImage.uri }} />;
+    imagePreview = (
+      <Image style={styles.image} source={{ uri: newImage.uri }} />
+    );
   }
 
   if (downloadedImageURI && !newImagePicked) {
@@ -177,13 +182,14 @@ const ImagePicker = (props) => {
   );
 };
 
-export default ImagePicker;
+export default UserImagePicker;
 
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'stretch',
+    paddingHorizontal: 5,
   },
   imagePreviewContainer: {
     flex: 1,
