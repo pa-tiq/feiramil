@@ -14,38 +14,6 @@ export const UserContext = createContext({
   updatePhoto: async (user) => {},
 });
 
-const createFormData = (uri) => {
-  const fileName = uri.split('/').pop();
-  const fileType = fileName.split('.').pop();
-  const formData = new FormData();
-  console.log('nome: ', fileName, 'tipo: ', `image/${fileType}`, 'uri: ', uri);
-  formData.append('image', {
-    uri,
-    name: fileName,
-    type: `image/${fileType}`,
-  });
-  return formData;
-};
-
-const createFormData2 = (photo) => {
-  //console.log(photo);
-  console.log(
-    'nome: ',
-    photo.filename,
-    'tipo: ',
-    `image/${photo.filename.split('.').pop()}`,
-    'uri: ',
-    photo.uri
-  );
-  const formData = new FormData();
-  formData.append('image', {
-    uri: photo.uri,
-    name: photo.filename,
-    type: `image/${photo.filename.split('.').pop()}`,
-  });
-  return formData;
-};
-
 const UserContextProvider = (props) => {
   const httpObj = useHttp();
   const authContext = useContext(AuthContext);
@@ -109,26 +77,14 @@ const UserContextProvider = (props) => {
     return loadedUser;
   };
 
-  const createFormData = (uri) => {
-    const fileName = uri.split('/').pop();
-    const fileType = fileName.split('.').pop();
-    const formData = new FormData();
-    console.log('nome: ', fileName, 'tipo: ', `image/${fileType}`, 'uri: ', uri);
-    formData.append('image', {
-      uri,
-      name: fileName,
-      type: `image/${fileType}`,
-    });
-    return formData;
-  };
-
-  const updatePhoto = async (path) => {
+  const updatePhoto = async (paths) => {
     let loadedUser = {};
     const putConfig = {
       url: URLs.update_user_photo_url,
       method: 'PUT',
       body: {
-        'path': path,
+        'path': paths.path,
+        'oldpath': paths.oldpath,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,

@@ -15,20 +15,26 @@ function UserData() {
   const [selectedImage, setSelectedImage] = useState();
 
   function imageTakenHandler(image) {
-    async function updatePhoto(){
-      try{
-        const uploadResult = await FileSystem.uploadAsync(URLs.update_user_photo_url, image.uri, {
-          fieldName: 'userphoto',
-          httpMethod: 'PATCH',
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,  
-          headers: {
-            Authorization: 'Bearer ' + authContext.token,
-          }        
-        });
+    async function updatePhoto() {
+      try {
+        const uploadResult = await FileSystem.uploadAsync(
+          URLs.update_user_photo_url,
+          image.uri,
+          {
+            fieldName: 'userphoto',
+            httpMethod: 'PATCH',
+            uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+            headers: {
+              Authorization: 'Bearer ' + authContext.token,
+            },
+          }
+        );
         const result = JSON.parse(uploadResult.body);
-        const response = await userContext.updatePhoto(result.path);
-      }
-      catch(err){
+        const response = await userContext.updatePhoto({
+          path: result.path.substring(1, result.path.length),
+          oldpath: userContext.user.photo,
+        });
+      } catch (err) {
         console.log(err);
       }
     }

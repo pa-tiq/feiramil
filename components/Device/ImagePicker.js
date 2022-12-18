@@ -20,7 +20,7 @@ import useFileSystem from '../../hooks/use-FileSystem';
 
 const ImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
-  const [image, setImage] = useState(null);
+  const [newImage, setNewImage] = useState(null);
   const [downloadedImageURI, setDowloadedImageURI] = useState(null);
   const [cameraPermissionInformation, requestCameraPermission] =
     useCameraPermissions();
@@ -33,8 +33,8 @@ const ImagePicker = (props) => {
 
   useLayoutEffect(() => {
     const userProfilePicturePath =
-      URLs.base_url + user.photo.substring(1, user.photo.length);
-    const fileName = user.photo.substring(1, user.photo.length).split('/')[2];
+      URLs.base_url + user.photo;
+    const fileName = user.photo.split('/')[2];
     async function findFileOrDownloadFile() {
       const fileInfo = await FileSystem.getInfoAsync(
         FileSystem.documentDirectory + fileName
@@ -95,7 +95,7 @@ const ImagePicker = (props) => {
       quality: 0.5,
     });
     if (!result.canceled) {
-      setImage(result.assets[0]);
+      setNewImage(result.assets[0]);
       setNewImagePicked(true);
     }
   }
@@ -111,13 +111,14 @@ const ImagePicker = (props) => {
       quality: 0.5,
     });
     if (!result.canceled) {
-      setImage(result.assets[0]);
+      setNewImage(result.assets[0]);
       setNewImagePicked(true);
     }
   }
 
   function submitFormHandler() {
-    props.onImageTaken(image);
+    props.onImageTaken(newImage);
+    setNewImagePicked(false);
   }
 
   function cancelEditFormHandler() {
@@ -133,11 +134,11 @@ const ImagePicker = (props) => {
     />
   );
 
-  if (image) {
-    imagePreview = <Image style={styles.image} source={{ uri: image.uri }} />;
+  if (newImage) {
+    imagePreview = <Image style={styles.image} source={{ uri: newImage.uri }} />;
   }
 
-  if (downloadedImageURI) {
+  if (downloadedImageURI && !newImagePicked) {
     imagePreview = (
       <Image style={styles.image} source={{ uri: downloadedImageURI }} />
     );
