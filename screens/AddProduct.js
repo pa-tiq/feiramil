@@ -1,15 +1,19 @@
+import { useContext } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import ProductForm from '../components/Products/ProductForm';
+import { ProductContext } from '../store/product-context';
 
 const AddProduct = ({ navigation }) => {
+  const productContext = useContext(ProductContext);
 
-  async function createPlaceHandler(place) {
-  //  const insertedPlace = await insertPlace(place);
-  //  sendPushNotification(insertedPlace);   
-  //  navigation.navigate('AllPlaces');
+  async function createProductHandler(product) {
+    const insertedProduct = await productContext.addProduct(product);
+    console.log(insertedProduct);
+    //  sendPushNotification(insertedPlace);
+    //  navigation.navigate('AllPlaces');
   }
-  
-  return <ProductForm onCreatePlace={createPlaceHandler} />;
+
+  return <ProductForm onCreateProduct={createProductHandler} />;
 };
 
 export default AddProduct;

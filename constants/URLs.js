@@ -7,4 +7,8 @@ export const URLs = {
   get_user_url: `${baseURL}/user/user`,
   update_user_url: `${baseURL}/user/user`,
   update_user_photo_url: `${baseURL}/user/image`,
+  add_product_url: `${baseURL}/feed/product`,
+  get_products_url: `${baseURL}/feed/product`,
+  get_product_detail_url: `${baseURL}/feed/product`,
+
 };

@@ -8,6 +8,7 @@ import AuthStack from './AuthStack';
 import AuthenticatedStack from './AuthenticatedStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserContextProvider from '../store/user-context';
+import ProductContextProvider from '../store/product-context';
 
 export default function NavigationStack() {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +34,9 @@ export default function NavigationStack() {
       {!authContext.isAuthenticated && <AuthStack />}
       {authContext.isAuthenticated && (
         <UserContextProvider>
-          <AuthenticatedStack />
+          <ProductContextProvider>
+            <AuthenticatedStack />
+          </ProductContextProvider>
         </UserContextProvider>
       )}
     </NavigationContainer>

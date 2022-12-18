@@ -1,22 +1,60 @@
-import React, { useState } from "react";
-import useHttp from "../hooks/use-http";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { URLs } from '../constants/URLs';
+import useHttp from '../hooks/use-http';
+import { AuthContext } from './auth-context';
 
-const ProductContext = React.createContext({
+export const ProductContext = createContext({
   products: [],
   isLoading: false,
   error: null,
-  addProduct: (product) => {},
+  addProduct: async (product) => {},
   removeProduct: (productId) => {},
-  updateProduct: (productId) => {},
-  fetchProducts: () => {},
-  fetchUserProducts: (userId) => {},
+  updateProduct: async (productId) => {},
+  fetchProducts: async () => {},
+  fetchUserProducts: async (userId) => {},
 });
 
-export const UserContextProvider = (props) => {
+const ProductContextProvider = (props) => {
   const httpObj = useHttp();
+  const authContext = useContext(AuthContext);
   const [products, setProducts] = useState([]);
+  const [productsChanged, setProductsChanged] = useState(false);
 
-  const addProduct = async (product) => {};
+  useEffect(() => {
+    fetchUserProducts();
+    setProductsChanged(false);
+  }, [productsChanged]);
+
+  const addProduct = async (product) => {
+    console.log(product);
+    let price;
+    if (product.price.length === 0) {
+      price = null;
+    } else {
+      price = parseFloat(product.price);
+    }
+    const postConfig = {
+      url: URLs.add_product_url,
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        title: product.title,
+        price: price,
+        description: product.description,
+      },
+    };
+    const createTask = (response) => {
+      if(response[0].insertId > 0) setProductsChanged(true);
+    };
+    await httpObj.sendRequest(postConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return;
+  };
 
   const removeProduct = async (productId) => {};
 
@@ -27,9 +65,9 @@ export const UserContextProvider = (props) => {
   const fetchUserProducts = async (userId) => {};
 
   return (
-    <UserContext.Provider
+    <ProductContext.Provider
       value={{
-        user: user,
+        products: products,
         isLoading: httpObj.isLoading,
         error: httpObj.error,
         addProduct: addProduct,
@@ -40,8 +78,8 @@ export const UserContextProvider = (props) => {
       }}
     >
       {props.children}
-    </UserContext.Provider>
+    </ProductContext.Provider>
   );
 };
 
-export default ProductContext;
+export default ProductContextProvider;

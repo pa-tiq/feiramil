@@ -32,23 +32,28 @@ const UserImagePicker = (props) => {
   const fileSystemObj = useFileSystem();
 
   useLayoutEffect(() => {
-    const userProfilePicturePath = URLs.base_url + user.photo;
-    const fileName = user.photo.split('/')[2];
     async function findFileOrDownloadFile() {
-      const fileInfo = await FileSystem.getInfoAsync(
-        FileSystem.documentDirectory + fileName
-      );
-      if (fileInfo.exists) {
-        setDowloadedImageURI(fileInfo.uri);
-      } else {
-        const createTask = (uri) => {
-          setDowloadedImageURI(uri);
-        };
-        fileSystemObj.downloadImage(
-          userProfilePicturePath,
-          fileName,
-          createTask
+      try {
+        if (!user.photo) return;
+        const userProfilePicturePath = URLs.base_url + user.photo;
+        const fileName = user.photo.split('/')[2];
+        const fileInfo = await FileSystem.getInfoAsync(
+          FileSystem.documentDirectory + fileName
         );
+        if (fileInfo.exists) {
+          setDowloadedImageURI(fileInfo.uri);
+        } else {
+          const createTask = (uri) => {
+            setDowloadedImageURI(uri);
+          };
+          fileSystemObj.downloadImage(
+            userProfilePicturePath,
+            fileName,
+            createTask
+          );
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
 

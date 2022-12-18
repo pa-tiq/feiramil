@@ -7,13 +7,17 @@ import Button from '../ui/Button';
 const ProductForm = (props) => {
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredDescription, setEnteredDescription] = useState('');
-  const [pickedLocation, setPickedLocation] = useState();
-  const [selectedImage, setSelectedImage] = useState();
+  const [enteredPrice, setEnteredPrice] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
   };  
   const changeDescriptionHandler = (enteredText) => {
     setEnteredDescription(enteredText);
+  };  
+  const changePriceHandler = (enteredText) => {
+    setEnteredPrice(enteredText);
   };
 
   function imageTakenHandler(imageUri) {
@@ -23,21 +27,23 @@ const ProductForm = (props) => {
     setPickedLocation(location);
   }
   function saveProductHandler() {
-    //const placeData = new Place(enteredTitle,selectedImage,pickedLocation);
-    //props.onCreatePlace(placeData)
+    const productData = {
+      title:enteredTitle,
+      price: enteredPrice,
+      description: enteredDescription,
+    }
+    props.onCreateProduct(productData)
   }
 
   return (
     <ScrollView style={styles.form}>
-      <View style={styles.titleContainer}>
+      <View style={styles.inputContainer}>
         <Text style={styles.label}>Título</Text>
         <TextInput
           style={styles.input}
           onChangeText={changeTitleHandler}
           value={enteredTitle}
         />
-      </View>
-      <View style={styles.descriptionContainer}>
         <Text style={styles.label}>Descrição</Text>
         <TextInput
           style={[styles.input, {textAlignVertical:'top'}]}
@@ -45,6 +51,13 @@ const ProductForm = (props) => {
           value={enteredDescription}
           multiline={true}
           numberOfLines={6}
+        />
+        <Text style={styles.label}>Preço</Text>
+        <TextInput
+          style={[styles.input]}
+          onChangeText={changePriceHandler}
+          value={enteredPrice}
+          keyboardType={'number-pad'}
         />
       </View>
       <ProductImagePicker onImageTaken={imageTakenHandler} />
@@ -68,12 +81,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     color: 'white',
   },
-  titleContainer: {
-    paddingHorizontal: 4,
+  inputContainer: {
+    paddingHorizontal: 5,
   },    
-  descriptionContainer: {
-    paddingHorizontal: 4,
-  },  
   buttonContainer: {
     marginTop: 14,
     paddingHorizontal: 4,

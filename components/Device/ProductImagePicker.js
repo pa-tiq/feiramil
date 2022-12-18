@@ -107,7 +107,7 @@ const ProductImagePicker = (props) => {
   let imagePreview = (
     <Ionicons
       style={styles.icon}
-      name={'image-outline'}
+      name={'images-outline'}
       color={'white'}
       size={30}
     />

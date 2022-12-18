@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import useHttp from '../hooks/use-http';
 import { URLs } from '../constants/URLs';
 import { AuthContext } from './auth-context';
-import { Platform } from 'react-native';
 
 export const UserContext = createContext({
   user: {},
