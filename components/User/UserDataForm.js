@@ -70,6 +70,7 @@ function UserDataForm(props) {
       om: enteredOm,
       phone: enteredPhone,
     });
+    cancelEditFormHandler();
   }
 
   function deleteErrorHandler(){

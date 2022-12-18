@@ -5,6 +5,7 @@ import { AuthContext } from './auth-context';
 
 export const ProductContext = createContext({
   products: [],
+  userProducts: [],
   isLoading: false,
   error: null,
   addProduct: async (product) => {},
@@ -18,15 +19,15 @@ const ProductContextProvider = (props) => {
   const httpObj = useHttp();
   const authContext = useContext(AuthContext);
   const [products, setProducts] = useState([]);
+  const [userProducts, setUserProducts] = useState([]);
   const [productsChanged, setProductsChanged] = useState(false);
 
   useEffect(() => {
-    fetchUserProducts();
+    fetchUserProducts(authContext.userId);
     setProductsChanged(false);
   }, [productsChanged]);
 
   const addProduct = async (product) => {
-    console.log(product);
     let price;
     if (product.price.length === 0) {
       price = null;
@@ -47,7 +48,7 @@ const ProductContextProvider = (props) => {
       },
     };
     const createTask = (response) => {
-      if(response[0].insertId > 0) setProductsChanged(true);
+      if(response && response[0].insertId > 0) setProductsChanged(true);
     };
     await httpObj.sendRequest(postConfig, createTask);
     if (httpObj.error) {
@@ -62,12 +63,37 @@ const ProductContextProvider = (props) => {
 
   const fetchProducts = async () => {};
 
-  const fetchUserProducts = async (userId) => {};
+  const fetchUserProducts = async (userId) => {
+    const getConfig = {
+      url: URLs.get_user_products_url + `/${userId}`,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+      },
+    };
+    const createTask = (response) => {
+      setUserProducts(response.products);
+      //loadedUser = {
+      //  email: response.user.email,
+      //  password: response.user.password,
+      //  name: response.user.name,
+      //  om: response.user.om,
+      //  phone: response.user.phone,
+      //  photo: response.user.photo,
+      //};
+      //setUser(loadedUser);
+    };
+    await httpObj.sendRequest(getConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+  };
 
   return (
     <ProductContext.Provider
       value={{
         products: products,
+        userProducts: userProducts,
         isLoading: httpObj.isLoading,
         error: httpObj.error,
         addProduct: addProduct,

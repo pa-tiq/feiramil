@@ -34,7 +34,7 @@ const useHttp = () => {
         throw new Error('Erro: Problema de conexão.');
       }
       const data = await response.json();
-      functionToUse(data);
+      functionToUse(data, response.status);
     } catch (err) {
       setError(err.message || 'Something went wrong!');
     }

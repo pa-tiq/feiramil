@@ -13,6 +13,7 @@ function UserData() {
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
   const [selectedImage, setSelectedImage] = useState();
+  const [responseStatus, setResponseStatus] = useState(null);
 
   function imageTakenHandler(image) {
     async function updatePhoto() {
@@ -87,6 +88,7 @@ function UserData() {
         ? {
             email: email,
             name: name,
+            password: null,
             om: om,
             phone: phone,
           }
@@ -97,13 +99,8 @@ function UserData() {
             om: om,
             phone: phone,
           };
-    const response = await userContext.updateUser({
-      email: email,
-      password: password,
-      name: name,
-      om: om,
-      phone: phone,
-    });
+    const resStatus = await userContext.updateUser(updatedUser);
+    setResponseStatus(resStatus);
   }
 
   return (

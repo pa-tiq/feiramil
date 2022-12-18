@@ -32,7 +32,7 @@ const ProductForm = (props) => {
       price: enteredPrice,
       description: enteredDescription,
     }
-    props.onCreateProduct(productData)
+    props.onCreateProduct(productData);
   }
 
   return (

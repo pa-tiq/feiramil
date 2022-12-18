@@ -54,7 +54,7 @@ const UserContextProvider = (props) => {
   const removeUser = async (userId) => {};
 
   const updateUser = async (user) => {
-    let loadedUser = {};
+    let responseStatus;
     const getConfig = {
       url: URLs.update_user_url,
       method: 'PUT',
@@ -64,7 +64,8 @@ const UserContextProvider = (props) => {
       },
       body: user,
     };
-    const createTask = (response) => {
+    const createTask = (response, status) => {
+      responseStatus = status;
       if (response.changedRows > 0) {
         setUserChanged(true);
       }
@@ -73,7 +74,7 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return loadedUser;
+    return responseStatus
   };
 
   const updatePhoto = async (paths) => {

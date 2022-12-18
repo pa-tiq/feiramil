@@ -10,7 +10,7 @@ const AddProduct = ({ navigation }) => {
     const insertedProduct = await productContext.addProduct(product);
     console.log(insertedProduct);
     //  sendPushNotification(insertedPlace);
-    //  navigation.navigate('AllPlaces');
+    navigation.navigate('UserProductsTab');
   }
 
   return <ProductForm onCreateProduct={createProductHandler} />;
