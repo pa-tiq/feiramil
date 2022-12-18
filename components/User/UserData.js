@@ -5,7 +5,6 @@ import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
 import ImagePicker from '../Device/ImagePicker';
 import UserDataForm from './UserDataForm';
-import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import { URLs } from '../../constants/URLs';
 import { AuthContext } from '../../store/auth-context';
