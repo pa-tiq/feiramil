@@ -12,6 +12,7 @@ export const ProductContext = createContext({
   removeProduct: (productId) => {},
   updateProduct: async (productId) => {},
   fetchProducts: async () => {},
+  fetchProductDetail: async (productId) => {},
   fetchUserProducts: async (userId) => {},
 });
 
@@ -62,6 +63,25 @@ const ProductContextProvider = (props) => {
   const updateProduct = async (productId) => {};
 
   const fetchProducts = async () => {};
+  
+  const fetchProductDetail = async (productId) => {
+    let fetchedProduct;
+    const getConfig = {
+      url: URLs.get_product_detail_url + `/${productId}`,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+      },
+    };
+    const createTask = (response) => {
+      fetchedProduct = response.product;
+    };
+    await httpObj.sendRequest(getConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return fetchedProduct;
+  };
 
   const fetchUserProducts = async (userId) => {
     const getConfig = {
@@ -73,15 +93,6 @@ const ProductContextProvider = (props) => {
     };
     const createTask = (response) => {
       setUserProducts(response.products);
-      //loadedUser = {
-      //  email: response.user.email,
-      //  password: response.user.password,
-      //  name: response.user.name,
-      //  om: response.user.om,
-      //  phone: response.user.phone,
-      //  photo: response.user.photo,
-      //};
-      //setUser(loadedUser);
     };
     await httpObj.sendRequest(getConfig, createTask);
     if (httpObj.error) {
@@ -100,6 +111,7 @@ const ProductContextProvider = (props) => {
         removeProduct: removeProduct,
         updateProduct: updateProduct,
         fetchProducts: fetchProducts,
+        fetchProductDetail: fetchProductDetail,
         fetchUserProducts: fetchUserProducts,
       }}
     >

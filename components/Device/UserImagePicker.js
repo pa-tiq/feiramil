@@ -9,7 +9,6 @@ import {
 } from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
-
 import { useContext, useLayoutEffect, useState } from 'react';
 import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';

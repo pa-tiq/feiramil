@@ -5,9 +5,9 @@ import ProductItem from './ProductItem';
 const ProductsList = ({ products }) => {
   const navigation = useNavigation();
   function selectProductHandler(id) {
-    //navigation.navigate('PlaceDetails',{
-    //  placeId: id
-    //});
+    navigation.navigate('ProductDetails',{
+      productId: id,
+    });
   }
   if (!products || products.length === 0) {
     return (

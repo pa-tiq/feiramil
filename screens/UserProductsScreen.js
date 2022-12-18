@@ -20,7 +20,7 @@ const UserProductsScreen = () => {
       loadUserProducts();
     }
   }, [isFocused]);
-  return <ProductsList products={userProducts}/>;
+  return <ProductsList products={userProducts} />;
 };
 
 export default UserProductsScreen;

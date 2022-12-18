@@ -5,6 +5,7 @@ import useHttp from '../hooks/use-http';
 
 export const AuthContext = createContext({
   token: '',
+  userId: -1,
   isAuthenticated: false,
   isLoading: false,
   authenticate: () => {},
@@ -89,6 +90,7 @@ const AuthContextProvider = ({ children }) => {
 
   const value = {
     token: authToken,
+    userId: userId,
     isAuthenticated: !!authToken,
     isLoading: isLoading,
     authenticate: authenticate,

@@ -35,6 +35,7 @@ const UserContextProvider = (props) => {
     };
     const createTask = (response) => {
       loadedUser = {
+        id: response.user.id,
         email: response.user.email,
         password: response.user.password,
         name: response.user.name,

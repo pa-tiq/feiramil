@@ -3,7 +3,7 @@ import { Colors } from '../../constants/styles';
 
 const ProductItem = ({ product, onSelect }) => {
   const selectProductHandler = () => {
-    //onSelect(product.id);
+    onSelect(product.id);
   };
 
   const mySQLTimeStampToDate = (dateString) => {
@@ -21,7 +21,7 @@ const ProductItem = ({ product, onSelect }) => {
       <Image source={{ uri: product.imageUri }} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>{product.title}</Text>
-        <Text style={styles.address}>{product.description}</Text>
+        <Text style={styles.description}>{product.description}</Text>
         <View style={styles.userData}>
           <Text style={styles.normalText}>{`Postado por `}</Text>
           <Text style={styles.userName}>{`${product.userName}`}</Text>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-  address: {
+  description: {
     fontWeight: 'bold',
     fontSize: 12,
     color: 'white',

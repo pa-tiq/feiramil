@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../../constants/styles';
+import Button from './Button';
 
-function ErrorOverlay({ message, reload }) {
+function ErrorOverlay({ message, reloadFunction }) {
   return (
     <View style={styles.rootContainer}>
       <Text style={styles.message}>{message}</Text>
-      <Button onPress={reload}>{'Recarregar'}</Button>
+      <Button onPress={reloadFunction}>{'Tentar de novo'}</Button>
     </View>
   );
 }
