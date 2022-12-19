@@ -13,27 +13,31 @@ const useHttp = () => {
         body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
         headers: requestConfig.headers ? requestConfig.headers : {},
       });
+      const data = await response
+        .json()
+        .then((result) => {
+          return result;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       if (!response.ok) {
-        if(requestConfig.method === 'POST'){
+        if (requestConfig.method === 'POST') {
           if (response.status === 422) {
-            throw new Error(
-              "Esse e-mail já está sendo usado."
-            );
+            throw new Error('Esse e-mail já está sendo usado.');
           }
           if (response.status === 401) {
-            throw new Error(
-              "Senha errada."
-            );
-          }        
+            throw new Error('Senha errada.');
+          }
           if (response.status === 404) {
             throw new Error(
-              "Não tem nenhum usuário cadastrado com esse e-mail."
+              'Não tem nenhum usuário cadastrado com esse e-mail.'
             );
           }
         }
-        throw new Error('Erro: Problema de conexão.');
+        if (data && data.message) throw new Error(data.message);
+        else throw new Error('Erro: Problema de conexão.');
       }
-      const data = await response.json();
       functionToUse(data, response.status);
     } catch (err) {
       setError(err.message || 'Something went wrong!');

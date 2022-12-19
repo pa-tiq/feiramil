@@ -6,7 +6,6 @@ import { AuthContext } from '../store/auth-context';
 import { ProductContext } from '../store/product-context';
 
 const UserProductsScreen = () => {
-  const [loadedProducts, setLoadedProducts] = useState([]);
   const isFocused = useIsFocused();
   const productContext = useContext(ProductContext);
   const authContext = useContext(AuthContext);
@@ -14,7 +13,11 @@ const UserProductsScreen = () => {
   
   useEffect(() => {
     async function loadUserProducts(){
-      await productContext.fetchUserProducts(authContext.userId);
+      try {
+        await productContext.fetchUserProducts(authContext.userId);
+      } catch (error) {
+        console.log(error);
+      }
     }
     if (isFocused) {
       loadUserProducts();

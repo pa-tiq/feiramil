@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
+import { findOrDownloadImage } from '../util/findOrDownloadFile';
 import { AuthContext } from './auth-context';
 
 export const ProductContext = createContext({
@@ -78,7 +79,7 @@ const ProductContextProvider = (props) => {
     };
     const createTask = (response) => {
       if (response.changedRows > 0) {
-        setUserChanged(true);
+        setProductsChanged(true);
       }
     };
     await httpObj.sendRequest(putConfig, createTask);
@@ -88,7 +89,19 @@ const ProductContextProvider = (props) => {
     return loadedUser;
   };
 
-  const removeProduct = async (productId) => {};
+  const removeProduct = async (productId) => {
+    const deleteConfig = {
+      url: `${URLs.delete_product_url}/${productId}`,
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+      },
+    };
+    const createTask = () => {
+      setProductsChanged(true);
+    };
+    httpObj.sendRequest(deleteConfig, createTask);
+  };
 
   const updateProduct = async (productId) => {};
 
@@ -122,7 +135,26 @@ const ProductContextProvider = (props) => {
       },
     };
     const createTask = (response) => {
-      setUserProducts(response.products);
+      async function getFile(product) {
+        try {
+          let uri;
+          uri = await findOrDownloadImage(product.imagePath);
+          product.imageUri = uri;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      if(response.products){
+        let products = response.products;
+        products.forEach((product) => {
+          if (!product.imagePath) {
+            product.imageUri = null;
+          } else {
+            getFile(product);
+          }
+        });
+        setUserProducts(products);
+      }
     };
     await httpObj.sendRequest(getConfig, createTask);
     if (httpObj.error) {

@@ -1,19 +1,18 @@
 import { View, StyleSheet, Text, Pressable, Image } from 'react-native';
 import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
+import { mySQLTimeStampToDate } from '../../util/mySQLTimeStampToDate';
+import { useLayoutEffect, useState } from 'react';
 
 const ProductItem = ({ product, onSelect }) => {
   const selectProductHandler = () => {
     onSelect(product.id);
   };
+  const [imageURI, setImageURI] = useState(null);
 
-  const mySQLTimeStampToDate = (dateString) => {
-    const year = dateString.substring(0, 4);
-    const month = dateString.substring(5, 7);
-    const day = dateString.substring(8, 10);
-    return `${day}/${month}/${year}`;
-  };
+  useLayoutEffect(()=>{
+    if(product.imageUri) setImageURI(product.imageUri);
+  },[product]);
 
   let imagePreview = (
     <View style={styles.imageContainer}>
@@ -26,11 +25,10 @@ const ProductItem = ({ product, onSelect }) => {
     </View>
   );
 
-  if (product.imageUri) {
-    let uri = product.imageUri;
-    imagePreview = <Image style={styles.image} source={{ uri: uri }} />;
+  if (imageURI) {
+    imagePreview = <Image style={styles.image} source={{ uri: imageURI }} />;
   }
-  //{imagePreview}
+
   return (
     <Pressable
       onPress={selectProductHandler}

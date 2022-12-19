@@ -6,10 +6,10 @@ import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { Colors } from '../constants/styles';
 import { ProductContext } from '../store/product-context';
 import { Ionicons } from '@expo/vector-icons';
-import useFileSystem from '../hooks/use-FileSystem';
 import { UserContext } from '../store/user-context';
 import Button from '../components/ui/Button';
 import { findOrDownloadImage } from '../util/findOrDownloadFile';
+import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +24,11 @@ const ProductDetails = ({ route, navigation }) => {
 
   const setProductId = () => {
     selectedProductId = route.params.productId;
+  };
+
+  const removePlaceHandler = async () => {
+    productContext.removeProduct(selectedProductId);
+    navigation.navigate('UserProductsScreen');
   };
 
   useLayoutEffect(() => {
@@ -85,15 +90,6 @@ const ProductDetails = ({ route, navigation }) => {
     setIsLoading(true);
     loadProductData();
   }, [selectedProductId]);
-
-  const mySQLTimeStampToDate = (dateString) => {
-    const year = dateString.substring(0, 4);
-    const month = dateString.substring(5, 7);
-    const day = dateString.substring(8, 10);
-    return `${day}/${month}/${year}`;
-  };
-
-  const removePlaceHandler = async () => {};
 
   if (isLoading) {
     return <LoadingOverlay />;
