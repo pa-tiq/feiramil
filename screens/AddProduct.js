@@ -29,12 +29,11 @@ const AddProduct = ({ navigation }) => {
       const response = await productContext.addProductImagePath({
         path: result.path.substring(1, result.path.length),
         productId: insertedProductId
-      });
-      navigation.navigate('UserProductsScreen');
+      });      
     } catch (error) {
       console.log(error);
     }
-
+    navigation.navigate('UserProductsScreen');
   }
 
   return <ProductForm onCreateProduct={createProductHandler} />;

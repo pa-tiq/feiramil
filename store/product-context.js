@@ -9,6 +9,7 @@ export const ProductContext = createContext({
   userProducts: [],
   isLoading: false,
   error: null,
+  triggerReload: () => {},
   addProduct: async (product) => {},
   addProductImagePath: async (data) => {},
   removeProduct: (productId) => {},
@@ -26,9 +27,20 @@ const ProductContextProvider = (props) => {
   const [productsChanged, setProductsChanged] = useState(false);
 
   useEffect(() => {
-    fetchUserProducts(authContext.userId);
+    async function getUserProducts(){
+      try {
+        await fetchUserProducts(authContext.userId);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getUserProducts();
     setProductsChanged(false);
   }, [productsChanged]);
+
+  const triggerReload = () => {
+    setProductsChanged(true);
+  }
 
   const addProduct = async (product) => {
     let price;
@@ -169,6 +181,7 @@ const ProductContextProvider = (props) => {
         userProducts: userProducts,
         isLoading: httpObj.isLoading,
         error: httpObj.error,
+        triggerReload: triggerReload,
         addProduct: addProduct,
         addProductImagePath: addProductImagePath,
         removeProduct: removeProduct,

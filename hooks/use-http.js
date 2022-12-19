@@ -24,15 +24,19 @@ const useHttp = () => {
       if (!response.ok) {
         if (requestConfig.method === 'POST') {
           if (response.status === 422) {
-            throw new Error('Esse e-mail já está sendo usado.');
+            if (data && data.message) throw new Error(data.message);
+            else throw new Error('Esse e-mail já está sendo usado.');
           }
           if (response.status === 401) {
-            throw new Error('Senha errada.');
+            if (data && data.message) throw new Error(data.message);
+            else throw new Error('Senha errada.');
           }
           if (response.status === 404) {
-            throw new Error(
-              'Não tem nenhum usuário cadastrado com esse e-mail.'
-            );
+            if (data && data.message) throw new Error(data.message);
+            else
+              throw new Error(
+                'Não tem nenhum usuário cadastrado com esse e-mail.'
+              );
           }
         }
         if (data && data.message) throw new Error(data.message);

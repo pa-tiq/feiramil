@@ -2,17 +2,24 @@ import { View, StyleSheet, Text, Pressable, Image } from 'react-native';
 import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
 import { mySQLTimeStampToDate } from '../../util/mySQLTimeStampToDate';
+import LoadingOverlay from '../ui/LoadingOverlay';
 import { useLayoutEffect, useState } from 'react';
 
 const ProductItem = ({ product, onSelect }) => {
   const selectProductHandler = () => {
     onSelect(product.id);
   };
-  const [imageURI, setImageURI] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [productItem, setProductItem] = useState({});
 
-  useLayoutEffect(()=>{
-    if(product.imageUri) setImageURI(product.imageUri);
-  },[product]);
+  useLayoutEffect(() => {
+    setProductItem(product);
+    setIsLoading(false);
+  }, [product]);
+
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
 
   let imagePreview = (
     <View style={styles.imageContainer}>
@@ -25,8 +32,10 @@ const ProductItem = ({ product, onSelect }) => {
     </View>
   );
 
-  if (imageURI) {
-    imagePreview = <Image style={styles.image} source={{ uri: imageURI }} />;
+  if (productItem.imageUri) {
+    imagePreview = (
+      <Image style={styles.image} source={{ uri: productItem.imageUri }} />
+    );
   }
 
   return (
@@ -36,14 +45,18 @@ const ProductItem = ({ product, onSelect }) => {
     >
       {imagePreview}
       <View style={styles.info}>
-        <Text style={styles.title}>{product.title}</Text>
-        <Text style={styles.description}>{product.description}</Text>
+        <Text style={styles.title}>{productItem.title}</Text>
+        <Text style={styles.description}>
+          {productItem.description.length > 40
+            ? `${productItem.description.substring(0, 40)}...`
+            : productItem.description}
+        </Text>
         <View style={styles.userData}>
           <Text style={styles.normalText}>{`Postado por `}</Text>
-          <Text style={styles.userName}>{`${product.userName}`}</Text>
+          <Text style={styles.userName}>{`${productItem.userName}`}</Text>
           <Text style={styles.normalText}>{` em `}</Text>
           <Text style={styles.userName}>{`${mySQLTimeStampToDate(
-            product.created_at
+            productItem.created_at
           )}`}</Text>
         </View>
       </View>

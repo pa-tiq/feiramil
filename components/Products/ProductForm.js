@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, TextInput } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  TextInput,
+  Alert,
+} from 'react-native';
 import { Colors } from '../../constants/styles';
 import ProductImagePicker from '../Device/ProductImagePicker';
 import Button from '../ui/Button';
@@ -9,28 +16,55 @@ const ProductForm = (props) => {
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredPrice, setEnteredPrice] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-  
+
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
-  };  
+  };
   const changeDescriptionHandler = (enteredText) => {
     setEnteredDescription(enteredText);
-  };  
+  };
   const changePriceHandler = (enteredText) => {
     setEnteredPrice(enteredText);
   };
 
   function imageTakenHandler(imageUri) {
     setSelectedImage(imageUri);
-  };
+  }
 
   function saveProductHandler() {
+    if (
+      enteredTitle.trim().length === 0 ||
+      enteredDescription.trim().length === 0
+    ) {
+      Alert.alert(
+        'Formulário incompleto',
+        'Por favor, preencha os dados do produto.'
+      );
+      return;
+    } 
+    else if (!selectedImage) {
+      Alert.alert(
+        'Nenhuma imagem escolhida',
+        'Por favor, escolha uma imagem para cadastrar o produto.'
+      );
+      return;
+    }
+    if (enteredPrice.trim().length > 0){
+      if (!parseFloat(enteredPrice) || parseFloat(enteredPrice) < 0){
+        Alert.alert(
+          'Preço inválido',
+          'Por favor, preencha o preço com um valor válido.'
+        );
+        return;
+      }      
+    }
+
     const productData = {
-      title:enteredTitle,
+      title: enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
-      image: selectedImage
-    }
+      image: selectedImage,
+    };
     props.onCreateProduct(productData);
   }
 
@@ -45,7 +79,7 @@ const ProductForm = (props) => {
         />
         <Text style={styles.label}>Descrição</Text>
         <TextInput
-          style={[styles.input, {textAlignVertical:'top'}]}
+          style={[styles.input, { textAlignVertical: 'top' }]}
           onChangeText={changeDescriptionHandler}
           value={enteredDescription}
           multiline={true}
@@ -82,11 +116,11 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     paddingHorizontal: 5,
-  },    
+  },
   buttonContainer: {
     marginTop: 14,
     paddingHorizontal: 4,
-    marginBottom: 14
+    marginBottom: 14,
   },
   input: {
     marginVertical: 8,

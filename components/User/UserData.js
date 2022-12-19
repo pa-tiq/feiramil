@@ -8,10 +8,12 @@ import UserDataForm from './UserDataForm';
 import * as FileSystem from 'expo-file-system';
 import { URLs } from '../../constants/URLs';
 import { AuthContext } from '../../store/auth-context';
+import { ProductContext } from '../../store/product-context';
 
 function UserData() {
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
+  const productContext = useContext(ProductContext);
   const [selectedImage, setSelectedImage] = useState();
   const [responseStatus, setResponseStatus] = useState(null);
 
@@ -41,6 +43,7 @@ function UserData() {
     }
     updatePhoto();
     setSelectedImage(image);
+    productContext.triggerReload();
   }
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
@@ -101,6 +104,7 @@ function UserData() {
           };
     const resStatus = await userContext.updateUser(updatedUser);
     setResponseStatus(resStatus);
+    productContext.triggerReload();
   }
 
   return (

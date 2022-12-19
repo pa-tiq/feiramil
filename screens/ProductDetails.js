@@ -59,7 +59,7 @@ const ProductDetails = ({ route, navigation }) => {
           try {
             let uri;
             uri = await findOrDownloadImage(path);
-            setDowloadedUserImageURI(uri)
+            setDowloadedUserImageURI(uri);
           } catch (error) {
             console.log(error);
           }
@@ -68,7 +68,7 @@ const ProductDetails = ({ route, navigation }) => {
           try {
             let uri;
             uri = await findOrDownloadImage(path);
-            setDowloadedProductImageURI(uri)
+            setDowloadedProductImageURI(uri);
           } catch (error) {
             console.log(error);
           }
@@ -136,6 +136,13 @@ const ProductDetails = ({ route, navigation }) => {
             ? fetchedProduct.description
             : 'Sem descrição'}
         </Text>
+      </View>      
+      <View style={styles.priceContainer}>
+        <Text style={styles.price}>
+          {fetchedProduct.price
+            ? `R$${fetchedProduct.price}`
+            : 'Sem preço'}
+        </Text>
       </View>
       <View style={styles.userData}>
         <View style={styles.userImageContainer}>
@@ -179,17 +186,16 @@ export default ProductDetails;
 const styles = StyleSheet.create({
   rootComponent: {
     marginHorizontal: 20,
-    marginVertical: 10,
+    marginVertical: 15,
   },
   productImageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+
   },
   productImage: {
     width: '100%',
     height: 300,
-    marginBottom: 15,
-    marginTop: 5,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.primary200,
@@ -198,16 +204,27 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    marginVertical: 8,
+    marginVertical: 0,
   },
   descriptionContainer: {
-    padding: 20,
+    marginTop: 15,
+    padding: 10,
+  },  
+  priceContainer: {
+    padding: 10,
+    marginBottom: 10,
   },
   description: {
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16,
+  },  
+  price: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   userData: {
     flexDirection: 'row',
