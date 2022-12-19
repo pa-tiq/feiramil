@@ -4,13 +4,12 @@ import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { Colors } from '../constants/styles';
-import { URLs } from '../constants/URLs';
 import { ProductContext } from '../store/product-context';
-import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import useFileSystem from '../hooks/use-FileSystem';
 import { UserContext } from '../store/user-context';
 import Button from '../components/ui/Button';
+import { findOrDownloadImage } from '../util/findOrDownloadFile';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,14 +21,13 @@ const ProductDetails = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   let selectedProductId = route.params.productId;
   const userContext = useContext(UserContext);
-  const fileSystemObj = useFileSystem();
 
   const setProductId = () => {
     selectedProductId = route.params.productId;
   };
 
   useLayoutEffect(() => {
-    async function loadPlaceData() {
+    async function loadProductData() {
       try {
         const product = await productContext.fetchProductDetail(
           selectedProductId
@@ -52,24 +50,29 @@ const ProductDetails = ({ route, navigation }) => {
             ),
           });
         }
-        if (product.userPhoto) {
-          const userProfilePicturePath = URLs.base_url + product.userPhoto;
-          const fileName = product.userPhoto.split('/')[2];
-          const fileInfo = await FileSystem.getInfoAsync(
-            FileSystem.documentDirectory + fileName
-          );
-          if (fileInfo.exists) {
-            setDowloadedUserImageURI(fileInfo.uri);
-          } else {
-            const createTask = (uri) => {
-              setDowloadedUserImageURI(uri);
-            };
-            fileSystemObj.downloadImage(
-              userProfilePicturePath,
-              fileName,
-              createTask
-            );
+        async function getUserFile(path){
+          try {
+            let uri;
+            uri = await findOrDownloadImage(path);
+            setDowloadedUserImageURI(uri)
+          } catch (error) {
+            console.log(error);
           }
+        }        
+        async function getProductFile(path){
+          try {
+            let uri;
+            uri = await findOrDownloadImage(path);
+            setDowloadedProductImageURI(uri)
+          } catch (error) {
+            console.log(error);
+          }
+        }
+        if (product.userPhoto){
+          getUserFile(product.userPhoto);
+        }        
+        if (product.imagePath){
+          getProductFile(product.imagePath);
         }
       } catch (error) {
         navigation.setOptions({
@@ -80,7 +83,7 @@ const ProductDetails = ({ route, navigation }) => {
       setIsLoading(false);
     }
     setIsLoading(true);
-    loadPlaceData();
+    loadProductData();
   }, [selectedProductId]);
 
   const mySQLTimeStampToDate = (dateString) => {

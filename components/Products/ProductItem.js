@@ -1,5 +1,7 @@
 import { View, StyleSheet, Text, Pressable, Image } from 'react-native';
 import { Colors } from '../../constants/styles';
+import { Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
 
 const ProductItem = ({ product, onSelect }) => {
   const selectProductHandler = () => {
@@ -13,12 +15,28 @@ const ProductItem = ({ product, onSelect }) => {
     return `${day}/${month}/${year}`;
   };
 
+  let imagePreview = (
+    <View style={styles.imageContainer}>
+      <Ionicons
+        style={styles.icon}
+        name={'image-outline'}
+        color={'white'}
+        size={30}
+      />
+    </View>
+  );
+
+  if (product.imageUri) {
+    let uri = product.imageUri;
+    imagePreview = <Image style={styles.image} source={{ uri: uri }} />;
+  }
+  //{imagePreview}
   return (
     <Pressable
       onPress={selectProductHandler}
       style={({ pressed }) => [styles.item, pressed && styles.pressed]}
     >
-      <Image source={{ uri: product.imageUri }} style={styles.image} />
+      {imagePreview}
       <View style={styles.info}>
         <Text style={styles.title}>{product.title}</Text>
         <Text style={styles.description}>{product.description}</Text>
@@ -26,7 +44,9 @@ const ProductItem = ({ product, onSelect }) => {
           <Text style={styles.normalText}>{`Postado por `}</Text>
           <Text style={styles.userName}>{`${product.userName}`}</Text>
           <Text style={styles.normalText}>{` em `}</Text>
-          <Text style={styles.userName}>{`${mySQLTimeStampToDate(product.created_at)}`}</Text>
+          <Text style={styles.userName}>{`${mySQLTimeStampToDate(
+            product.created_at
+          )}`}</Text>
         </View>
       </View>
     </Pressable>
@@ -47,16 +67,25 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    maxHeight: 200,
+  },
+  icon: {
+    paddingVertical: 25,
   },
   pressed: {
     opacity: 0.5,
+  },
+  imageContainer: {
+    flex: 1,
+    borderBottomLeftRadius: 4,
+    borderTopLeftRadius: 4,
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
   image: {
     flex: 1,
     borderBottomLeftRadius: 4,
     borderTopLeftRadius: 4,
-    minHeight: 100,
+    height: 100,
   },
   info: {
     flex: 2,
@@ -71,16 +100,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
     color: 'white',
-  },  
+  },
   userData: {
-    flexDirection:'row',
-    marginVertical: 5
+    flexDirection: 'row',
+    marginVertical: 5,
   },
   userName: {
     fontWeight: 'bold',
     fontSize: 10,
     color: Colors.primary50,
-  },  
+  },
   normalText: {
     fontWeight: 'normal',
     fontSize: 10,

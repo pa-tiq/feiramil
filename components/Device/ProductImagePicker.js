@@ -56,7 +56,7 @@ const ProductImagePicker = (props) => {
         console.log(error);
       }
     }
-    if(props.isEdit) findFileOrDownloadFile();
+    if (props.isEdit) findFileOrDownloadFile();
   }, [user]);
 
   // needed only for iOS
@@ -126,12 +126,7 @@ const ProductImagePicker = (props) => {
   }
 
   let imagePreview = (
-    <Ionicons
-      style={styles.icon}
-      name={'images-outline'}
-      color={'white'}
-      size={30}
-    />
+    <Ionicons name={'images-outline'} color={'white'} size={30} />
   );
 
   if (newImage) {

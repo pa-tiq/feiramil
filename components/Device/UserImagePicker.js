@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert, Text, Image } from 'react-native';
+import { View, StyleSheet, Alert, Image } from 'react-native';
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -14,8 +14,7 @@ import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
-import { URLs } from '../../constants/URLs';
-import useFileSystem from '../../hooks/use-FileSystem';
+import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 
 const UserImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
@@ -28,34 +27,20 @@ const UserImagePicker = (props) => {
 
   const userContext = useContext(UserContext);
   const { user } = userContext;
-  const fileSystemObj = useFileSystem();
 
   useLayoutEffect(() => {
-    async function findFileOrDownloadFile() {
+    async function getFile(path){
       try {
-        if (!user.photo) return;
-        const userProfilePicturePath = URLs.base_url + user.photo;
-        const fileName = user.photo.split('/')[2];
-        const fileInfo = await FileSystem.getInfoAsync(
-          FileSystem.documentDirectory + fileName
-        );
-        if (fileInfo.exists) {
-          setDowloadedImageURI(fileInfo.uri);
-        } else {
-          const createTask = (uri) => {
-            setDowloadedImageURI(uri);
-          };
-          fileSystemObj.downloadImage(
-            userProfilePicturePath,
-            fileName,
-            createTask
-          );
-        }
+        let uri;
+        uri = await findOrDownloadImage(path);
+        setDowloadedImageURI(uri);
       } catch (error) {
         console.log(error);
       }
     }
-    findFileOrDownloadFile();
+    if (user.photo){
+      getFile(user.photo);
+    }
   }, [user]);
 
   // needed only for iOS
