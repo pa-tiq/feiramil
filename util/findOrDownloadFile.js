@@ -15,17 +15,13 @@ export async function findOrDownloadImage(path) {
     const createTask = (uri) => {
       fileUri = uri;
     };
-    await downloadImage(
-      filePath,
-      fileName,
-      createTask
-    );
+    await downloadImage(filePath, fileName, createTask);
     imageUri = fileUri;
   }
   return imageUri;
 }
 
-async function downloadImage(url,fileName, functionToUse){
+async function downloadImage(url, fileName, functionToUse) {
   const downloadResumable = FileSystem.createDownloadResumable(
     url,
     FileSystem.documentDirectory + fileName
@@ -35,15 +31,15 @@ async function downloadImage(url,fileName, functionToUse){
     functionToUse(uri);
   } catch (error) {
     setError(error.message || 'Something went wrong!');
-  }   
+  }
 }
 
-export async function uploadProductImage(imageUri, authToken){
+export async function uploadProductImage(imageUri, authToken) {
   const uploadResult = await FileSystem.uploadAsync(
     URLs.add_product_image_url,
     imageUri,
     {
-      fieldName: 'productphoto',
+      fieldName: 'photo',
       httpMethod: 'PATCH',
       uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
       headers: {
@@ -51,8 +47,24 @@ export async function uploadProductImage(imageUri, authToken){
       },
     }
   );
-  const a = JSON.stringify(uploadResult,null,4);
-  const b = await JSON.parse(a);
-  console.log(b.body);
-  return b.body
+
+  const result = JSON.parse(uploadResult.body);
+  return result;
+}
+
+export async function uploadUserPhoto(imageUri, authToken) {
+  const uploadResult = await FileSystem.uploadAsync(
+    URLs.update_user_photo_url,
+    imageUri,
+    {
+      fieldName: 'userphoto',
+      httpMethod: 'PATCH',
+      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+      headers: {
+        Authorization: 'Bearer ' + authToken,
+      },
+    }
+  );
+  const result = JSON.parse(uploadResult.body);
+  return result;
 }

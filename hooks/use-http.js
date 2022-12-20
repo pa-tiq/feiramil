@@ -19,6 +19,7 @@ const useHttp = () => {
           return result;
         })
         .catch((err) => {
+          console.log('vixe maria');
           console.log(err);
         });
       if (!response.ok) {

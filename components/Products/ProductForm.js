@@ -33,7 +33,7 @@ const ProductForm = (props) => {
     if (!editingProduct) return;
     setEnteredTitle(editingProduct.title);
     setEnteredDescription(editingProduct.description);
-    setEnteredPrice(`${editingProduct.price}`);
+    setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
     setSelectedImage(editingProduct.imageUri);
     onRefresh();
   }, [editingProduct]);

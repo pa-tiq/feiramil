@@ -43,7 +43,8 @@ const AddProduct = ({ route, navigation }) => {
         const imageUploadResult = await uploadImage(product.image);
         const response = await productContext.updateProductImagePath({
           path: imageUploadResult.path.substring(1, imageUploadResult.path.length),
-          productId: product.id,
+          oldpath: editingProduct.imagePath,
+          productId: `${product.id}`,
         });        
       }
     } catch (error) {

@@ -12,8 +12,8 @@ export const ProductContext = createContext({
   triggerReload: () => {},
   triggerFeedReload: () => {},
   addProduct: async (product) => {},
-  addProductImagePath: async (data) => {},
-  updateProductImagePath: async (data) => {},
+  addProductImagePath: async ({path, productId}) => {},
+  updateProductImagePath: async ({path, oldpath, productId}) => {},
   removeProduct: (productId) => {},
   updateProduct: async (product) => {},
   fetchProductsExeptUser: async () => {},
@@ -134,13 +134,13 @@ const ProductContextProvider = (props) => {
     return productInsertId;
   };
   
-  const addProductImagePath = async (data) => {
+  const addProductImagePath = async ({path, productId}) => {
     let loadedUser = {};
     const putConfig = {
-      url: URLs.add_product_image_url + `/${data.productId}`,
+      url: URLs.add_product_image_url + `/${productId}`,
       method: 'POST',
       body: {
-        'path': data.path,
+        'path': path,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
@@ -159,14 +159,13 @@ const ProductContextProvider = (props) => {
     return loadedUser;
   };
 
-  const updateProductImagePath = async (paths) => {
-    let loadedUser = {};
+  const updateProductImagePath = async ({path, oldpath, productId}) => {
     const putConfig = {
-      url: URLs.update_product_image_url,
+      url: URLs.update_product_image_url + `/${productId}`,
       method: 'PUT',
       body: {
-        'path': paths.path,
-        'oldpath': paths.oldpath,
+        'path': path,
+        'oldpath': oldpath,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
@@ -182,7 +181,6 @@ const ProductContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return loadedUser;
   };
 
   const removeProduct = async (productId) => {

@@ -79,7 +79,6 @@ const UserContextProvider = (props) => {
   };
 
   const updatePhotoPath = async (paths) => {
-    let loadedUser = {};
     const putConfig = {
       url: URLs.update_user_photo_url,
       method: 'PUT',
@@ -101,7 +100,6 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return loadedUser;
   };
 
   return (

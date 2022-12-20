@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
@@ -9,6 +9,12 @@ import * as FileSystem from 'expo-file-system';
 import { URLs } from '../../constants/URLs';
 import { AuthContext } from '../../store/auth-context';
 import { ProductContext } from '../../store/product-context';
+import { uploadUserPhoto } from '../../util/findOrDownloadFile';
+import LoadingOverlay from '../ui/LoadingOverlay';
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
 
 function UserData() {
   const authContext = useContext(AuthContext);
@@ -20,19 +26,20 @@ function UserData() {
   function imageTakenHandler(image) {
     async function updatePhoto() {
       try {
-        const uploadResult = await FileSystem.uploadAsync(
-          URLs.update_user_photo_url,
-          image.uri,
-          {
-            fieldName: 'userphoto',
-            httpMethod: 'PATCH',
-            uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-            headers: {
-              Authorization: 'Bearer ' + authContext.token,
-            },
-          }
-        );
-        const result = JSON.parse(uploadResult.body);
+        //const uploadResult = await FileSystem.uploadAsync(
+        //  URLs.update_user_photo_url,
+        //  image.uri,
+        //  {
+        //    fieldName: 'userphoto',
+        //    httpMethod: 'PATCH',
+        //    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+        //    headers: {
+        //      Authorization: 'Bearer ' + authContext.token,
+        //    },
+        //  }
+        //);
+        //const result = JSON.parse(uploadResult.body);
+        const result = await uploadUserPhoto(image.uri, authContext.token);
         const response = await userContext.updatePhotoPath({
           path: result.path.substring(1, result.path.length),
           oldpath: userContext.user.photo,
@@ -45,6 +52,12 @@ function UserData() {
     setSelectedImage(image);
     productContext.triggerReload();
   }
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  }, []);
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
@@ -105,6 +118,10 @@ function UserData() {
     const resStatus = await userContext.updateUser(updatedUser);
     setResponseStatus(resStatus);
     productContext.triggerReload();
+  }
+
+  if (refreshing) {
+    return <LoadingOverlay />;
   }
 
   return (
