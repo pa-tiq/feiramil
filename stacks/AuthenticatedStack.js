@@ -1,21 +1,22 @@
 import { useContext, useEffect } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 
-import { AuthContext } from '../store/auth-context';
 import MainTab from './MainTab';
 import { Colors } from '../constants/styles';
 import UserTab from './UserTab';
 import UserProductsTab from './UserProductsTab';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import CustomTabBar from '../components/ui/CustomTabBar';
+import IconButton from '../components/ui/IconButton';
+import { StyleSheet, View } from 'react-native';
 
-const BottomTab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 export default function AuthenticatedStack() {
-  const authContext = useContext(AuthContext);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -36,47 +37,59 @@ export default function AuthenticatedStack() {
     };
   }, []);
 
+  let headerButtons = (
+    <View style={styles.headerButtonsContainer}>
+
+  </View>
+  );
+
   return (
-    <BottomTab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: { backgroundColor: Colors.primary500, borderTopColor: Colors.primary700},
-        tabBarActiveTintColor: 'white',
-        tabBarInactiveTintColor: Colors.primary200,
-        tabBarHideOnKeyboard: true
-      }}
-      initialRouteName='MainTab'
-    >
-      <BottomTab.Screen
-        name='UserProductsTab'
-        component={UserProductsTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='layers-outline' color={color} size={size} />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-      <BottomTab.Screen
-        name='MainTab'
-        component={MainTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='home-outline' color={color} size={size} />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-      <BottomTab.Screen
-        name='UserTab'
-        component={UserTab}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name='person-outline' color={color} size={size} />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-    </BottomTab.Navigator>
+    <>
+      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
+        <Tab.Screen
+          name='UserProductsTab'
+          component={UserProductsTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name='layers-outline' color={color} size={size} />
+            ),
+            tabBarLabel: 'Seus produtos',
+          }}
+        />
+        <Tab.Screen
+          name='MainTab'
+          component={MainTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name='home-outline' color={color} size={size} />
+            ),
+            tabBarLabel: 'Produtos',
+          }}
+        />
+        <Tab.Screen
+          name='UserTab'
+          component={UserTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name='person-outline' color={color} size={size} />
+            ),
+            tabBarLabel: 'Configurações',
+          }}
+        />
+      </Tab.Navigator>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  headerButtonsContainer: {
+    backgroundColor: Colors.primary700,
+    alignItems: 'flex-end',
+    paddingTop: 20,
+    paddingRight: 15,
+  },
+  addProductIcon: {
+    color: 'white',
+    marginTop: 19,
+  },
+});

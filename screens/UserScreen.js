@@ -11,17 +11,17 @@ function UserScreen() {
   const isFocused = useIsFocused();
   const userContext = useContext(UserContext);
 
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        const user = await userContext.fetchUser();
-        setLoadedUser(user);
-      } catch (err) {}
-    }
-    if (isFocused) {
-      loadUser();
-    }
-  }, [isFocused]);
+  //useEffect(() => {
+  //  async function loadUser() {
+  //    try {
+  //      const user = await userContext.fetchUser();
+  //      setLoadedUser(user);
+  //    } catch (err) {}
+  //  }
+  //  if (isFocused) {
+  //    loadUser();
+  //  }
+  //}, [isFocused]);
 
   return (
     <ScrollView>

@@ -21,17 +21,9 @@ export default function UserProductsTab() {
       <Stack.Screen
         name='UserProductsScreen'
         component={UserProductsScreen}
-        options={({ navigation }) => ({
-          headerRight: ({ tintColor }) => (
-            <IconButton
-              icon='add'
-              color={tintColor}
-              size={24}
-              onPress={() => navigation.navigate('AddProduct')}
-            />
-          ),
-          title: 'Seus Produtos'
-        })}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name='AddProduct'

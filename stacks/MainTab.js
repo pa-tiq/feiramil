@@ -20,17 +20,9 @@ export default function MainTab() {
       <Stack.Screen
         name='PoductsScreen'
         component={ProductsScreen}
-        options={({ navigation }) => ({
-          headerRight: ({ tintColor }) => (
-            <IconButton
-              icon='add'
-              color={tintColor}
-              size={24}
-              onPress={() => navigation.navigate('AddProduct')}
-            />
-          ),
-          title: 'Produtos'
-        })}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name='AddProduct'
