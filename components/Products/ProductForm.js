@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,12 +10,33 @@ import {
 import { Colors } from '../../constants/styles';
 import ProductImagePicker from '../Device/ProductImagePicker';
 import Button from '../ui/Button';
+import LoadingOverlay from '../ui/LoadingOverlay';
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
 
 const ProductForm = (props) => {
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredPrice, setEnteredPrice] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(props.editingProduct);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!editingProduct) return;
+    setEnteredTitle(editingProduct.title);
+    setEnteredDescription(editingProduct.description);
+    setEnteredPrice(`${editingProduct.price}`);
+    setSelectedImage(editingProduct.imageUri);
+    onRefresh();
+  }, [editingProduct]);
 
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
@@ -41,22 +62,21 @@ const ProductForm = (props) => {
         'Por favor, preencha os dados do produto.'
       );
       return;
-    } 
-    else if (!selectedImage) {
+    } else if (!editingProduct && !selectedImage) {
       Alert.alert(
         'Nenhuma imagem escolhida',
         'Por favor, escolha uma imagem para cadastrar o produto.'
       );
       return;
     }
-    if (enteredPrice.trim().length > 0){
-      if (!parseFloat(enteredPrice) || parseFloat(enteredPrice) < 0){
+    if (enteredPrice.trim().length > 0) {
+      if (!parseFloat(enteredPrice) || parseFloat(enteredPrice) < 0) {
         Alert.alert(
           'Preço inválido',
           'Por favor, preencha o preço com um valor válido.'
         );
         return;
-      }      
+      }
     }
 
     const productData = {
@@ -65,7 +85,31 @@ const ProductForm = (props) => {
       description: enteredDescription,
       image: selectedImage,
     };
-    props.onCreateProduct(productData);
+
+    if (editingProduct) {
+      if (
+        productData.title === props.editingProduct.title &&
+        productData.price === `${props.editingProduct.price}` &&
+        productData.description === props.editingProduct.description &&
+        productData.image === props.editingProduct.imageUri
+      )
+      {
+        Alert.alert(
+          'Nenhuma alteração',
+          'Você não editou nada!'
+        );
+        return;
+      }
+      productData.id = editingProduct.id;
+      const newImageChosen = productData.image !== props.editingProduct.imageUri;
+      props.onEditProduct(productData, newImageChosen);
+    } else {
+      props.onCreateProduct(productData);
+    }
+  }
+
+  if (refreshing) {
+    return <LoadingOverlay />;
   }
 
   return (
@@ -93,9 +137,14 @@ const ProductForm = (props) => {
           keyboardType={'number-pad'}
         />
       </View>
-      <ProductImagePicker imagePicked={imageTakenHandler} />
+      <ProductImagePicker
+        imagePicked={imageTakenHandler}
+        editingProductImageUri={selectedImage}
+      />
       <View style={styles.buttonContainer}>
-        <Button onPress={saveProductHandler}>Adicionar Produto</Button>
+        <Button onPress={saveProductHandler}>
+          {editingProduct ? 'Editar Produto' : 'Adicionar Produto'}
+        </Button>
       </View>
     </ScrollView>
   );

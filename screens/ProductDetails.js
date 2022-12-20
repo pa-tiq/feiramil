@@ -26,9 +26,18 @@ const ProductDetails = ({ route, navigation }) => {
     selectedProductId = route.params.productId;
   };
 
-  const removePlaceHandler = async () => {
+  const removeProductHandler = async () => {
     productContext.removeProduct(selectedProductId);
     navigation.navigate('UserProductsScreen', { triggerReload: true });
+  };
+
+  const editProductHandler = async () => {
+    navigation.navigate('AddProduct', {
+      editingProduct: {
+        ...fetchedProduct,
+        imageUri: downloadedProductImageURI,
+      },
+    });
   };
 
   useLayoutEffect(() => {
@@ -50,7 +59,7 @@ const ProductDetails = ({ route, navigation }) => {
                 icon='trash'
                 color={tintColor}
                 size={24}
-                onPress={removePlaceHandler}
+                onPress={removeProductHandler}
               />
             ),
           });
@@ -120,7 +129,11 @@ const ProductDetails = ({ route, navigation }) => {
   let editButton;
 
   if (currentUser.id === fetchedProduct.userId) {
-    editButton = <Button icon='create-outline'>Editar</Button>;
+    editButton = (
+      <Button icon='create-outline' onPress={editProductHandler}>
+        Editar
+      </Button>
+    );
   }
 
   return (

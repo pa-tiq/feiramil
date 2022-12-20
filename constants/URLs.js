@@ -8,6 +8,8 @@ export const URLs = {
   update_user_url: `${baseURL}/user/user`,
   update_user_photo_url: `${baseURL}/user/image`,
   add_product_url: `${baseURL}/feed/product`,
+  update_product_url: `${baseURL}/feed/product`,
+  update_product_image_url: `${baseURL}/feed/image`,
   add_product_image_url: `${baseURL}/feed/image`,
   get_products_url: `${baseURL}/feed/products`,
   get_products_exept_user_url: `${baseURL}/feed`,

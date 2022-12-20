@@ -1,6 +1,5 @@
 import { Animated, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/styles';
-import IconButton from './IconButton';
 
 function CustomTabBar({ state, descriptors, navigation, position }) {
   return (

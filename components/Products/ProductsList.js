@@ -33,10 +33,6 @@ const ProductsList = ({ products, isLoading }) => {
     wait(1000).then(() => setRefreshing(false));
   }, []);
 
-  //useEffect(() => {
-  //  onRefresh();
-  //}, []);  
-
   useLayoutEffect(() => {
     setProductList(products);
   }, [products]);

@@ -37,3 +37,22 @@ async function downloadImage(url,fileName, functionToUse){
     setError(error.message || 'Something went wrong!');
   }   
 }
+
+export async function uploadProductImage(imageUri, authToken){
+  const uploadResult = await FileSystem.uploadAsync(
+    URLs.add_product_image_url,
+    imageUri,
+    {
+      fieldName: 'productphoto',
+      httpMethod: 'PATCH',
+      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+      headers: {
+        Authorization: 'Bearer ' + authToken,
+      },
+    }
+  );
+  const a = JSON.stringify(uploadResult,null,4);
+  const b = await JSON.parse(a);
+  console.log(b.body);
+  return b.body
+}

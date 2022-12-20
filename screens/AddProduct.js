@@ -1,42 +1,64 @@
-import { useContext } from 'react';
+import { useContext, useLayoutEffect, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import ProductForm from '../components/Products/ProductForm';
-import { URLs } from '../constants/URLs';
 import { ProductContext } from '../store/product-context';
-import * as FileSystem from 'expo-file-system';
 import { AuthContext } from '../store/auth-context';
+import { uploadProductImage } from '../util/findOrDownloadFile';
 
-const AddProduct = ({ navigation }) => {
+const AddProduct = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   const authContext = useContext(AuthContext);
+  const [editingProduct, setEditingProduct] = useState(route.params?.editingProduct)
+
+  useLayoutEffect(()=>{
+    if(!editingProduct) return;
+    navigation.setOptions({
+      title: `Editando ${editingProduct.title}`,
+    });
+  },[editingProduct])
+
+  async function uploadImage(imageUri){
+    const result = await uploadProductImage(imageUri, authContext.token);
+    return result
+  }
 
   async function createProductHandler(product) {
     try {
       const insertedProductId = await productContext.addProduct(product);
-      const uploadResult = await FileSystem.uploadAsync(
-        URLs.add_product_image_url,
-        product.image.uri,
-        {
-          fieldName: 'productphoto',
-          httpMethod: 'PATCH',
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-          headers: {
-            Authorization: 'Bearer ' + authContext.token,
-          },
-        }
-      );
-      const result = JSON.parse(uploadResult.body);
+      const result = await uploadImage(product.image);
       const response = await productContext.addProductImagePath({
         path: result.path.substring(1, result.path.length),
-        productId: insertedProductId
-      });      
+        productId: insertedProductId,
+      });
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate('UserProductsScreen',{ triggerReload: true });
+    navigation.navigate('UserProductsScreen', { triggerReload: true });
+  }  
+
+  async function editProductHandler(product, newImageChosen) {
+    try {
+      const updateResult = await productContext.updateProduct(product);
+      if(newImageChosen){
+        const imageUploadResult = await uploadImage(product.image);
+        const response = await productContext.updateProductImagePath({
+          path: imageUploadResult.path.substring(1, imageUploadResult.path.length),
+          productId: product.id,
+        });        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    navigation.navigate('UserProductsScreen', { triggerReload: true });
   }
 
-  return <ProductForm onCreateProduct={createProductHandler} />;
+  return (
+    <ProductForm
+      onCreateProduct={createProductHandler}
+      onEditProduct={editProductHandler}
+      editingProduct={editingProduct}
+    />
+  );
 };
 
 export default AddProduct;

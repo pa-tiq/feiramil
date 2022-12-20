@@ -13,8 +13,9 @@ export const ProductContext = createContext({
   triggerFeedReload: () => {},
   addProduct: async (product) => {},
   addProductImagePath: async (data) => {},
+  updateProductImagePath: async (data) => {},
   removeProduct: (productId) => {},
-  updateProduct: async (productId) => {},
+  updateProduct: async (product) => {},
   fetchProductsExeptUser: async () => {},
   fetchProductDetail: async (productId) => {},
   fetchUserProducts: async (userId) => {},
@@ -69,10 +70,10 @@ const ProductContextProvider = (props) => {
   const addProduct = async (product) => {
     let price;
     let productInsertId;
-    if (product.price.length === 0) {
+    if (!product.price || product.price.length === 0) {
       price = null;
     } else {
-      price = parseFloat(product.price);
+      price = parseFloat(product.price.replace(',','.'));
     }
     const postConfig = {
       url: URLs.add_product_url,
@@ -91,6 +92,39 @@ const ProductContextProvider = (props) => {
       if(response && response.result[0]){
         setProductsChanged(true);
         productInsertId = parseInt(response.result[0].insertId);
+      } 
+    };
+    await httpObj.sendRequest(postConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return productInsertId;
+  };
+
+  const updateProduct = async (product) => {
+    let price;
+    let productInsertId;
+    if (!product.price || product.price.length === 0) {
+      price = null;
+    } else {
+      price = parseFloat(product.price.replace(',','.'));
+    }
+    const postConfig = {
+      url: URLs.update_product_url + `/${product.id}`,
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+      body: {
+        title: product.title,
+        price: price,
+        description: product.description,
+      },
+    };
+    const createTask = (response) => {
+      if(response && response.changedRows > 0){
+        setProductsChanged(true);
       } 
     };
     await httpObj.sendRequest(postConfig, createTask);
@@ -125,6 +159,32 @@ const ProductContextProvider = (props) => {
     return loadedUser;
   };
 
+  const updateProductImagePath = async (paths) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.update_product_image_url,
+      method: 'PUT',
+      body: {
+        'path': paths.path,
+        'oldpath': paths.oldpath,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',       
+      },
+    };
+    const createTask = (response) => {
+      if (response.changedRows > 0) {
+        setUserChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
+  };
+
   const removeProduct = async (productId) => {
     const deleteConfig = {
       url: `${URLs.delete_product_url}/${productId}`,
@@ -138,8 +198,6 @@ const ProductContextProvider = (props) => {
     };
     httpObj.sendRequest(deleteConfig, createTask);
   };
-
-  const updateProduct = async (productId) => {};
 
   const fetchProductsExeptUser = async (userId) => {
     const getConfig = {
@@ -243,6 +301,7 @@ const ProductContextProvider = (props) => {
         triggerFeedReload: triggerFeedReload,
         addProduct: addProduct,
         addProductImagePath: addProductImagePath,
+        updateProductImagePath: updateProductImagePath,
         removeProduct: removeProduct,
         updateProduct: updateProduct,
         fetchProductsExeptUser: fetchProductsExeptUser,

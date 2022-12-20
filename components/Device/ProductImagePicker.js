@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert, Text, Image } from 'react-native';
+import { View, StyleSheet, Alert, Image } from 'react-native';
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -8,15 +8,14 @@ import {
   MediaTypeOptions,
 } from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
 
 import { useContext, useLayoutEffect, useState } from 'react';
 import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
-import { URLs } from '../../constants/URLs';
 import useFileSystem from '../../hooks/use-FileSystem';
+import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 
 const ProductImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
@@ -26,38 +25,26 @@ const ProductImagePicker = (props) => {
     useCameraPermissions();
   const [libraryPermissionInformation, requestLibraryPermission] =
     useMediaLibraryPermissions();
+  const [editingProductImageUri, setEditingProductImageUri] = useState(
+    props.editingProductImageUri
+  );
 
   const userContext = useContext(UserContext);
-  const { user } = userContext;
-  const fileSystemObj = useFileSystem();
 
   useLayoutEffect(() => {
-    async function findFileOrDownloadFile() {
-      try {
-        if (!user.photo) return;
-        const userProfilePicturePath = URLs.base_url + user.photo;
-        const fileName = user.photo.split('/')[2];
-        const fileInfo = await FileSystem.getInfoAsync(
-          FileSystem.documentDirectory + fileName
-        );
-        if (fileInfo.exists) {
-          setDowloadedImageURI(fileInfo.uri);
-        } else {
-          const createTask = (uri) => {
-            setDowloadedImageURI(uri);
-          };
-          fileSystemObj.downloadImage(
-            userProfilePicturePath,
-            fileName,
-            createTask
-          );
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (props.isEdit) findFileOrDownloadFile();
-  }, [user]);
+    //async function getFile(){
+    //  try {
+    //    const uri = await findOrDownloadImage(editingProductImageUri);
+    //    setDowloadedImageURI(uri);
+    //  } catch (error) {
+    //    console.log(error);
+    //  }
+    //}
+    if (editingProductImageUri){
+      //getFile();
+      setDowloadedImageURI(editingProductImageUri);
+    } 
+  }, [editingProductImageUri]);
 
   // needed only for iOS
   async function verifyCameraPermissions() {
@@ -104,7 +91,7 @@ const ProductImagePicker = (props) => {
     if (!result.canceled) {
       setNewImage(result.assets[0]);
       setNewImagePicked(true);
-      props.imagePicked(result.assets[0]);
+      props.imagePicked(result.assets[0].uri);
     }
   }
 
@@ -121,7 +108,7 @@ const ProductImagePicker = (props) => {
     if (!result.canceled) {
       setNewImage(result.assets[0]);
       setNewImagePicked(true);
-      props.imagePicked(result.assets[0]);
+      props.imagePicked(result.assets[0].uri);
     }
   }
 
