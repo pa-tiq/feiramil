@@ -25,11 +25,6 @@ export default function MainTab() {
         }}
       />
       <Stack.Screen
-        name='AddProduct'
-        component={AddProduct}
-        options={{ title: 'Adicione um produto', headerTitleAlign: 'center' }}
-      />
-      <Stack.Screen
         name='ProductDetails'
         component={ProductDetails}
         options={{ title: 'Carregando produto...', headerTitleAlign: 'center' }}

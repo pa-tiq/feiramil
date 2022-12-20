@@ -29,6 +29,11 @@ const UserProductsScreen = ({route, navigation}) => {
     }
   },[routeParams])
 
+  useEffect(()=>{
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  },[]);
+
   if (refreshing) {
     return <LoadingOverlay />;
   }

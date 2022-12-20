@@ -10,6 +10,7 @@ export const URLs = {
   add_product_url: `${baseURL}/feed/product`,
   add_product_image_url: `${baseURL}/feed/image`,
   get_products_url: `${baseURL}/feed/products`,
+  get_products_exept_user_url: `${baseURL}/feed`,
   get_user_products_url: `${baseURL}/feed/products`,
   get_product_detail_url: `${baseURL}/feed/product`,
   delete_product_url: `${baseURL}/feed/product`

@@ -52,12 +52,14 @@ const ProductItem = ({ product, onSelect }) => {
             : productItem.description}
         </Text>
         <View style={styles.userData}>
-          <Text style={styles.normalText}>{`Postado por `}</Text>
-          <Text style={styles.userName}>{`${productItem.userName}`}</Text>
-          <Text style={styles.normalText}>{` em `}</Text>
-          <Text style={styles.userName}>{`${mySQLTimeStampToDate(
-            productItem.created_at
-          )}`}</Text>
+          <Text style={[styles.line, styles.normalText]}>
+            {`Postado por `}
+            <Text style={styles.specialText}>{`${productItem.userName}`}</Text>
+            <Text style={styles.normalText}>{` em `}</Text>
+            <Text style={styles.specialText}>{`${mySQLTimeStampToDate(
+              productItem.created_at
+            )}`}</Text>
+          </Text>
         </View>
       </View>
     </Pressable>
@@ -116,14 +118,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginVertical: 5,
   },
-  userName: {
+  line: {
+    paddingVertical: 1,
+  },
+  specialText: {
     fontWeight: 'bold',
-    fontSize: 10,
+    fontSize: 12,
     color: Colors.primary50,
   },
   normalText: {
     fontWeight: 'normal',
-    fontSize: 10,
+    fontSize: 12,
     color: 'white',
   },
 });

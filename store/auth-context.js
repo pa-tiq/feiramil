@@ -62,6 +62,7 @@ const AuthContextProvider = ({ children }) => {
   };
   const logout = async () => {
     setAuthToken(null);
+    setUserId(null);
     AsyncStorage.removeItem('token');
   };
   const signup = async (email, password, name, om) => {

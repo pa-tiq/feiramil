@@ -28,7 +28,7 @@ const ProductDetails = ({ route, navigation }) => {
 
   const removePlaceHandler = async () => {
     productContext.removeProduct(selectedProductId);
-    navigation.navigate('UserProductsScreen',{ triggerReload: true });
+    navigation.navigate('UserProductsScreen', { triggerReload: true });
   };
 
   useLayoutEffect(() => {
@@ -55,7 +55,7 @@ const ProductDetails = ({ route, navigation }) => {
             ),
           });
         }
-        async function getUserFile(path){
+        async function getUserFile(path) {
           try {
             let uri;
             uri = await findOrDownloadImage(path);
@@ -63,8 +63,8 @@ const ProductDetails = ({ route, navigation }) => {
           } catch (error) {
             console.log(error);
           }
-        }        
-        async function getProductFile(path){
+        }
+        async function getProductFile(path) {
           try {
             let uri;
             uri = await findOrDownloadImage(path);
@@ -73,10 +73,10 @@ const ProductDetails = ({ route, navigation }) => {
             console.log(error);
           }
         }
-        if (product.userPhoto){
+        if (product.userPhoto) {
           getUserFile(product.userPhoto);
-        }        
-        if (product.imagePath){
+        }
+        if (product.imagePath) {
           getProductFile(product.imagePath);
         }
       } catch (error) {
@@ -117,12 +117,10 @@ const ProductDetails = ({ route, navigation }) => {
     );
   }
 
-  let editButton = ( <> </> );
+  let editButton;
 
   if (currentUser.id === fetchedProduct.userId) {
-    editButton = (
-      <Button icon='create-outline'>Editar</Button>
-    );
+    editButton = <Button icon='create-outline'>Editar</Button>;
   }
 
   return (
@@ -136,12 +134,10 @@ const ProductDetails = ({ route, navigation }) => {
             ? fetchedProduct.description
             : 'Sem descrição'}
         </Text>
-      </View>      
+      </View>
       <View style={styles.priceContainer}>
         <Text style={styles.price}>
-          {fetchedProduct.price
-            ? `R$${fetchedProduct.price}`
-            : 'Sem preço'}
+          {fetchedProduct.price ? `R$${fetchedProduct.price}` : 'Sem preço'}
         </Text>
       </View>
       <View style={styles.userData}>
@@ -191,7 +187,6 @@ const styles = StyleSheet.create({
   productImageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   productImage: {
     width: '100%',
@@ -200,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.primary200,
     overflow: 'hidden',
-  },  
+  },
   image: {
     width: '100%',
     height: '100%',
@@ -209,7 +204,7 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     marginTop: 15,
     padding: 10,
-  },  
+  },
   priceContainer: {
     padding: 10,
     marginBottom: 10,
@@ -219,7 +214,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 16,
-  },  
+  },
   price: {
     color: 'white',
     textAlign: 'center',

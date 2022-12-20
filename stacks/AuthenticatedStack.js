@@ -45,7 +45,7 @@ export default function AuthenticatedStack() {
 
   return (
     <>
-      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
+      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props}/>}>
         <Tab.Screen
           name='UserProductsTab'
           component={UserProductsTab}

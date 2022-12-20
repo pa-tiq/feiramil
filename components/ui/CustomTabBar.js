@@ -51,6 +51,7 @@ function CustomTabBar({ state, descriptors, navigation, position }) {
             onPress={onPress}
             onLongPress={onLongPress}
             style={{ flex: 1 }}
+            key={label}
           >
             <Animated.Text style={[{ opacity }, styles.title]}>
               {label}

@@ -10,11 +10,12 @@ export const ProductContext = createContext({
   isLoading: false,
   error: null,
   triggerReload: () => {},
+  triggerFeedReload: () => {},
   addProduct: async (product) => {},
   addProductImagePath: async (data) => {},
   removeProduct: (productId) => {},
   updateProduct: async (productId) => {},
-  fetchProducts: async () => {},
+  fetchProductsExeptUser: async () => {},
   fetchProductDetail: async (productId) => {},
   fetchUserProducts: async (userId) => {},
 });
@@ -25,21 +26,44 @@ const ProductContextProvider = (props) => {
   const [products, setProducts] = useState([]);
   const [userProducts, setUserProducts] = useState([]);
   const [productsChanged, setProductsChanged] = useState(false);
+  const [feedProductsChanged, setFeedProductsChanged] = useState(false);
 
-  useEffect(() => {
-    async function getUserProducts(){
-      try {
-        await fetchUserProducts(authContext.userId);
-      } catch (error) {
-        console.log(error);
-      }
+  async function getUserProducts(){
+    try {
+      await fetchUserProducts(authContext.userId);
+    } catch (error) {
+      console.log(error);
     }
+  }    
+  async function getFeedProducts(){
+    try {
+      await fetchProductsExeptUser(authContext.userId);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=>{
     getUserProducts();
-    setProductsChanged(false);
-  }, [productsChanged]);
+    getFeedProducts();
+  },[]);
+
+  useEffect(() => {    
+    if(productsChanged){
+      getUserProducts();
+      setProductsChanged(false);
+    }     
+    if(feedProductsChanged){
+      getFeedProducts();
+      setFeedProductsChanged(false);
+    } 
+  }, [productsChanged,feedProductsChanged]);  
 
   const triggerReload = () => {
     setProductsChanged(true);
+  }  
+  const triggerFeedReload = () => {
+    setFeedProductsChanged(true);
   }
 
   const addProduct = async (product) => {
@@ -117,7 +141,41 @@ const ProductContextProvider = (props) => {
 
   const updateProduct = async (productId) => {};
 
-  const fetchProducts = async () => {};
+  const fetchProductsExeptUser = async (userId) => {
+    const getConfig = {
+      url: URLs.get_products_exept_user_url + `/${userId}`,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+      },
+    };
+    const createTask = (response) => {
+      async function getFile(product) {
+        try {
+          let uri;
+          uri = await findOrDownloadImage(product.imagePath);
+          product.imageUri = uri;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      if(response.products){
+        let products = response.products;
+        products.forEach((product) => {
+          if (!product.imagePath) {
+            product.imageUri = null;
+          } else {
+            getFile(product);
+          }
+        });
+        setProducts(products);
+      }
+    };
+    await httpObj.sendRequest(getConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+  };
   
   const fetchProductDetail = async (productId) => {
     let fetchedProduct;
@@ -182,11 +240,12 @@ const ProductContextProvider = (props) => {
         isLoading: httpObj.isLoading,
         error: httpObj.error,
         triggerReload: triggerReload,
+        triggerFeedReload: triggerFeedReload,
         addProduct: addProduct,
         addProductImagePath: addProductImagePath,
         removeProduct: removeProduct,
         updateProduct: updateProduct,
-        fetchProducts: fetchProducts,
+        fetchProductsExeptUser: fetchProductsExeptUser,
         fetchProductDetail: fetchProductDetail,
         fetchUserProducts: fetchUserProducts,
       }}
