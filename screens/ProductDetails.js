@@ -28,7 +28,7 @@ const ProductDetails = ({ route, navigation }) => {
 
   const removePlaceHandler = async () => {
     productContext.removeProduct(selectedProductId);
-    navigation.navigate('UserProductsScreen');
+    navigation.navigate('UserProductsScreen',{ triggerReload: true });
   };
 
   useLayoutEffect(() => {

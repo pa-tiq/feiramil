@@ -33,7 +33,7 @@ const AddProduct = ({ navigation }) => {
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate('UserProductsScreen');
+    navigation.navigate('UserProductsScreen',{ triggerReload: true });
   }
 
   return <ProductForm onCreateProduct={createProductHandler} />;

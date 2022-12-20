@@ -1,13 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
-import { useCallback, useContext, useLayoutEffect, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { View, StyleSheet, Text, FlatList, RefreshControl } from 'react-native';
 import { ProductContext } from '../../store/product-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import ProductItem from './ProductItem';
 
 const wait = (timeout) => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
-}
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
 
 const ProductsList = ({ products, isLoading }) => {
   const [productList, setProductList] = useState([]);
@@ -24,14 +30,18 @@ const ProductsList = ({ products, isLoading }) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     productContext.triggerReload();
-    wait(2000).then(() => setRefreshing(false));
+    wait(1000).then(() => setRefreshing(false));
   }, []);
+
+  //useEffect(() => {
+  //  onRefresh();
+  //}, []);  
 
   useLayoutEffect(() => {
     setProductList(products);
   }, [products]);
 
-  if (isLoading || refreshing){
+  if (isLoading || refreshing) {
     return <LoadingOverlay />;
   }
 
@@ -48,9 +58,15 @@ const ProductsList = ({ products, isLoading }) => {
       data={productList}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <ProductItem product={item} onSelect={selectProductHandler} isLoading={isLoading} />
+        <ProductItem
+          product={item}
+          onSelect={selectProductHandler}
+          isLoading={isLoading}
+        />
       )}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     />
   );
 };
