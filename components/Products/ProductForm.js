@@ -26,6 +26,7 @@ const ProductForm = (props) => {
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredPrice, setEnteredPrice] = useState('');
   const [enteredCity, setEnteredCity] = useState('');
+  const [enteredState, setEnteredState] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [editingProduct, setEditingProduct] = useState(props.editingProduct);
   const [selectedCity, setSelectedCity] = useState(props.selectedCity);
@@ -42,6 +43,7 @@ const ProductForm = (props) => {
     setEnteredTitle(editingProduct.title);
     setEnteredDescription(editingProduct.description);
     setEnteredCity(editingProduct.city);
+    setEnteredState(editingProduct.state);
     setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
     setSelectedImage(editingProduct.imageUri);
     onRefresh();
@@ -140,6 +142,15 @@ const ProductForm = (props) => {
       <View style={styles.cityButton}>
         <IconTextButton icon={'location-outline'} onPress={pickCityHandler}>
           {`${props.selectedCity} - ${props.selectedState}`}
+        </IconTextButton>
+      </View>
+    );
+  }  
+  if (enteredCity.length !== 0 && enteredState.length !== 0) {
+    cityView = (
+      <View style={styles.cityButton}>
+        <IconTextButton icon={'location-outline'} onPress={pickCityHandler}>
+          {`${enteredCity} - ${enteredState}`}
         </IconTextButton>
       </View>
     );

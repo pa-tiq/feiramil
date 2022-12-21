@@ -60,6 +60,14 @@ const ProductItem = ({ product, onSelect }) => {
               productItem.created_at
             )}`}</Text>
           </Text>
+        </View>        
+        <View style={styles.location}>
+          <Text style={[styles.line, styles.normalText]}>
+            {`Localizado em `}
+            <Text style={styles.specialText}>{`${productItem.city}`}</Text>
+            <Text style={styles.normalText}>{` - `}</Text>
+            <Text style={styles.specialText}>{`${productItem.state}`}</Text>
+          </Text>
         </View>
       </View>
     </Pressable>
@@ -116,7 +124,10 @@ const styles = StyleSheet.create({
   },
   userData: {
     flexDirection: 'row',
-    marginVertical: 5,
+    marginTop: 5,
+  },  
+  location: {
+    flexDirection: 'row',
   },
   line: {
     paddingVertical: 1,

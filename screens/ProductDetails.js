@@ -152,6 +152,11 @@ const ProductDetails = ({ route, navigation }) => {
         <Text style={styles.price}>
           {fetchedProduct.price ? `R$${fetchedProduct.price}` : 'Sem preço'}
         </Text>
+      </View>      
+      <View style={styles.locationContainer}>
+        <Text style={styles.price}>
+          {`${fetchedProduct.city} - ${fetchedProduct.state}`}
+        </Text>
       </View>
       <View style={styles.userData}>
         <View style={styles.userImageContainer}>
@@ -219,6 +224,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   priceContainer: {
+    padding: 10,
+  },  
+  locationContainer: {
     padding: 10,
     marginBottom: 10,
   },
