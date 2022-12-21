@@ -24,11 +24,9 @@ async function wait2(timeout, waiting) {
 
 const CityPick = ({ navigation }) => {
   const [chosenCity, setChosenCity] = useState('');
-  //const [chosenState, setChosenState] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
   const [filteredCities, setFilteredCities] = useState([]);
   const [filter, setFilter] = useState(false);
-  //const [filterState, setFilterState] = useState(false);
 
   const [waiting, setWaiting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -41,14 +39,6 @@ const CityPick = ({ navigation }) => {
       setFilter(true);
     });
   }, []);
-  //const [refreshingState, setRefreshingState] = useState(false);
-  //const onRefreshState = useCallback(() => {
-  //  setRefreshingState(true);
-  //  wait(500).then(() => {
-  //    setRefreshingState(false);
-  //    setFilterState(true);
-  //  });
-  //}, []);
 
   const changeCityHandler = (enteredText) => {
     setChosenCity(enteredText);
@@ -64,19 +54,11 @@ const CityPick = ({ navigation }) => {
     setSelectedCity(null);
   };
   const submitSelectCityHandler = () => {
-    //props.setCityAndState({ city:selectedCity.cidade, state:selectedCity.estado });
     navigation.navigate('AddProduct', {
       city: selectedCity.cidade,
       state: selectedCity.estado,
     });
   };
-
-  //const changeStateHandler = (enteredText) => {
-  //  setChosenState(enteredText);
-  //  if (!refreshingState) {
-  //    onRefreshState();
-  //  }
-  //};
 
   useEffect(() => {
     if (!filter) return;
@@ -97,24 +79,6 @@ const CityPick = ({ navigation }) => {
     setFilteredCities(cidades);
     setFilter(false);
   }, [filter]);
-
-  //useEffect(() => {
-  //  if (!filterState) return;
-  //  let estados = [];
-  //  cidades_IBGE.estados.forEach((estado) => {
-  //    if (
-  //      estado.nome
-  //        .normalize('NFD')
-  //        .replace(/[\u0300-\u036f]/g, '')
-  //        .toLowerCase()
-  //        .includes(chosenState.toLowerCase())
-  //    ) {
-  //      estados.push(estado.nome);
-  //    }
-  //  });
-  //  setFilteredCities(estados);
-  //  setFilterState(false);
-  //}, [filterState]);
 
   let cityList;
 
