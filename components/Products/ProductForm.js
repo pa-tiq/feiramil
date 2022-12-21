@@ -10,16 +10,21 @@ import {
 import { Colors } from '../../constants/styles';
 import ProductImagePicker from '../Device/ProductImagePicker';
 import Button from '../ui/Button';
+import IconTextButton from '../ui/IconTextButton';
 import LoadingOverlay from '../ui/LoadingOverlay';
+import { useNavigation } from '@react-navigation/native';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
 const ProductForm = (props) => {
+  const navigation = useNavigation();
+
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredPrice, setEnteredPrice] = useState('');
+  const [enteredCity, setEnteredCity] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [editingProduct, setEditingProduct] = useState(props.editingProduct);
 
@@ -33,6 +38,7 @@ const ProductForm = (props) => {
     if (!editingProduct) return;
     setEnteredTitle(editingProduct.title);
     setEnteredDescription(editingProduct.description);
+    setEnteredCity(editingProduct.city);
     setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
     setSelectedImage(editingProduct.imageUri);
     onRefresh();
@@ -44,6 +50,11 @@ const ProductForm = (props) => {
   const changeDescriptionHandler = (enteredText) => {
     setEnteredDescription(enteredText);
   };
+
+  const changeCityHandler = (enteredText) => {
+    setEnteredCity(enteredText);
+  };
+
   const changePriceHandler = (enteredText) => {
     setEnteredPrice(enteredText);
   };
@@ -83,6 +94,7 @@ const ProductForm = (props) => {
       title: enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
+      city: enteredCity,
       image: selectedImage,
     };
 
@@ -91,22 +103,24 @@ const ProductForm = (props) => {
         productData.title === props.editingProduct.title &&
         productData.price === `${props.editingProduct.price}` &&
         productData.description === props.editingProduct.description &&
+        productData.city === props.editingProduct.city &&
         productData.image === props.editingProduct.imageUri
-      )
-      {
-        Alert.alert(
-          'Nenhuma alteração',
-          'Você não editou nada!'
-        );
+      ) {
+        Alert.alert('Nenhuma alteração', 'Você não editou nada!');
         return;
       }
       productData.id = editingProduct.id;
-      const newImageChosen = productData.image !== props.editingProduct.imageUri;
+      const newImageChosen =
+        productData.image !== props.editingProduct.imageUri;
       props.onEditProduct(productData, newImageChosen);
     } else {
       props.onCreateProduct(productData);
     }
   }
+
+  const pickCityHandler = () => {
+    navigation.navigate('CityPick');
+  };
 
   if (refreshing) {
     return <LoadingOverlay />;
@@ -129,13 +143,33 @@ const ProductForm = (props) => {
           multiline={true}
           numberOfLines={6}
         />
-        <Text style={styles.label}>Preço</Text>
-        <TextInput
-          style={[styles.input]}
-          onChangeText={changePriceHandler}
-          value={enteredPrice}
-          keyboardType={'number-pad'}
-        />
+        <View style={styles.inputRowContainer}>
+          <View style={styles.price}>
+            <Text style={styles.label}>Preço</Text>
+            <TextInput
+              style={[styles.input]}
+              onChangeText={changePriceHandler}
+              value={enteredPrice}
+              keyboardType={'number-pad'}
+            />
+          </View>
+          <View style={styles.city}>
+            <Text style={styles.label}>Cidade</Text>
+            {
+              //   <TextInput
+              //    style={[styles.input]}
+              //    onChangeText={changeCityHandler}
+              //    value={enteredPrice}
+              //  />
+            }
+            <View style={styles.cityButton}>
+              <IconTextButton
+                icon={'location-outline'}
+                onPress={pickCityHandler}
+              />
+            </View>
+          </View>
+        </View>
       </View>
       <ProductImagePicker
         imagePicked={imageTakenHandler}
@@ -165,6 +199,22 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     paddingHorizontal: 5,
+  },
+  inputRowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  price: {
+    flex: 1,
+    marginRight: 4,
+  },
+  city: {
+    flex: 1,
+    marginLeft: 4,
+  },  
+  cityButton: {
+    marginVertical:6,
+    flex:1,
   },
   buttonContainer: {
     marginTop: 14,

@@ -6,6 +6,7 @@ import IconButton from '../components/ui/IconButton';
 import AddProduct from '../screens/AddProduct';
 import UserProductsScreen from '../screens/UserProductsScreen';
 import ProductDetails from '../screens/ProductDetails';
+import CityPick from '../screens/CityPick';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,11 @@ export default function UserProductsTab() {
         name='AddProduct'
         component={AddProduct}
         options={{ title: 'Adicione um produto', headerTitleAlign: 'center' }}
+      />      
+      <Stack.Screen
+        name='CityPick'
+        component={CityPick}
+        options={{ title: 'Selecione a cidade', headerTitleAlign: 'center' }}
       />
       <Stack.Screen
         name='ProductDetails'
