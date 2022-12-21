@@ -13,6 +13,7 @@ import Button from '../ui/Button';
 import IconTextButton from '../ui/IconTextButton';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { useNavigation } from '@react-navigation/native';
+import FlatButton from '../ui/FlatButton';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -27,6 +28,8 @@ const ProductForm = (props) => {
   const [enteredCity, setEnteredCity] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [editingProduct, setEditingProduct] = useState(props.editingProduct);
+  const [selectedCity, setSelectedCity] = useState(props.selectedCity);
+  const [selectedState, setSelectedState] = useState(props.selectedState);
 
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
@@ -126,6 +129,22 @@ const ProductForm = (props) => {
     return <LoadingOverlay />;
   }
 
+  let cityView = (
+    <View style={styles.cityButton}>
+      <IconTextButton icon={'location-outline'} onPress={pickCityHandler} />
+    </View>
+  );
+
+  if (props.selectedCity && props.selectedState) {
+    cityView = (
+      <View style={styles.cityButton}>
+        <IconTextButton icon={'location-outline'} onPress={pickCityHandler}>
+          {`${props.selectedCity} - ${props.selectedState}`}
+        </IconTextButton>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.form}>
       <View style={styles.inputContainer}>
@@ -155,19 +174,7 @@ const ProductForm = (props) => {
           </View>
           <View style={styles.city}>
             <Text style={styles.label}>Cidade</Text>
-            {
-              //   <TextInput
-              //    style={[styles.input]}
-              //    onChangeText={changeCityHandler}
-              //    value={enteredPrice}
-              //  />
-            }
-            <View style={styles.cityButton}>
-              <IconTextButton
-                icon={'location-outline'}
-                onPress={pickCityHandler}
-              />
-            </View>
+            {cityView}
           </View>
         </View>
       </View>
@@ -211,10 +218,10 @@ const styles = StyleSheet.create({
   city: {
     flex: 1,
     marginLeft: 4,
-  },  
+  },
   cityButton: {
-    marginVertical:6,
-    flex:1,
+    marginVertical: 6,
+    flex: 1,
   },
   buttonContainer: {
     marginTop: 14,

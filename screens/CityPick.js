@@ -17,12 +17,12 @@ const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-async function wait2(timeout, waiting){
+async function wait2(timeout, waiting) {
   if (waiting) timeout = 1;
-  await new Promise(resolve => setTimeout(resolve, timeout));
+  await new Promise((resolve) => setTimeout(resolve, timeout));
 }
 
-const CityPick = () => {
+const CityPick = ({ navigation }) => {
   const [chosenCity, setChosenCity] = useState('');
   //const [chosenState, setChosenState] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
@@ -62,6 +62,13 @@ const CityPick = () => {
   };
   const cancelSelectCityHandler = () => {
     setSelectedCity(null);
+  };
+  const submitSelectCityHandler = () => {
+    //props.setCityAndState({ city:selectedCity.cidade, state:selectedCity.estado });
+    navigation.navigate('AddProduct', {
+      city: selectedCity.cidade,
+      state: selectedCity.estado,
+    });
   };
 
   //const changeStateHandler = (enteredText) => {
@@ -128,7 +135,7 @@ const CityPick = () => {
             pressed && styles.pressed,
           ]}
           key={idx}
-          onPress={selectCityHandler.bind(this,item)}
+          onPress={selectCityHandler.bind(this, item)}
         >
           <View>
             <Text style={styles.item}>{item.cidade}</Text>
@@ -147,7 +154,9 @@ const CityPick = () => {
           </Button>
         </View>
         <View style={styles.buttonRight}>
-          <Button icon='checkmark-outline'>Selecionar</Button>
+          <Button icon='checkmark-outline' onPress={submitSelectCityHandler}>
+            Selecionar
+          </Button>
         </View>
       </View>
     );
@@ -214,7 +223,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     backgroundColor: 'white',
     borderRadius: 4,
-  },  
+  },
   finish: {
     marginVertical: 8,
     paddingHorizontal: 4,
@@ -223,7 +232,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.primary500,
     borderBottomWidth: 2,
     backgroundColor: Colors.primary400,
-    color:'white',
+    color: 'white',
     borderRadius: 4,
   },
   listContainer: {

@@ -9,17 +9,19 @@ const AddProduct = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   const authContext = useContext(AuthContext);
   const [editingProduct, setEditingProduct] = useState(route.params?.editingProduct)
+  const [selectedCity, setSelectedCity] = useState(route.params ? route.params.city : null);
+  const [selectedState, setSelectedState] = useState(route.params ? route.params.state : null);
 
   useLayoutEffect(()=>{
     if(!editingProduct) return;
     navigation.setOptions({
       title: `Editando ${editingProduct.title}`,
     });
-  },[editingProduct])
+  },[editingProduct]);
 
   async function uploadImage(imageUri){
     const result = await uploadProductImage(imageUri, authContext.token);
-    return result
+    return result;
   }
 
   async function createProductHandler(product) {
@@ -58,6 +60,8 @@ const AddProduct = ({ route, navigation }) => {
       onCreateProduct={createProductHandler}
       onEditProduct={editProductHandler}
       editingProduct={editingProduct}
+      selectedCity={route.params ? route.params.city : null}
+      selectedState={route.params ? route.params.state : null}
     />
   );
 };
