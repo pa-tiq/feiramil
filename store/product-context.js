@@ -86,8 +86,8 @@ const ProductContextProvider = (props) => {
         title: product.title,
         price: price,
         description: product.description,
-        city: 'Manaus',
-        state: 'AM',
+        city: product.city,
+        state: product.state,
       },
     };
     const createTask = (response) => {
@@ -122,8 +122,8 @@ const ProductContextProvider = (props) => {
         title: product.title,
         price: price,
         description: product.description,
-        city: 'Manaus',
-        state: 'AM',
+        city: product.city,
+        state: product.state,
       },
     };
     const createTask = (response) => {

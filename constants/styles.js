@@ -11,4 +11,6 @@ export const Colors = {
   gray700: '#221c30',
   error100: '#fcdcbf',
   error500: '#f37c13',
+  background: '#021905',
+
 };

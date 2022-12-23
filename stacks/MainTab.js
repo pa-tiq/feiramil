@@ -12,9 +12,9 @@ export default function MainTab() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: Colors.primary700 },
+        headerStyle: { backgroundColor: Colors.background },
         headerTintColor: 'white',
-        contentStyle: { backgroundColor: Colors.primary700 },
+        contentStyle: { backgroundColor: Colors.background },
       }}
     >
       <Stack.Screen

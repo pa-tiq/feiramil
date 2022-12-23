@@ -9,8 +9,6 @@ const AddProduct = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   const authContext = useContext(AuthContext);
   const [editingProduct, setEditingProduct] = useState(route.params?.editingProduct)
-  const [selectedCity, setSelectedCity] = useState(route.params ? route.params.city : null);
-  const [selectedState, setSelectedState] = useState(route.params ? route.params.state : null);
 
   useLayoutEffect(()=>{
     if(!editingProduct) return;

@@ -67,7 +67,7 @@ export default CustomTabBar;
 const styles = StyleSheet.create({
   rootContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.primary700,
+    backgroundColor: Colors.background,
     paddingTop: 50,
     paddingHorizontal: 15,
   },

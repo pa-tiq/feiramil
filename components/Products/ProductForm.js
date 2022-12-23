@@ -99,7 +99,8 @@ const ProductForm = (props) => {
       title: enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
-      city: enteredCity,
+      city: props.selectedCity,
+      state: props.selectedState,
       image: selectedImage,
     };
 
@@ -109,6 +110,7 @@ const ProductForm = (props) => {
         productData.price === `${props.editingProduct.price}` &&
         productData.description === props.editingProduct.description &&
         productData.city === props.editingProduct.city &&
+        productData.state === props.editingProduct.state &&
         productData.image === props.editingProduct.imageUri
       ) {
         Alert.alert('Nenhuma alteração', 'Você não editou nada!');

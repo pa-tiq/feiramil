@@ -1,4 +1,6 @@
-const baseURL = 'http://192.168.1.6:8080';
+const private_ip_manaus = 'http://192.168.1.6'
+const private_ip_bsb = 'http://192.168.1.253'
+const baseURL = `${private_ip_bsb}:8080`;
 
 export const URLs = {
   base_url: baseURL,
