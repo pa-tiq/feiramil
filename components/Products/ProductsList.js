@@ -15,7 +15,7 @@ const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-const ProductsList = ({ products, isLoading }) => {
+const ProductsList = ({ products, searchText, isLoading }) => {
   const [productList, setProductList] = useState([]);
   const navigation = useNavigation();
   function selectProductHandler(id) {
@@ -33,8 +33,13 @@ const ProductsList = ({ products, isLoading }) => {
   }, []);
 
   useLayoutEffect(() => {
-    setProductList(products);
-  }, [products]);
+    if(searchText && searchText !==''){
+      setProductList(products.filter(item => item.title.includes(searchText) || item.description.includes(searchText)));
+    }
+    else{
+      setProductList(products);
+    }
+  }, [products, searchText]);
 
   if (isLoading || refreshing) {
     return <LoadingOverlay />;

@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import ProductsList from '../components/Products/ProductsList';
 import FloatingButton from '../components/ui/FloatingButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
+import SearchBar from '../components/ui/SearchBar';
 import { ProductContext } from '../store/product-context';
 
 const wait = (timeout) => {
@@ -13,6 +14,7 @@ const ProductsScreen = ({route, navigation}) => {
   const productContext = useContext(ProductContext);
   const { products } = productContext;
   const { params:routeParams } = route;
+  const [searchText, setSearchText] = useState('');
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -34,14 +36,23 @@ const ProductsScreen = ({route, navigation}) => {
     wait(1000).then(() => setRefreshing(false));
   },[]);
 
+  const updateSearchValue = (enteredText) => {
+    setSearchText(enteredText);
+  }
+
   if (refreshing) {
     return <LoadingOverlay />;
   }
 
   return (
     <>
+      <SearchBar
+        placeholder={'Pesquisa'}
+        onUpdateValue={updateSearchValue}
+      />
       <ProductsList
         products={products}
+        searchText={searchText}
         isLoading={productContext.isLoading}
       />
     </>
