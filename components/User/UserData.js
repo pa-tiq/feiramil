@@ -5,8 +5,6 @@ import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
 import UserImagePicker from '../Device/UserImagePicker';
 import UserDataForm from './UserDataForm';
-import * as FileSystem from 'expo-file-system';
-import { URLs } from '../../constants/URLs';
 import { AuthContext } from '../../store/auth-context';
 import { ProductContext } from '../../store/product-context';
 import { uploadUserPhoto } from '../../util/findOrDownloadFile';
@@ -16,29 +14,14 @@ const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-function UserData() {
+function UserData(props) {
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
   const productContext = useContext(ProductContext);
-  const [selectedImage, setSelectedImage] = useState();
-  const [responseStatus, setResponseStatus] = useState(null);
 
   function imageTakenHandler(image) {
     async function updatePhoto() {
       try {
-        //const uploadResult = await FileSystem.uploadAsync(
-        //  URLs.update_user_photo_url,
-        //  image.uri,
-        //  {
-        //    fieldName: 'userphoto',
-        //    httpMethod: 'PATCH',
-        //    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-        //    headers: {
-        //      Authorization: 'Bearer ' + authContext.token,
-        //    },
-        //  }
-        //);
-        //const result = JSON.parse(uploadResult.body);
         const result = await uploadUserPhoto(image.uri, authContext.token);
         const response = await userContext.updatePhotoPath({
           path: result.path.substring(1, result.path.length),
@@ -68,13 +51,15 @@ function UserData() {
   });
 
   async function submitHandler(credentials) {
-    let { email, password, name, om, phone } = credentials;
+    let { email, password, name, om, phone, city, state } = credentials;
 
     email = email.trim();
     password = password.trim();
     name = name.trim();
     om = om.trim();
     phone = phone.trim();
+    city = city.trim();
+    state = state.trim();
 
     const emailIsValid = email.includes('@');
     const passwordIsValid = password.length > 6 || password.length === 0;
@@ -107,6 +92,8 @@ function UserData() {
             password: null,
             om: om,
             phone: phone,
+            city: city,
+            state: state,
           }
         : {
             email: email,
@@ -114,9 +101,10 @@ function UserData() {
             password: password,
             om: om,
             phone: phone,
+            city: city,
+            state: state,
           };
     const resStatus = await userContext.updateUser(updatedUser);
-    setResponseStatus(resStatus);
     productContext.triggerReload();
   }
 
@@ -133,6 +121,8 @@ function UserData() {
         <UserDataForm
           onSubmit={submitHandler}
           credentialsInvalid={credentialsInvalid}
+          selectedCity={props.selectedCity}
+          selectedState={props.selectedState}
         />
       </View>
     </>

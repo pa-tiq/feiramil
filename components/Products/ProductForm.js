@@ -126,7 +126,7 @@ const ProductForm = (props) => {
   }
 
   const pickCityHandler = () => {
-    navigation.navigate('CityPick');
+    navigation.navigate('CityPick', {parentScreen: 'AddProduct'});
   };
 
   if (refreshing) {

@@ -1,12 +1,10 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useContext, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import ErrorOverlay from '../components/ui/ErrorOverlay';
-import LoadingOverlay from '../components/ui/LoadingOverlay';
 import UserData from '../components/User/UserData';
 import { UserContext } from '../store/user-context';
 
-function UserScreen() {
+function UserScreen({ route }) {
   const [loadedUser, setLoadedUser] = useState({});
   const isFocused = useIsFocused();
   const userContext = useContext(UserContext);
@@ -26,7 +24,10 @@ function UserScreen() {
   return (
     <ScrollView>
       <View style={styles.rootContainer}>
-        <UserData />
+        <UserData
+          selectedCity={route.params ? route.params.city : null}
+          selectedState={route.params ? route.params.state : null}
+        />
       </View>
     </ScrollView>
   );

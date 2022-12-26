@@ -22,7 +22,7 @@ async function wait2(timeout, waiting) {
   await new Promise((resolve) => setTimeout(resolve, timeout));
 }
 
-const CityPick = ({ navigation }) => {
+const CityPick = ({ route, navigation }) => {
   const [chosenCity, setChosenCity] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
   const [filteredCities, setFilteredCities] = useState([]);
@@ -54,7 +54,7 @@ const CityPick = ({ navigation }) => {
     setSelectedCity(null);
   };
   const submitSelectCityHandler = () => {
-    navigation.navigate('AddProduct', {
+    navigation.navigate(route.params.parentScreen, {
       city: selectedCity.cidade,
       state: selectedCity.estado,
     });

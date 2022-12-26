@@ -1,21 +1,27 @@
 import { useContext, useLayoutEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import Button from '../ui/Button';
 import Input from '../Auth/Input';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import ErrorOverlay from '../ui/ErrorOverlay';
+import IconTextButton from '../ui/IconTextButton';
+import { useNavigation } from '@react-navigation/native';
 
 function UserDataForm(props) {
+  const navigation = useNavigation();
+
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
   const [enteredName, setEnteredName] = useState('');
   const [enteredOm, setEnteredOm] = useState('');
   const [enteredPhone, setEnteredPhone] = useState('');
+  const [enteredCity, setEnteredCity] = useState('');
+  const [enteredState, setEnteredState] = useState('');
 
   const [editForm, setEditForm] = useState(false);
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(null);
 
   function editFormHandler() {
     setEditForm(true);
@@ -32,6 +38,8 @@ function UserDataForm(props) {
     setEnteredName(user.name);
     setEnteredOm(user.om);
     setEnteredPhone(user.phone);
+    setEnteredCity(user.city ? user.city : '');
+    setEnteredState(user.state ? user.state : '');
   }, [user]);
 
   const {
@@ -69,20 +77,65 @@ function UserDataForm(props) {
       name: enteredName,
       om: enteredOm,
       phone: enteredPhone,
+      city: props.selectedCity,
+      state: props.selectedState,
     });
     cancelEditFormHandler();
   }
 
-  function deleteErrorHandler(){
+  function deleteErrorHandler() {
     setError(null);
   }
+
+  const pickCityHandler = () => {
+    navigation.navigate('UserCityPick', { parentScreen: 'User' });
+  };
 
   if (userContext.isLoading) {
     return <LoadingOverlay />;
   }
 
   if (!userContext.isLoading && error) {
-    return <ErrorOverlay message={userContext.error} reload={deleteErrorHandler}/>;
+    return (
+      <ErrorOverlay message={userContext.error} reload={deleteErrorHandler} />
+    );
+  }
+
+  let cityView = (
+    <View style={styles.cityButton}>
+      <IconTextButton
+        icon={'location-outline'}
+        onPress={pickCityHandler}
+        disabled={!editForm}
+      />
+    </View>
+  );
+
+  if (props.selectedCity && props.selectedState) {
+    cityView = (
+      <View style={styles.cityButton}>
+        <IconTextButton
+          icon={'location-outline'}
+          onPress={pickCityHandler}
+          disabled={!editForm}
+        >
+          {`${props.selectedCity} - ${props.selectedState}`}
+        </IconTextButton>
+      </View>
+    );
+  }
+  if (enteredCity.length !== 0 && enteredState.length !== 0) {
+    cityView = (
+      <View style={styles.cityButton}>
+        <IconTextButton
+          icon={'location-outline'}
+          onPress={pickCityHandler}
+          disabled={!editForm}
+        >
+          {`${enteredCity} - ${enteredState}`}
+        </IconTextButton>
+      </View>
+    );
   }
 
   return (
@@ -128,6 +181,10 @@ function UserDataForm(props) {
         isInvalid={phoneIsInvalid}
         editable={editForm}
       />
+      <View style={styles.city}>
+        <Text style={styles.label}>Cidade</Text>
+        {cityView}
+      </View>
       <View style={styles.buttons}>
         {!editForm ? (
           <Button onPress={editFormHandler}>{'Editar'}</Button>
@@ -149,8 +206,8 @@ function UserDataForm(props) {
 export default UserDataForm;
 
 const styles = StyleSheet.create({
-  form:{
-    paddingHorizontal:5,
+  form: {
+    paddingHorizontal: 5,
   },
   buttons: {
     marginTop: 12,
@@ -168,5 +225,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
+  },
+  city: {
+    flex: 1,
+    marginLeft: 0,
+  },
+  cityButton: {
+    marginVertical: 6,
+    flex: 1,
+  },
+  label: {
+    marginTop: 4,
+    color: 'white',
   },
 });

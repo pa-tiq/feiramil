@@ -6,6 +6,7 @@ import { AuthContext } from '../store/auth-context';
 import { Colors } from '../constants/styles';
 import IconButton from '../components/ui/IconButton';
 import UserScreen from '../screens/UserScreen';
+import CityPick from '../screens/CityPick';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function UserTab() {
         title: 'Usuário'
       }}
     />
+    
   );
 
   return (
@@ -39,6 +41,11 @@ export default function UserTab() {
       }}
     >
       {userScreen}
+      <Stack.Screen
+        name='UserCityPick'
+        component={CityPick}
+        options={{ title: 'Selecione a cidade', headerTitleAlign: 'center' }}
+      />
     </Stack.Navigator>
   );
 }
