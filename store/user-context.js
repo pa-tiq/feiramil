@@ -42,6 +42,8 @@ const UserContextProvider = (props) => {
         om: response.user.om,
         phone: response.user.phone,
         photo: response.user.photo,
+        city: response.user.city,
+        state: response.user.state,
       };
       setUser(loadedUser);
     };

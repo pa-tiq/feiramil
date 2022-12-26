@@ -2,7 +2,6 @@ import { useNavigation } from '@react-navigation/native';
 import {
   useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
@@ -86,6 +85,6 @@ const styles = StyleSheet.create({
   },
   list: {
     marginHorizontal: 20,
-    marginVertical: 10,
+    marginVertical: 5,
   },
 });

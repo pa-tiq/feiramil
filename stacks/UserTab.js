@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { AuthContext } from '../store/auth-context';
@@ -12,7 +11,6 @@ const Stack = createNativeStackNavigator();
 
 export default function UserTab() {
   const authContext = useContext(AuthContext);
-  const navigation = useNavigation();
 
   const userScreen = (
     <Stack.Screen

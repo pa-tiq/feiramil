@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
   textInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal:20
   },
   inputContainer: {
     marginVertical: 8,
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
     marginLeft: '85%'
   },
   input: {
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 10,
     backgroundColor: Colors.primary500,
     borderRadius: 4,

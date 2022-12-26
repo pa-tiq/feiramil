@@ -2,10 +2,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/styles';
 
-function Button({ children, onPress, icon }) {
+function Button({ children, onPress, icon, style }) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.button, style, pressed && styles.pressed]}
       onPress={onPress}
     >
       {icon && (
