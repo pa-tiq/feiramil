@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary700
   },
   message: {
+    color:'white',
     fontSize: 16,
     marginBottom: 12,
   },

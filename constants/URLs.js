@@ -1,11 +1,12 @@
-const private_ip_manaus = 'http://192.168.1.6'
+const private_ip_manaus = 'http://192.168.1.8'
 const private_ip_bsb = 'http://192.168.1.253'
-const baseURL = `${private_ip_bsb}:8080`;
+const baseURL = `${private_ip_manaus}:8080`;
 
 export const URLs = {
   base_url: baseURL,
   login_url: `${baseURL}/auth/login`,
   signup_url: `${baseURL}/auth/signup`,
+  tokenlogin_url: `${baseURL}/auth/tokenlogin`,
   get_user_url: `${baseURL}/user/user`,
   update_user_url: `${baseURL}/user/user`,
   update_user_photo_url: `${baseURL}/user/image`,

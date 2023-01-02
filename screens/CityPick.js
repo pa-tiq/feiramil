@@ -23,9 +23,11 @@ async function wait2(timeout, waiting) {
 }
 
 const CityPick = ({ route, navigation }) => {
-  const [chosenCity, setChosenCity] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [filteredCities, setFilteredCities] = useState([]);
+  const [filteredStates, setFilteredStates] = useState([]);
   const [filter, setFilter] = useState(false);
 
   const [waiting, setWaiting] = useState(false);
@@ -41,16 +43,25 @@ const CityPick = ({ route, navigation }) => {
   }, []);
 
   const changeCityHandler = (enteredText) => {
-    setChosenCity(enteredText);
-    if (!refreshing) {
-      onRefresh();
-    }
+    setCityInput(enteredText);
+    //if (!refreshing) {
+    //  onRefresh();
+    //}
+    setFilter(true);
   };
 
   const selectCityHandler = (item) => {
     setSelectedCity(item);
   };
+  const selectStateHandler = (sigla, nome) => {
+    setSelectedState({ sigla, nome });
+    setCityInput('');
+  };
   const cancelSelectCityHandler = () => {
+    setSelectedCity(null);
+  };
+  const cancelSelectStateHandler = () => {
+    setSelectedState(null);
     setSelectedCity(null);
   };
   const submitSelectCityHandler = () => {
@@ -61,52 +72,115 @@ const CityPick = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    if (!filter) return;
+    if (!filter && !selectedState) return;
     let cidades = [];
-    cidades_IBGE.estados.forEach((estado) => {
-      estado.cidades.forEach((cidade) => {
+    let estados = [];
+    if (selectedState) {
+      cidades_IBGE.estados
+        .filter((item) => {
+          return item.sigla === selectedState.sigla;
+        })
+        .forEach((estado) => {
+          estado.cidades.forEach((cidade) => {
+            if (
+              cidade
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .includes(cityInput.toLowerCase())
+            ) {
+              cidades.push({ estado: estado.sigla, cidade: cidade });
+            }
+          });
+        });
+    } else {
+      cidades_IBGE.estados.forEach((estado) => {
         if (
-          cidade
+          estado.nome
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .toLowerCase()
-            .includes(chosenCity.toLowerCase())
+            .includes(cityInput.toLowerCase())
         ) {
-          cidades.push({ estado: estado.sigla, cidade: cidade });
+          estados.push({ sigla: estado.sigla, nome: estado.nome });
         }
       });
-    });
+    }
     setFilteredCities(cidades);
+    setFilteredStates(estados);
     setFilter(false);
-  }, [filter]);
+  }, [filter, selectedState]);
 
-  let cityList;
-
-  if (refreshing) {
-    cityList = <LoadingOverlay />;
-  } else if (chosenCity.length === 0) {
-    cityList = (
-      <View style={[styles.itemContainer, { alignItems: 'center' }]}>
-        <Text style={styles.item}>Nada inserido.</Text>
-      </View>
-    );
-  } else {
-    cityList = filteredCities.map((item, idx) => {
-      return (
+  let stateList = (
+    <FlatList
+      data={cidades_IBGE.estados}
+      keyExtractor={(item) => item.sigla}
+      renderItem={({ item }) => (
         <Pressable
           style={({ pressed }) => [
             styles.itemContainer,
             pressed && styles.pressed,
           ]}
-          key={idx}
-          onPress={selectCityHandler.bind(this, item)}
+          onPress={selectStateHandler.bind(this, item.sigla, item.nome)}
         >
           <View>
-            <Text style={styles.item}>{item.cidade}</Text>
+            <Text style={styles.item}>{`${item.sigla} - ${item.nome}`}</Text>
           </View>
         </Pressable>
-      );
-    });
+      )}
+    />
+  );
+
+  if (cityInput && !selectedState) {
+    stateList = (
+      <FlatList
+        data={filteredStates}
+        keyExtractor={(item) => item.sigla}
+        renderItem={({ item }) => (
+          <Pressable
+            style={({ pressed }) => [
+              styles.itemContainer,
+              pressed && styles.pressed,
+            ]}
+            onPress={selectStateHandler.bind(this, item.sigla, item.nome)}
+          >
+            <View>
+              <Text style={styles.item}>{`${item.sigla} - ${item.nome}`}</Text>
+            </View>
+          </Pressable>
+        )}
+      />
+    );
+  }
+
+  let cityList;
+
+  if (selectedState) {
+    cityList = (
+      <FlatList
+        style={({ pressed }) => [
+          styles.itemContainer,
+          pressed && styles.pressed,
+        ]}
+        data={filteredCities}
+        keyExtractor={(item) => item.cidade}
+        renderItem={({ item }) => (
+          <Pressable
+            style={({ pressed }) => [
+              styles.itemContainer,
+              pressed && styles.pressed,
+            ]}
+            onPress={selectCityHandler.bind(this, item)}
+          >
+            <View>
+              <Text
+                style={styles.item}
+              >{`${item.estado} - ${item.cidade}`}</Text>
+            </View>
+          </Pressable>
+        )}
+      />
+    );
   }
 
   if (selectedCity) {
@@ -130,7 +204,7 @@ const CityPick = ({ route, navigation }) => {
     <TextInput
       style={styles.input}
       onChangeText={changeCityHandler}
-      value={chosenCity}
+      value={cityInput}
     />
   );
 
@@ -143,23 +217,33 @@ const CityPick = ({ route, navigation }) => {
   }
 
   return (
-    <ScrollView style={styles.rootContainer}>
-      {
-        //<View style={styles.inputContainer}>
-        //  <Text style={styles.label}>Estado</Text>
-        //  <TextInput
-        //    style={styles.input}
-        //    onChangeText={changeStateHandler}
-        //    value={chosenState}
-        //  />
-        //</View>
-      }
+    <View style={styles.rootContainer}>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Cidade</Text>
+        {selectedState && (
+          <>
+            <Text style={styles.label}>Estado</Text>
+            <Text
+              style={styles.finish}
+            >{`${selectedState.sigla} - ${selectedState.nome}`}</Text>
+            <Button
+              style={{ marginBottom: 8 }}
+              icon='close-outline'
+              onPress={cancelSelectStateHandler}
+            >
+              Cancelar
+            </Button>
+          </>
+        )}
+        {selectedState ? (
+          <Text style={styles.label}>Cidade</Text>
+        ) : (
+          <Text style={styles.label}>Estado</Text>
+        )}
         {input}
       </View>
-      <View style={styles.listContainer}>{cityList}</View>
-    </ScrollView>
+      {selectedState && <View style={[styles.cityListContainer, selectedCity && {marginTop: 0, marginHorizontal:5}]}>{cityList}</View>}
+      {!selectedState && <View style={styles.stateListContainer}>{stateList}</View>}
+    </View>
   );
 };
 
@@ -181,7 +265,7 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: 8,
     paddingHorizontal: 4,
-    paddingVertical: 8,
+    paddingVertical: 6,
     fontSize: 16,
     borderBottomColor: Colors.primary500,
     borderBottomWidth: 2,
@@ -199,9 +283,15 @@ const styles = StyleSheet.create({
     color: 'white',
     borderRadius: 4,
   },
-  listContainer: {
+  cityListContainer: {
     marginHorizontal: 10,
     marginVertical: 10,
+    paddingBottom: 200,
+  },  
+  stateListContainer: {
+    marginHorizontal: 10,
+    marginVertical: 10,
+    paddingBottom: 80,
   },
   itemContainer: {
     padding: 10,
@@ -231,9 +321,13 @@ const styles = StyleSheet.create({
   buttonLeft: {
     flex: 1,
     marginRight: 2,
+    minHeight:50,
+
   },
   buttonRight: {
     flex: 1,
     marginLeft: 2,
+    minHeight:50,
+
   },
 });

@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
+import { Alert } from 'react-native';
 
 export const AuthContext = createContext({
   token: '',
@@ -21,11 +22,35 @@ const AuthContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    async function getToken(){
-      setIsLoading(true);
+    async function getToken() {
       const storedToken = await AsyncStorage.getItem('token');
+      if (!storedToken) return;
+      const getConfig = {
+        url: URLs.tokenlogin_url,
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer ' + storedToken,
+        },
+      };
+      const createTask = (response) => {
+        if (!response.status || response.status !== 200) {
+          throw new Error('tokenlogin failed');
+        }
+        else{
+          setAuthToken(storedToken);
+          setUserId(response.userId);
+        }
+      };
+      try {
+        setIsLoading(true);
+        await httpObj.sendRequest(getConfig, createTask);
+      } catch (error) {
+        Alert.alert(
+          'Autenticação falhou',
+          'Não foi possível realizar a autenticação rápida. Por favor, faça login novamente.'
+        );
+      }      
       setIsLoading(false);
-      setAuthToken(storedToken);
     }
     getToken();
   }, []);

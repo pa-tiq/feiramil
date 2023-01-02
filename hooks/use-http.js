@@ -16,7 +16,7 @@ const useHttp = () => {
       const data = await response
         .json()
         .then((result) => {
-          return result;
+          return { ...result, status: response.status };
         })
         .catch((err) => {
           console.log('vixe maria');

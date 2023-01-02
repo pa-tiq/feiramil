@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import Button from '../ui/Button';
@@ -28,6 +28,12 @@ function UserDataForm(props) {
   }
   function cancelEditFormHandler() {
     setEditForm(false);
+    setEnteredEmail(user.email);
+    setEnteredName(user.name);
+    setEnteredOm(user.om);
+    setEnteredPhone(user.phone);
+    setEnteredCity(user.city);
+    setEnteredState(user.state);
   }
 
   const userContext = useContext(UserContext);
@@ -38,9 +44,9 @@ function UserDataForm(props) {
     setEnteredName(user.name);
     setEnteredOm(user.om);
     setEnteredPhone(user.phone);
-    setEnteredCity(user.city ? user.city : '');
-    setEnteredState(user.state ? user.state : '');
-  }, [user]);
+    setEnteredCity(props.selectedCity ? props.selectedCity : (user.city ? user.city : ''));
+    setEnteredState(props.selectedState ? props.selectedState : (user.state ? user.state : ''));
+  }, [user, props]);
 
   const {
     email: emailIsInvalid,
