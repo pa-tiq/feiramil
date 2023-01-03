@@ -49,7 +49,7 @@ function CustomTabBar({ state, descriptors, navigation, position }) {
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={{ flex: 1 }}
+            style={[{ flex: 1}, options.tabBarStyle && options.tabBarStyle]}
             key={label}
           >
             <Animated.Text style={[{ opacity }, styles.title]}>
@@ -72,6 +72,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   title: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     textAlign: 'center',
     textAlignVertical: 'center',
     alignItems: 'center',
@@ -79,5 +81,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     color: 'white',
+    flexWrap: 'nowrap',
   },
 });

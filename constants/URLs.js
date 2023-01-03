@@ -17,6 +17,9 @@ export const URLs = {
   get_products_url: `${baseURL}/feed/products`,
   get_products_exept_user_url: `${baseURL}/feed`,
   get_user_products_url: `${baseURL}/feed/products`,
+  get_user_favourites_url: `${baseURL}/feed/favourites`,
+  add_user_favourite_url: `${baseURL}/feed/favourite`,
+  remove_user_favourite_url: `${baseURL}/feed/favourite`,
   get_product_detail_url: `${baseURL}/feed/product`,
   delete_product_url: `${baseURL}/feed/product`
 };

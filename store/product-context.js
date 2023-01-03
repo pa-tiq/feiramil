@@ -7,6 +7,7 @@ import { AuthContext } from './auth-context';
 export const ProductContext = createContext({
   products: [],
   userProducts: [],
+  userFavourites: [],
   isLoading: false,
   error: null,
   triggerReload: () => {},
@@ -19,6 +20,9 @@ export const ProductContext = createContext({
   fetchProductsExeptUser: async () => {},
   fetchProductDetail: async (productId) => {},
   fetchUserProducts: async (userId) => {},
+  fetchUserFavourites: async (userId) => {},
+  addUserFavourite: async ({productId, userId}) => {},
+  removeUserFavourite: async ({productId, userId}) => {},
 });
 
 const ProductContextProvider = (props) => {
@@ -26,12 +30,20 @@ const ProductContextProvider = (props) => {
   const authContext = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [userProducts, setUserProducts] = useState([]);
+  const [userFavourites, setUserFavourites] = useState([]);
   const [productsChanged, setProductsChanged] = useState(false);
   const [feedProductsChanged, setFeedProductsChanged] = useState(false);
 
   async function getUserProducts(){
     try {
       await fetchUserProducts(authContext.userId);
+    } catch (error) {
+      console.log(error);
+    }
+  }      
+  async function getUserFavourites(){
+    try {
+      await fetchUserFavourites(authContext.userId);
     } catch (error) {
       console.log(error);
     }
@@ -46,6 +58,7 @@ const ProductContextProvider = (props) => {
 
   useEffect(()=>{
     getUserProducts();
+    getUserFavourites();
     getFeedProducts();
   },[]);
 
@@ -161,7 +174,7 @@ const ProductContextProvider = (props) => {
       throw new Error(httpObj.error);
     }
     return loadedUser;
-  };
+  };  
 
   const updateProductImagePath = async ({path, oldpath, productId}) => {
     const putConfig = {
@@ -292,11 +305,101 @@ const ProductContextProvider = (props) => {
     }
   };
 
+  const fetchUserFavourites = async (userId) => {
+    const getConfig = {
+      url: URLs.get_user_favourites_url + `/${userId}`,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+      },
+    };
+    const createTask = (response) => {
+      async function getFile(product) {
+        try {
+          let uri;
+          uri = await findOrDownloadImage(product.imagePath);
+          product.imageUri = uri;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      if(response.products){
+        let products = response.products;
+        products.forEach((product) => {
+          if (!product.imagePath) {
+            product.imageUri = null;
+          } else {
+            getFile(product);
+          }
+        });
+        console.log(products);
+        setUserFavourites(products);
+      }
+    };
+    await httpObj.sendRequest(getConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+  };
+
+  const addUserFavourite = async (productId) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.add_user_favourite_url,
+      method: 'POST',
+      body: {
+        'productId': productId,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',       
+      },
+    };
+    const createTask = (response) => {
+      console.log(response);
+      if (response.changedRows > 0) {
+        setProductsChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
+  };
+
+  const removeUserFavourite = async (productId) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.remove_user_favourite_url,
+      method: 'DELETE',
+      body: {
+        'productId': productId,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',       
+      },
+    };
+    const createTask = (response) => {
+      console.log(response);
+      if (response.changedRows > 0) {
+        setProductsChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
+  };
+
   return (
     <ProductContext.Provider
       value={{
         products: products,
         userProducts: userProducts,
+        userFavourites: userFavourites,
         isLoading: httpObj.isLoading,
         error: httpObj.error,
         triggerReload: triggerReload,
@@ -309,6 +412,9 @@ const ProductContextProvider = (props) => {
         fetchProductsExeptUser: fetchProductsExeptUser,
         fetchProductDetail: fetchProductDetail,
         fetchUserProducts: fetchUserProducts,
+        fetchUserFavourites: fetchUserFavourites,
+        addUserFavourite: addUserFavourite,
+        removeUserFavourite: removeUserFavourite,
       }}
     >
       {props.children}

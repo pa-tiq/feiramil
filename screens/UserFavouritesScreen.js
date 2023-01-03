@@ -9,9 +9,9 @@ const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-const UserProductsScreen = ({ route, navigation }) => {
+const UserFavouritesScreen = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
-  const { userProducts } = productContext;
+  const { userFavourites } = productContext;
   const { params: routeParams } = route;
 
   const [refreshing, setRefreshing] = useState(false);
@@ -41,20 +41,14 @@ const UserProductsScreen = ({ route, navigation }) => {
   return (
     <>
       <ProductsList
-        products={userProducts}
+        products={userFavourites}
         isLoading={productContext.isLoading}
-      />      
-      <FloatingButton
-        icon={'add'}
-        color={'white'}
-        size={24}
-        onPress={() => navigation.navigate('AddProduct')}
       />
     </>
   );
 };
 
-export default UserProductsScreen;
+export default UserFavouritesScreen;
 
 const styles = StyleSheet.create({
   rootContainer: {

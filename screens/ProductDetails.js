@@ -1,5 +1,12 @@
-import { useContext, useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
+import { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Image,
+  Pressable,
+} from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -13,6 +20,7 @@ import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [favorite, setFavorite] = useState(false);
   const [fetchedProduct, setFetchedProduct] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [downloadedUserImageURI, setDowloadedUserImageURI] = useState(null);
@@ -29,6 +37,15 @@ const ProductDetails = ({ route, navigation }) => {
   const removeProductHandler = async () => {
     productContext.removeProduct(selectedProductId);
     navigation.navigate('UserProductsScreen', { triggerReload: true });
+  };
+
+  const favouriteProductHandler = async () => {
+    if (!favorite) {
+      await productContext.addUserFavourite(selectedProductId);
+    } else {
+      await productContext.removeUserFavourite(selectedProductId);
+    }
+    setFavorite((previousValue) => !previousValue);
   };
 
   const editProductHandler = async () => {
@@ -60,6 +77,19 @@ const ProductDetails = ({ route, navigation }) => {
                 color={tintColor}
                 size={24}
                 onPress={removeProductHandler}
+                style={styles.headerRightButton}
+              />
+            ),
+          });
+        } else {
+          navigation.setOptions({
+            headerRight: ({ tintColor }) => (
+              <IconButton
+                icon='heart'
+                color={tintColor}
+                size={24}
+                onPress={favouriteProductHandler}
+                style={styles.headerRightButton}
               />
             ),
           });
@@ -99,6 +129,34 @@ const ProductDetails = ({ route, navigation }) => {
     setIsLoading(true);
     loadProductData();
   }, [selectedProductId]);
+
+  useEffect(() => {
+    if (favorite) {
+      navigation.setOptions({
+        headerRight: ({ tintColor }) => (
+          <IconButton
+            icon='heart'
+            color={'red'}
+            size={24}
+            onPress={favouriteProductHandler}
+            style={styles.headerRightButton}
+          />
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerRight: ({ tintColor }) => (
+          <IconButton
+            icon='heart'
+            color={tintColor}
+            size={24}
+            onPress={favouriteProductHandler}
+            style={styles.headerRightButton}
+          />
+        ),
+      });
+    }
+  }, [favorite]);
 
   if (isLoading) {
     return <LoadingOverlay />;
@@ -152,7 +210,7 @@ const ProductDetails = ({ route, navigation }) => {
         <Text style={styles.price}>
           {fetchedProduct.price ? `R$${fetchedProduct.price}` : 'Sem preço'}
         </Text>
-      </View>      
+      </View>
       <View style={styles.locationContainer}>
         <Text style={styles.price}>
           {`${fetchedProduct.city} - ${fetchedProduct.state}`}
@@ -202,6 +260,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 15,
   },
+  headerRightButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+    marginRight: -20,
+  },
   productImageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -225,7 +288,7 @@ const styles = StyleSheet.create({
   },
   priceContainer: {
     padding: 10,
-  },  
+  },
   locationContainer: {
     padding: 10,
     marginBottom: 10,

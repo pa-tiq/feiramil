@@ -13,6 +13,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import CustomTabBar from '../components/ui/CustomTabBar';
 import IconButton from '../components/ui/IconButton';
 import { StyleSheet, View } from 'react-native';
+import UserFavouritesTab from './UserFavouritesTab';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -37,15 +38,11 @@ export default function AuthenticatedStack() {
     };
   }, []);
 
-  let headerButtons = (
-    <View style={styles.headerButtonsContainer}>
-
-  </View>
-  );
+  let headerButtons = <View style={styles.headerButtonsContainer}></View>;
 
   return (
     <>
-      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props}/>}>
+      <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
         <Tab.Screen
           name='UserProductsTab'
           component={UserProductsTab}
@@ -54,6 +51,17 @@ export default function AuthenticatedStack() {
               <Ionicons name='layers-outline' color={color} size={size} />
             ),
             tabBarLabel: 'Seus produtos',
+            tabBarStyle: { flex: 1.5 },
+          }}
+        />
+        <Tab.Screen
+          name='UserFavouritesTab'
+          component={UserFavouritesTab}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name='layers-outline' color={color} size={size} />
+            ),
+            tabBarLabel: 'Favoritos',
           }}
         />
         <Tab.Screen
@@ -73,7 +81,8 @@ export default function AuthenticatedStack() {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name='person-outline' color={color} size={size} />
             ),
-            tabBarLabel: 'Configurações',
+            tabBarLabel: String.fromCharCode(9881),
+            tabBarStyle: { flex: 0.5 },
           }}
         />
       </Tab.Navigator>

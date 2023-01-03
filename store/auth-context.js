@@ -35,8 +35,7 @@ const AuthContextProvider = ({ children }) => {
       const createTask = (response) => {
         if (!response.status || response.status !== 200) {
           throw new Error('tokenlogin failed');
-        }
-        else{
+        } else {
           setAuthToken(storedToken);
           setUserId(response.userId);
         }
@@ -47,9 +46,9 @@ const AuthContextProvider = ({ children }) => {
       } catch (error) {
         Alert.alert(
           'Autenticação falhou',
-          'Não foi possível realizar a autenticação rápida. Por favor, faça login novamente.'
+          'Não foi possível realizar a autenticação rápida. Por favor, faça login novamente.',
         );
-      }      
+      }
       setIsLoading(false);
     }
     getToken();
