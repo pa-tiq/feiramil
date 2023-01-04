@@ -130,7 +130,7 @@ function UserDataForm(props) {
       </View>
     );
   }
-  if (enteredCity.length !== 0 && enteredState.length !== 0) {
+  if (enteredCity && enteredState && enteredCity.length !== 0 && enteredState.length !== 0) {
     cityView = (
       <View style={styles.cityButton}>
         <IconTextButton

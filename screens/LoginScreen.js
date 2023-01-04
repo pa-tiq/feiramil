@@ -12,15 +12,19 @@ function LoginScreen() {
       await authContext.login(email, password);
     } catch (error) {
       Alert.alert('Falha no login!', error.message);
-      return;
     }
   }
 
-  if (authContext.isLoading) {
-    return <LoadingOverlay message='Entrando...' />;
-  }
+  //if (authContext.isLoading) {
+  //  return <LoadingOverlay message='Entrando...' />;
+  //}
 
-  return <ScrollView><AuthContent isLogin onAuthenticate={loginHandler} /></ScrollView>;
+  return (
+    <ScrollView>
+      {authContext.isLoading && <LoadingOverlay message='Entrando...' />}
+      <AuthContent isLogin onAuthenticate={loginHandler} />
+    </ScrollView>
+  );
 }
 
 export default LoginScreen;

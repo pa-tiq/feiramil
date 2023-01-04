@@ -20,7 +20,7 @@ import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [favorite, setFavorite] = useState(false);
+  const [favorite, setFavorite] = useState(null);
   const [fetchedProduct, setFetchedProduct] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [downloadedUserImageURI, setDowloadedUserImageURI] = useState(null);
@@ -81,19 +81,7 @@ const ProductDetails = ({ route, navigation }) => {
               />
             ),
           });
-        } else {
-          navigation.setOptions({
-            headerRight: ({ tintColor }) => (
-              <IconButton
-                icon='heart'
-                color={tintColor}
-                size={24}
-                onPress={favouriteProductHandler}
-                style={styles.headerRightButton}
-              />
-            ),
-          });
-        }
+        } 
         async function getUserFile(path) {
           try {
             let uri;
@@ -118,6 +106,11 @@ const ProductDetails = ({ route, navigation }) => {
         if (product.imagePath) {
           getProductFile(product.imagePath);
         }
+        if(productContext.userFavourites.includes(route.params.productId)){
+          setFavorite(true);
+        } else{
+          setFavorite(false);
+        }
       } catch (error) {
         navigation.setOptions({
           title: 'Erro ao buscar o produto.',
@@ -131,9 +124,10 @@ const ProductDetails = ({ route, navigation }) => {
   }, [selectedProductId]);
 
   useEffect(() => {
+    if (favorite === null) return;
     if (favorite) {
       navigation.setOptions({
-        headerRight: ({ tintColor }) => (
+        headerRight: () => (
           <IconButton
             icon='heart'
             color={'red'}

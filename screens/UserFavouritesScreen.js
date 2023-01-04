@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import ProductsList from '../components/Products/ProductsList';
-import FloatingButton from '../components/ui/FloatingButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { ProductContext } from '../store/product-context';
 
@@ -11,7 +10,7 @@ const wait = (timeout) => {
 
 const UserFavouritesScreen = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
-  const { userFavourites } = productContext;
+  const { userFavourites, products } = productContext;
   const { params: routeParams } = route;
 
   const [refreshing, setRefreshing] = useState(false);
@@ -34,14 +33,16 @@ const UserFavouritesScreen = ({ route, navigation }) => {
     wait(1000).then(() => setRefreshing(false));
   }, []);
 
-  if (refreshing) {
+  if (refreshing || productContext.isLoading) {
     return <LoadingOverlay />;
   }
 
   return (
     <>
       <ProductsList
-        products={userFavourites}
+        products={products.filter((product) => 
+          userFavourites.includes(product.id)
+        )}
         isLoading={productContext.isLoading}
       />
     </>

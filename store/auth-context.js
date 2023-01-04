@@ -40,13 +40,13 @@ const AuthContextProvider = ({ children }) => {
           setUserId(response.userId);
         }
       };
-      try {
-        setIsLoading(true);
-        await httpObj.sendRequest(getConfig, createTask);
-      } catch (error) {
+      setIsLoading(true);
+      await httpObj.sendRequest(getConfig, createTask);
+      if (httpObj.error) {
+        await AsyncStorage.removeItem('token');
         Alert.alert(
           'Autenticação falhou',
-          'Não foi possível realizar a autenticação rápida. Por favor, faça login novamente.',
+          'Não foi possível realizar a autenticação rápida. Por favor, faça login novamente.'
         );
       }
       setIsLoading(false);

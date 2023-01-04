@@ -51,6 +51,7 @@ const ProductsList = ({ products, searchText, isLoading }) => {
       </View>
     );
   }
+  
   return (
     <FlatList
       style={styles.list}
