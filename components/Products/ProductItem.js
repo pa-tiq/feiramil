@@ -3,7 +3,8 @@ import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
 import { mySQLTimeStampToDate } from '../../util/mySQLTimeStampToDate';
 import LoadingOverlay from '../ui/LoadingOverlay';
-import { useLayoutEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
+import { wait } from '../../util/wait';
 
 const ProductItem = ({ product, onSelect }) => {
   const selectProductHandler = () => {
@@ -12,7 +13,14 @@ const ProductItem = ({ product, onSelect }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [productItem, setProductItem] = useState({});
 
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(300).then(() => setRefreshing(false));
+  }, []); 
+
   useLayoutEffect(() => {
+    onRefresh();
     setProductItem(product);
     setIsLoading(false);
   }, [product]);
@@ -32,9 +40,9 @@ const ProductItem = ({ product, onSelect }) => {
     </View>
   );
 
-  if (productItem.imageUri) {
+  if (product.imageUri) {
     imagePreview = (
-      <Image style={styles.image} source={{ uri: productItem.imageUri }} />
+      <Image style={styles.image} source={{ uri: product.imageUri }} />
     );
   }
 

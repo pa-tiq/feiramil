@@ -1,4 +1,4 @@
-import { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,6 +17,10 @@ import Button from '../components/ui/Button';
 import { findOrDownloadImage } from '../util/findOrDownloadFile';
 import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
 
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
+
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [favorite, setFavorite] = useState(null);
@@ -28,6 +32,12 @@ const ProductDetails = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   let selectedProductId = route.params.productId;
   const userContext = useContext(UserContext);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(300).then(() => setRefreshing(false));
+  }, []); 
 
   const setProductId = () => {
     selectedProductId = route.params.productId;
@@ -45,6 +55,7 @@ const ProductDetails = ({ route, navigation }) => {
       await productContext.removeUserFavourite(selectedProductId);
     }
     setFavorite((previousValue) => !previousValue);
+    //onRefresh();
   };
 
   const editProductHandler = async () => {
@@ -153,7 +164,7 @@ const ProductDetails = ({ route, navigation }) => {
     }
   }, [favorite]);
 
-  if (isLoading) {
+  if (isLoading || refreshing) {
     return <LoadingOverlay />;
   }
 
