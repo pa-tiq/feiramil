@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,7 +13,6 @@ import Button from '../ui/Button';
 import IconTextButton from '../ui/IconTextButton';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { useNavigation } from '@react-navigation/native';
-import FlatButton from '../ui/FlatButton';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -28,26 +27,32 @@ const ProductForm = (props) => {
   const [enteredCity, setEnteredCity] = useState('');
   const [enteredState, setEnteredState] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-  const [editingProduct, setEditingProduct] = useState(props.editingProduct);
-  const [selectedCity, setSelectedCity] = useState(props.selectedCity);
-  const [selectedState, setSelectedState] = useState(props.selectedState);
+  //const [editingProduct, setEditingProduct] = useState(props.editingProduct);
+  //const [selectedCity, setSelectedCity] = useState(props.selectedCity);
+  //const [selectedState, setSelectedState] = useState(props.selectedState);
+
+  const { editingProduct, selectedCity, selectedState } = props;
 
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    wait(1000).then(() => setRefreshing(false));
+    wait(300).then(() => setRefreshing(false));
   }, []);
 
   useLayoutEffect(() => {
+    onRefresh();
+  }, []);  
+  
+  useEffect(() => {
     if (!editingProduct) return;
-    setEnteredTitle(editingProduct.title);
-    setEnteredDescription(editingProduct.description);
-    setEnteredCity(editingProduct.city);
-    setEnteredState(editingProduct.state);
-    setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
+    if (enteredTitle.length === 0) setEnteredTitle(editingProduct.title);
+    if (enteredDescription.length === 0)  setEnteredDescription(editingProduct.description);
+    setEnteredCity(selectedCity ? selectedCity : editingProduct.city);
+    setEnteredState(selectedState ? selectedState :  editingProduct.state);
+    if (enteredPrice.length === 0) setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
     setSelectedImage(editingProduct.imageUri);
     onRefresh();
-  }, [editingProduct]);
+  }, [editingProduct, selectedCity, selectedState]);
 
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
@@ -99,8 +104,8 @@ const ProductForm = (props) => {
       title: enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
-      city: props.selectedCity,
-      state: props.selectedState,
+      city: props.selectedCity ? props.selectedCity : editingProduct.city,
+      state: props.selectedState ? props.selectedState : editingProduct.state,
       image: selectedImage,
     };
 

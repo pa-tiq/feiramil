@@ -5,7 +5,6 @@ import {
   Text,
   ScrollView,
   Image,
-  Pressable,
 } from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
@@ -81,7 +80,14 @@ const ProductDetails = ({ route, navigation }) => {
               />
             ),
           });
-        } 
+        }
+        else{
+          if(productContext.userFavourites.includes(route.params.productId)){
+            setFavorite(true);
+          } else{
+            setFavorite(false);
+          }
+        }
         async function getUserFile(path) {
           try {
             let uri;
@@ -105,11 +111,6 @@ const ProductDetails = ({ route, navigation }) => {
         }
         if (product.imagePath) {
           getProductFile(product.imagePath);
-        }
-        if(productContext.userFavourites.includes(route.params.productId)){
-          setFavorite(true);
-        } else{
-          setFavorite(false);
         }
       } catch (error) {
         navigation.setOptions({

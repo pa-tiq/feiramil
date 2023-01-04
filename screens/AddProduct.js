@@ -8,7 +8,8 @@ import { uploadProductImage } from '../util/findOrDownloadFile';
 const AddProduct = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   const authContext = useContext(AuthContext);
-  const [editingProduct, setEditingProduct] = useState(route.params?.editingProduct)
+  const [editingProduct, setEditingProduct] = useState(route.params?.editingProduct);
+  console.log(route.params);
 
   useLayoutEffect(()=>{
     if(!editingProduct) return;

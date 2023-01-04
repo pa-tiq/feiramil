@@ -3,13 +3,11 @@ import {
   View,
   StyleSheet,
   Text,
-  ScrollView,
   TextInput,
   FlatList,
   Pressable,
 } from 'react-native';
 import Button from '../components/ui/Button';
-import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { Colors } from '../constants/styles';
 const cidades_IBGE = require('../constants/cidades.json');
 
