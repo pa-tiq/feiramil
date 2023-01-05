@@ -9,12 +9,14 @@ import { AuthContext } from '../../store/auth-context';
 import { ProductContext } from '../../store/product-context';
 import { uploadUserPhoto } from '../../util/findOrDownloadFile';
 import LoadingOverlay from '../ui/LoadingOverlay';
+import { useNavigation } from '@react-navigation/core';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
 function UserData(props) {
+  const navigation = useNavigation();
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
   const productContext = useContext(ProductContext);
@@ -116,6 +118,10 @@ function UserData(props) {
       phone: !phoneIsValid,
     });
     setCredentials(null);
+    navigation.navigate('User', {
+      city: city,
+      state: state,
+    });
   }
 
   if (refreshing) {

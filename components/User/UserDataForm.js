@@ -34,6 +34,10 @@ function UserDataForm(props) {
     setEnteredPhone(user.phone);
     setEnteredCity(user.city);
     setEnteredState(user.state);
+    navigation.navigate('User', {
+      city: user.city,
+      state: user.state,
+    });
   }
 
   const userContext = useContext(UserContext);
@@ -46,7 +50,7 @@ function UserDataForm(props) {
     setEnteredPhone((props.credentials && props.credentials.phone) ? props.credentials.phone : user.phone);
     setEnteredCity(props.selectedCity ? props.selectedCity : (user.city ? user.city : ''));
     setEnteredState(props.selectedState ? props.selectedState : (user.state ? user.state : ''));
-    setEditForm(props.editForm);
+    setEditForm(props.editForm || (props.selectedCity !== user.city) || (props.selectedState !== user.state));
   }, [user, props]);
 
   let {
