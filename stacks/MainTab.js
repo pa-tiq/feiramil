@@ -5,6 +5,8 @@ import { Colors } from '../constants/styles';
 import IconButton from '../components/ui/IconButton';
 import AddProduct from '../screens/AddProduct';
 import ProductDetails from '../screens/ProductDetails';
+import FiltersScreen from '../screens/FiltersScreen';
+import CityPick from '../screens/CityPick';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,16 @@ export default function MainTab() {
         name='ProductDetails'
         component={ProductDetails}
         options={{ title: 'Carregando produto...', headerTitleAlign: 'center' }}
+      />      
+      <Stack.Screen
+        name='FiltersScreen'
+        component={FiltersScreen}
+        options={{ title: 'Filtros', headerTitleAlign: 'center' }}
+      />
+      <Stack.Screen
+        name='FiltersCityPick'
+        component={CityPick}
+        options={{ title: 'Selecione a cidade', headerTitleAlign: 'center' }}
       />
     </Stack.Navigator>
   );

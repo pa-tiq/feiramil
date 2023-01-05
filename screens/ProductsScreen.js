@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import FiltersModal from '../components/Modals/FiltersModal';
 import ProductsList from '../components/Products/ProductsList';
 import Button from '../components/ui/Button';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -47,6 +48,7 @@ const ProductsScreen = ({ route, navigation }) => {
 
   const showFilterScreen = () => {
     setShowFilter(true);
+    navigation.navigate('FiltersScreen');
   };
 
   if (refreshing) {
