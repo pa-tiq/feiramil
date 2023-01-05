@@ -3,6 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
 import { Alert } from 'react-native';
+//import bcrypt from 'bcryptjs';
+import CryptoJS from 'crypto-js';
 
 export const AuthContext = createContext({
   token: '',
@@ -60,7 +62,8 @@ const AuthContextProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const postConfig = {
+    const hashedPassword = CryptoJS.SHA256(password);
+    const postConfig = {  
       url: URLs.login_url,
       method: 'POST',
       headers: {
@@ -68,7 +71,7 @@ const AuthContextProvider = ({ children }) => {
       },
       body: {
         email: email,
-        password: password,
+        password: hashedPassword.toString(CryptoJS.enc.Hex),
       },
     };
     const createTask = (response) => {
@@ -90,6 +93,7 @@ const AuthContextProvider = ({ children }) => {
     AsyncStorage.removeItem('token');
   };
   const signup = async (email, password, name, om) => {
+    const hashedPassword = CryptoJS.SHA256(password);
     const putConfig = {
       url: URLs.signup_url,
       method: 'PUT',
@@ -98,7 +102,7 @@ const AuthContextProvider = ({ children }) => {
       },
       body: {
         email: email,
-        password: password,
+        password: hashedPassword.toString(CryptoJS.enc.Hex),
         name: name,
         om: om,
       },
