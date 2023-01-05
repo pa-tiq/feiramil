@@ -34,7 +34,7 @@ const AddProduct = ({ route, navigation }) => {
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate('UserProductsScreen', { triggerReload: true });
+    navigation.navigate('UserProductsScreen', { triggerUserProductsReload: true });
   }  
 
   async function editProductHandler(product, newImageChosen) {
@@ -51,7 +51,7 @@ const AddProduct = ({ route, navigation }) => {
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate('UserProductsScreen', { triggerReload: true });
+    navigation.navigate('UserProductsScreen', { triggerUserProductsReload: true });
   }
 
   return (

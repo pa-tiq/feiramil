@@ -17,14 +17,14 @@ const UserFavouritesScreen = ({ route, navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    productContext.triggerReload();
+    productContext.triggerUserProductsReload();
     wait(1000).then(() => setRefreshing(false));
   }, []);
 
   useEffect(() => {
-    if (routeParams && routeParams.triggerReload) {
+    if (routeParams && routeParams.triggerUserProductsReload) {
       onRefresh();
-      routeParams.triggerReload = null;
+      routeParams.triggerUserProductsReload = null;
     }
   }, [routeParams]);
 

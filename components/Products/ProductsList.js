@@ -27,7 +27,7 @@ const ProductsList = ({ products, searchText, isLoading }) => {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    productContext.triggerReload();
+    productContext.triggerUserProductsReload();
     wait(1000).then(() => setRefreshing(false));
   }, []);
 

@@ -26,7 +26,7 @@ const ProductsScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    if (routeParams && routeParams.triggerReload) {
+    if (routeParams && routeParams.triggerUserProductsReload) {
       onRefresh();
       routeParams.trigger = null;
     }

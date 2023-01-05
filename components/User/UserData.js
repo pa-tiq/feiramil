@@ -33,7 +33,7 @@ function UserData(props) {
     }
     updatePhoto();
     setSelectedImage(image);
-    productContext.triggerReload();
+    productContext.triggerUserProductsReload();
   }
 
   const [refreshing, setRefreshing] = useState(false);
@@ -105,7 +105,7 @@ function UserData(props) {
             state: state,
           };
     const resStatus = await userContext.updateUser(updatedUser);
-    productContext.triggerReload();
+    productContext.triggerUserProductsReload();
   }
 
   if (refreshing) {

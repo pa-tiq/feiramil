@@ -10,7 +10,7 @@ export const ProductContext = createContext({
   userFavourites: [],
   isLoading: false,
   error: null,
-  triggerReload: () => {},
+  triggerUserProductsReload: () => {},
   triggerFeedReload: () => {},
   addProduct: async (product) => {},
   addProductImagePath: async ({ path, productId }) => {},
@@ -74,7 +74,7 @@ const ProductContextProvider = (props) => {
     }
   }, [productsChanged, feedProductsChanged]);
 
-  const triggerReload = () => {
+  const triggerUserProductsReload = () => {
     setProductsChanged(true);
   };
   const triggerFeedReload = () => {
@@ -345,7 +345,6 @@ const ProductContextProvider = (props) => {
     };
     const createTask = (response) => {
       if (response.status === 201) {
-        console.log(response);
         setFeedProductsChanged(true);
       }
     };
@@ -371,8 +370,6 @@ const ProductContextProvider = (props) => {
     };
     const createTask = (response) => {
       if (response.status === 200) {
-        console.log(response);
-
         setFeedProductsChanged(true);
       }
     };
@@ -391,7 +388,7 @@ const ProductContextProvider = (props) => {
         userFavourites: userFavourites,
         isLoading: httpObj.isLoading,
         error: httpObj.error,
-        triggerReload: triggerReload,
+        triggerUserProductsReload: triggerUserProductsReload,
         triggerFeedReload: triggerFeedReload,
         addProduct: addProduct,
         addProductImagePath: addProductImagePath,

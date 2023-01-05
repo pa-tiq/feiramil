@@ -45,7 +45,7 @@ const ProductDetails = ({ route, navigation }) => {
 
   const removeProductHandler = async () => {
     productContext.removeProduct(selectedProductId);
-    navigation.navigate('UserProductsScreen', { triggerReload: true });
+    navigation.navigate('UserProductsScreen', { triggerUserProductsReload: true });
   };
 
   const favouriteProductHandler = async () => {
