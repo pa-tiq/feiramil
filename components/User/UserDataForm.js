@@ -1,5 +1,5 @@
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import Button from '../ui/Button';
 import Input from '../Auth/Input';
@@ -40,15 +40,16 @@ function UserDataForm(props) {
   const { user } = userContext;
 
   useLayoutEffect(() => {
-    setEnteredEmail(user.email);
-    setEnteredName(user.name);
-    setEnteredOm(user.om);
-    setEnteredPhone(user.phone);
+    setEnteredEmail((props.credentials && props.credentials.email) ? props.credentials.email : user.email);
+    setEnteredName((props.credentials && props.credentials.name) ? props.credentials.name : user.name);
+    setEnteredOm((props.credentials && props.credentials.om) ? props.credentials.om : user.om);
+    setEnteredPhone((props.credentials && props.credentials.phone) ? props.credentials.phone : user.phone);
     setEnteredCity(props.selectedCity ? props.selectedCity : (user.city ? user.city : ''));
     setEnteredState(props.selectedState ? props.selectedState : (user.state ? user.state : ''));
+    setEditForm(props.editForm);
   }, [user, props]);
 
-  const {
+  let {
     email: emailIsInvalid,
     password: passwordIsInvalid,
     name: nameIsInvalid,
@@ -77,6 +78,28 @@ function UserDataForm(props) {
   }
 
   function submitHandler() {
+
+    //const emailIsValid = enteredEmail.includes('@');
+    //const passwordIsValid = enteredPassword.length > 6 || enteredPassword.length === 0;
+    //const nameIsValid = enteredName.length > 2;
+    //const omIsValid = enteredOm.length > 1;
+    //const phoneIsValid = enteredPhone.length > 9;
+    //if (
+    //  !emailIsValid ||
+    //  !passwordIsValid ||
+    //  !nameIsValid ||
+    //  !omIsValid ||
+    //  !phoneIsValid
+    //) {
+    //  Alert.alert('Dados inválidos', 'Por favor verifique os dados inseridos.');
+    //  emailIsInvalid =  !emailIsValid;
+    //  passwordIsInvalid = !passwordIsValid;
+    //  nameIsInvalid = !nameIsValid;
+    //  omIsInvalid = !omIsValid;
+    //  phoneIsInvalid = !phoneIsValid;
+    //  return;
+    //}
+
     props.onSubmit({
       email: enteredEmail,
       password: enteredPassword,

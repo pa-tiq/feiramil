@@ -23,12 +23,12 @@ function Input({
 
   return (
     <View style={styles.inputContainer}>
-      <Text style={[styles.label, isInvalid && styles.labelInvalid]}>
+      <Text style={[styles.label, isInvalid && styles.labelInvalid, !editable && styles.labelNotEditable]}>
         {label}
       </Text>
       <View style={styles.textInputContainer}>
         <TextInput
-          style={[styles.input, isInvalid && styles.inputInvalid]}
+          style={[styles.input, isInvalid && styles.inputInvalid, !editable && styles.inputNotEditable]}
           autoCapitalize={false}
           autoCapitalize='none'
           keyboardType={keyboardType}
@@ -40,7 +40,7 @@ function Input({
         />
         {secure && <IconButton
           icon={viewSecure ? 'eye-outline' : "eye-off-outline"}
-          color='black'
+          color={editable ? 'black' : 'grey'}
           size={24}
           onPress={changeViewSecure}
           style={styles.iconButton}
@@ -84,4 +84,16 @@ const styles = StyleSheet.create({
   inputInvalid: {
     backgroundColor: Colors.error100,
   },
+  inputNotEditable:{
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    backgroundColor: 'grey',
+    borderRadius: 4,
+    fontSize: 16,
+    flex:1
+  },
+  labelNotEditable:{
+    color: 'grey',
+    marginBottom: 4,
+  }
 });

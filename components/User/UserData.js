@@ -32,7 +32,6 @@ function UserData(props) {
       }
     }
     updatePhoto();
-    setSelectedImage(image);
     productContext.triggerUserProductsReload();
   }
 
@@ -50,16 +49,18 @@ function UserData(props) {
     phone: false,
   });
 
-  async function submitHandler(credentials) {
-    let { email, password, name, om, phone, city, state } = credentials;
+  const [credentials, setCredentials] = useState(null)
+
+  async function submitHandler(insertedCredentials) {
+    let { email, password, name, om, phone, city, state } = insertedCredentials;
 
     email = email.trim();
     password = password.trim();
-    name = name.trim();
-    om = om.trim();
-    phone = phone.trim();
-    city = city.trim();
-    state = state.trim();
+    name = name ? name.trim() : '';
+    om = om ? om.trim() : '';
+    phone = phone ? phone.trim() : '';
+    city = city ? city.trim() : '';
+    state = state ? state.trim(): '';
 
     const emailIsValid = email.includes('@');
     const passwordIsValid = password.length > 6 || password.length === 0;
@@ -82,6 +83,7 @@ function UserData(props) {
         om: !omIsValid,
         phone: !phoneIsValid,
       });
+      setCredentials(insertedCredentials);
       return;
     }
     const updatedUser =
@@ -104,8 +106,16 @@ function UserData(props) {
             city: city,
             state: state,
           };
-    const resStatus = await userContext.updateUser(updatedUser);
+    await userContext.updateUser(updatedUser);
     productContext.triggerUserProductsReload();
+    setCredentialsInvalid({
+      email: !emailIsValid,
+      password: !passwordIsValid,
+      name: !nameIsValid,
+      om: !omIsValid,
+      phone: !phoneIsValid,
+    });
+    setCredentials(null);
   }
 
   if (refreshing) {
@@ -121,6 +131,8 @@ function UserData(props) {
         <UserDataForm
           onSubmit={submitHandler}
           credentialsInvalid={credentialsInvalid}
+          credentials = {credentials}
+          editForm = {!!credentials}
           selectedCity={props.selectedCity}
           selectedState={props.selectedState}
         />
