@@ -25,10 +25,12 @@ const FiltersScreen = ({ route }) => {
       ) {
         return;
       }
-      const newList = [
-        ...locationList.slice(0, locationList.length - 1),
-        { city: params.city, state: params.state, editable: true },
-      ];
+      //const newList = [
+      //  ...locationList.slice(0, locationList.length - 1),
+      //  { city: params.city, state: params.state, editable: true },
+      //];
+      let newList = [...locationList];
+      newList[params.index] = { city: params.city, state: params.state, editable: true }
       setLocationList(newList);
     }
   }, [params]);
@@ -56,7 +58,7 @@ const FiltersScreen = ({ route }) => {
           style={styles.list}
           data={locationList}
           keyExtractor={(_, idx) => idx}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <CityPickButton
               cityPickToNavigate={'FiltersCityPick'}
               parentScreen={'FiltersScreen'}
@@ -64,6 +66,7 @@ const FiltersScreen = ({ route }) => {
               selectedState={item.state}
               editable={item.editable}
               label={item.label}
+              index={index}
             />
           )}
         />

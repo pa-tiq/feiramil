@@ -11,6 +11,8 @@ export const UserContext = createContext({
   removeUser: (userId) => {},
   updateUser: async (user) => {},
   updatePhotoPath: async (user) => {},
+  addCityFilter: async (city,state) => {},
+  removeCityFilter: async (city,state) => {},
 });
 
 const UserContextProvider = (props) => {
@@ -104,6 +106,58 @@ const UserContextProvider = (props) => {
     }
   };
 
+  const addCityFilter = async (city, state) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.add_city_filter_url,
+      method: 'POST',
+      body: {
+        city: city,
+        state: state,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+    };
+    const createTask = (response) => {
+      if (response.status === 201) {
+        setFeedProductsChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
+  };
+
+  const removeCityFilter = async (city, state) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.remove_city_filter_url,
+      method: 'DELETE',
+      body: {
+        city: city,
+        state: state,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+    };
+    const createTask = (response) => {
+      if (response.status === 200) {
+        setFeedProductsChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -114,6 +168,8 @@ const UserContextProvider = (props) => {
         removeUser: removeUser,
         updateUser: updateUser,
         updatePhotoPath: updatePhotoPath,
+        addCityFilter: addCityFilter,
+        removeCityFilter: removeCityFilter,
       }}
     >
       {props.children}
