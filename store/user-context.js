@@ -5,20 +5,23 @@ import { AuthContext } from './auth-context';
 
 export const UserContext = createContext({
   user: {},
+  filters: [],
   isLoading: false,
   error: null,
   fetchUser: async () => {},
   removeUser: (userId) => {},
   updateUser: async (user) => {},
   updatePhotoPath: async (user) => {},
-  addCityFilter: async (city,state) => {},
-  removeCityFilter: async (city,state) => {},
+  addCityFilter: async (city, state) => {},
+  updateCityFilter: async (id, city, state) => {},
+  removeCityFilter: async (city, state) => {},
 });
 
 const UserContextProvider = (props) => {
   const httpObj = useHttp();
   const authContext = useContext(AuthContext);
   const [user, setUser] = useState({});
+  const [filters, setFilters] = useState([]);
   const [userChanged, setUserChanged] = useState(false);
 
   useEffect(() => {
@@ -79,7 +82,7 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return responseStatus
+    return responseStatus;
   };
 
   const updatePhotoPath = async (paths) => {
@@ -87,12 +90,12 @@ const UserContextProvider = (props) => {
       url: URLs.update_user_photo_url,
       method: 'PUT',
       body: {
-        'path': paths.path,
-        'oldpath': paths.oldpath,
+        path: paths.path,
+        oldpath: paths.oldpath,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
-        'Content-Type': 'application/json',       
+        'Content-Type': 'application/json',
       },
     };
     const createTask = (response) => {
@@ -122,7 +125,38 @@ const UserContextProvider = (props) => {
     };
     const createTask = (response) => {
       if (response.status === 201) {
-        setFeedProductsChanged(true);
+        let fil = filters;
+        fil.add({ id: response.filterId, city: city, state: state });
+        setFilters(fil);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+    return loadedUser;
+  };  
+  
+  const updateCityFilter = async (id, city, state) => {
+    let loadedUser = {};
+    const putConfig = {
+      url: URLs.update_city_filter_url,
+      method: 'PUT',
+      body: {
+        id: id,
+        city: city,
+        state: state,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+    };
+    const createTask = (response) => {
+      if (response.status === 201) {
+        let fil = filters;
+        fil.add({ id: response.filterId, city: city, state: state });
+        setFilters(fil);
       }
     };
     await httpObj.sendRequest(putConfig, createTask);
@@ -148,7 +182,8 @@ const UserContextProvider = (props) => {
     };
     const createTask = (response) => {
       if (response.status === 200) {
-        setFeedProductsChanged(true);
+        let fil = filters.filter((item) => item.id != response.filterId);
+        setFilters(fil);
       }
     };
     await httpObj.sendRequest(putConfig, createTask);
@@ -162,6 +197,7 @@ const UserContextProvider = (props) => {
     <UserContext.Provider
       value={{
         user: user,
+        filters: filters,
         isLoading: httpObj.isLoading,
         error: httpObj.error,
         fetchUser: fetchUser,
@@ -169,6 +205,7 @@ const UserContextProvider = (props) => {
         updateUser: updateUser,
         updatePhotoPath: updatePhotoPath,
         addCityFilter: addCityFilter,
+        updateCityFilter: updateCityFilter,
         removeCityFilter: removeCityFilter,
       }}
     >

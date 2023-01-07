@@ -30,7 +30,22 @@ const FiltersScreen = ({ route }) => {
       //  { city: params.city, state: params.state, editable: true },
       //];
       let newList = [...locationList];
-      newList[params.index] = { city: params.city, state: params.state, editable: true }
+      let id;
+      if (!newList[params.index]) {
+        id = userContext.addCityFilter(params.city, params.state);
+      } else {
+        id = userContext.updateCityFilter(
+          newList[params.index].id,
+          params.city,
+          params.state
+        );
+      }
+      newList[params.index] = {
+        id: id,
+        city: params.city,
+        state: params.state,
+        editable: true,
+      };
       setLocationList(newList);
     }
   }, [params]);
@@ -45,6 +60,10 @@ const FiltersScreen = ({ route }) => {
 
   const removeLocation = () => {
     if (locationList.length > 1) {
+      userContext.removeCityFilter(
+        locationList[locationList.length - 1].city,
+        locationList[locationList.length - 1].state
+      );
       setLocationList((prevValue) => {
         return [...prevValue.slice(0, locationList.length - 1)];
       });
