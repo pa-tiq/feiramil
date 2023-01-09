@@ -44,13 +44,35 @@ function UserDataForm(props) {
   const { user } = userContext;
 
   useLayoutEffect(() => {
-    setEnteredEmail((props.credentials && props.credentials.email) ? props.credentials.email : user.email);
-    setEnteredName((props.credentials && props.credentials.name) ? props.credentials.name : user.name);
-    setEnteredOm((props.credentials && props.credentials.om) ? props.credentials.om : user.om);
-    setEnteredPhone((props.credentials && props.credentials.phone) ? props.credentials.phone : user.phone);
-    setEnteredCity(props.selectedCity ? props.selectedCity : (user.city ? user.city : ''));
-    setEnteredState(props.selectedState ? props.selectedState : (user.state ? user.state : ''));
-    setEditForm(props.editForm || (props.selectedCity !== user.city) || (props.selectedState !== user.state));
+    setEnteredEmail(
+      props.credentials && props.credentials.email
+        ? props.credentials.email
+        : user.email
+    );
+    setEnteredName(
+      props.credentials && props.credentials.name
+        ? props.credentials.name
+        : user.name
+    );
+    setEnteredOm(
+      props.credentials && props.credentials.om ? props.credentials.om : user.om
+    );
+    setEnteredPhone(
+      props.credentials && props.credentials.phone
+        ? props.credentials.phone
+        : user.phone
+    );
+    setEnteredCity(
+      props.selectedCity ? props.selectedCity : user.city ? user.city : ''
+    );
+    setEnteredState(
+      props.selectedState ? props.selectedState : user.state ? user.state : ''
+    );
+    setEditForm(
+      props.editForm ||
+        (props.selectedCity && props.selectedCity !== user.city) ||
+        (props.selectedCity && props.selectedState !== user.state)
+    );
   }, [user, props]);
 
   let {
@@ -82,7 +104,6 @@ function UserDataForm(props) {
   }
 
   function submitHandler() {
-
     //const emailIsValid = enteredEmail.includes('@');
     //const passwordIsValid = enteredPassword.length > 6 || enteredPassword.length === 0;
     //const nameIsValid = enteredName.length > 2;
@@ -157,7 +178,12 @@ function UserDataForm(props) {
       </View>
     );
   }
-  if (enteredCity && enteredState && enteredCity.length !== 0 && enteredState.length !== 0) {
+  if (
+    enteredCity &&
+    enteredState &&
+    enteredCity.length !== 0 &&
+    enteredState.length !== 0
+  ) {
     cityView = (
       <View style={styles.cityButton}>
         <IconTextButton

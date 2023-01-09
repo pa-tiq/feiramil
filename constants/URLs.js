@@ -23,6 +23,7 @@ export const URLs = {
   remove_user_favourite_url: `${baseURL}/feed/favourite`,
   get_product_detail_url: `${baseURL}/feed/product`,
   delete_product_url: `${baseURL}/feed/product`,
+  get_city_filters_url: `${baseURL}/user/filter`,
   add_city_filter_url: `${baseURL}/user/filter`,
   update_city_filter_url: `${baseURL}/user/filter`,
   remove_city_filter_url: `${baseURL}/user/filter`

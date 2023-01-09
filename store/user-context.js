@@ -12,6 +12,7 @@ export const UserContext = createContext({
   removeUser: (userId) => {},
   updateUser: async (user) => {},
   updatePhotoPath: async (user) => {},
+  fetchFilters: async () => {},
   addCityFilter: async (city, state) => {},
   updateCityFilter: async (id, city, state) => {},
   removeCityFilter: async (city, state) => {},
@@ -24,8 +25,22 @@ const UserContextProvider = (props) => {
   const [filters, setFilters] = useState([]);
   const [userChanged, setUserChanged] = useState(false);
 
+  async function getUser(){
+    await fetchUser();
+  }  
+  
+  async function getFilters(){
+    await fetchFilters();
+  }
+
   useEffect(() => {
-    fetchUser();
+    getUser()
+    getFilters();
+  }, []);
+
+  useEffect(() => {
+    getUser();
+    getFilters();
     setUserChanged(false);
   }, [userChanged]);
 
@@ -109,8 +124,27 @@ const UserContextProvider = (props) => {
     }
   };
 
+  const fetchFilters = async (city, state) => {
+    const putConfig = {
+      url: URLs.get_city_filters_url,
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+    };
+    const createTask = (response) => {
+      if (response.status === 200) {
+        setFilters(response.filters);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
+  };
+
   const addCityFilter = async (city, state) => {
-    let loadedUser = {};
     const putConfig = {
       url: URLs.add_city_filter_url,
       method: 'POST',
@@ -134,11 +168,9 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return loadedUser;
-  };  
-  
+  };
+
   const updateCityFilter = async (id, city, state) => {
-    let loadedUser = {};
     const putConfig = {
       url: URLs.update_city_filter_url,
       method: 'PUT',
@@ -163,17 +195,14 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return loadedUser;
   };
 
-  const removeCityFilter = async (city, state) => {
-    let loadedUser = {};
+  const removeCityFilter = async (id) => {
     const putConfig = {
       url: URLs.remove_city_filter_url,
       method: 'DELETE',
       body: {
-        city: city,
-        state: state,
+        id: id,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
@@ -190,7 +219,6 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
-    return loadedUser;
   };
 
   return (
@@ -204,6 +232,7 @@ const UserContextProvider = (props) => {
         removeUser: removeUser,
         updateUser: updateUser,
         updatePhotoPath: updatePhotoPath,
+        fetchFilters: fetchFilters,
         addCityFilter: addCityFilter,
         updateCityFilter: updateCityFilter,
         removeCityFilter: removeCityFilter,

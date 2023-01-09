@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   icon: {
-    marginRight: 6,
+    marginHorizontal: 5,
   },
   buttonText: {
     textAlign: 'center',

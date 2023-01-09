@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import CityPickButton from '../components/ui/CItyPickButton';
 import FloatingButton from '../components/ui/FloatingButton';
+import Button from '../components/ui/Button';
 import { UserContext } from '../store/user-context';
 
 const FiltersScreen = ({ route }) => {
   const userContext = useContext(UserContext);
   const { params } = route;
+  const { filters } = userContext;
 
   const [locationList, setLocationList] = useState([
     {
@@ -18,6 +20,15 @@ const FiltersScreen = ({ route }) => {
   ]);
 
   useEffect(() => {
+    let filterList = [];
+    filterList[0] = locationList[0];
+    filters.forEach((filter) => {
+      filterList.push(filter);
+    });
+    setLocationList(filterList);
+  }, [filters]);
+
+  useEffect(() => {
     if (params && params.city) {
       if (
         params.city === userContext.user.city &&
@@ -25,28 +36,15 @@ const FiltersScreen = ({ route }) => {
       ) {
         return;
       }
-      //const newList = [
-      //  ...locationList.slice(0, locationList.length - 1),
-      //  { city: params.city, state: params.state, editable: true },
-      //];
-      let newList = [...locationList];
-      let id;
       if (!newList[params.index]) {
-        id = userContext.addCityFilter(params.city, params.state);
+        userContext.addCityFilter(params.city, params.state);
       } else {
-        id = userContext.updateCityFilter(
+        userContext.updateCityFilter(
           newList[params.index].id,
           params.city,
           params.state
         );
       }
-      newList[params.index] = {
-        id: id,
-        city: params.city,
-        state: params.state,
-        editable: true,
-      };
-      setLocationList(newList);
     }
   }, [params]);
 
@@ -58,14 +56,11 @@ const FiltersScreen = ({ route }) => {
     }
   };
 
-  const removeLocation = () => {
+  const removeLocation = (locationId) => {
     if (locationList.length > 1) {
-      userContext.removeCityFilter(
-        locationList[locationList.length - 1].city,
-        locationList[locationList.length - 1].state
-      );
+      userContext.removeCityFilter(locationList[locationId].id);
       setLocationList((prevValue) => {
-        return [...prevValue.slice(0, locationList.length - 1)];
+        return [...prevValue.filter((item, idx) => idx !== locationId)];
       });
     }
   };
@@ -78,15 +73,25 @@ const FiltersScreen = ({ route }) => {
           data={locationList}
           keyExtractor={(_, idx) => idx}
           renderItem={({ item, index }) => (
-            <CityPickButton
-              cityPickToNavigate={'FiltersCityPick'}
-              parentScreen={'FiltersScreen'}
-              selectedCity={item.city}
-              selectedState={item.state}
-              editable={item.editable}
-              label={item.label}
-              index={index}
-            />
+            <View style={styles.listItem}>
+              <CityPickButton
+                cityPickToNavigate={'FiltersCityPick'}
+                parentScreen={'FiltersScreen'}
+                selectedCity={item.city}
+                selectedState={item.state}
+                editable={item.editable}
+                label={item.label}
+                index={index}
+              />
+              {index !== 0 && (
+                <View style={styles.buttonListItem}>
+                  <Button
+                    icon={'trash'}
+                    onPress={removeLocation.bind(this, index)}
+                  ></Button>
+                </View>
+              )}
+            </View>
           )}
         />
       </View>
@@ -96,15 +101,6 @@ const FiltersScreen = ({ route }) => {
         size={24}
         onPress={() => {
           addLocation();
-        }}
-      />
-      <FloatingButton
-        icon={'remove'}
-        color={'white'}
-        size={24}
-        style={{ right: 100 }}
-        onPress={() => {
-          removeLocation();
         }}
       />
     </>
@@ -132,5 +128,12 @@ const styles = StyleSheet.create({
   list: {
     marginHorizontal: 10,
     marginVertical: 5,
+  },
+  listItem: {
+    flexDirection: 'row',
+  },
+  buttonListItem: {
+    marginHorizontal: 3,
+    marginTop: 32,
   },
 });
