@@ -1,11 +1,13 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { InteractionManager, StyleSheet, View } from 'react-native';
+import { interpolateNode } from 'react-native-reanimated';
 import FiltersModal from '../components/Modals/FiltersModal';
 import ProductsList from '../components/Products/ProductsList';
 import Button from '../components/ui/Button';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import SearchBar from '../components/ui/SearchBar';
 import { ProductContext } from '../store/product-context';
+import { UserContext } from '../store/user-context';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -13,10 +15,14 @@ const wait = (timeout) => {
 
 const ProductsScreen = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
+  const userContext = useContext(UserContext);
+  const { user, filters } = userContext;
   const { products } = productContext;
   const { params: routeParams } = route;
   const [searchText, setSearchText] = useState('');
   const [showFilter, setShowFilter] = useState(false);
+  const [cityStateList, setCityList] = useState([]);
+  const [stateList, setStateList] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -32,6 +38,8 @@ const ProductsScreen = ({ route, navigation }) => {
       routeParams.trigger = null;
     }
   }, [routeParams]);
+
+  useEffect(() => {}, [user, filters]);
 
   useEffect(() => {
     setRefreshing(true);
@@ -75,7 +83,29 @@ const ProductsScreen = ({ route, navigation }) => {
         </View>
       </View>
       <ProductsList
-        products={products}
+        products={
+          userContext.user.filter
+            ? products.filter((item) => {
+                let itemWillShow = false;
+                if (
+                  userContext.user.city === item.city &&
+                  userContext.user.state === item.state
+                ) {
+                  return true;
+                }
+                userContext.filters.forEach((filter) => {
+                  if (
+                    item.city === filter.city &&
+                    item.state === filter.state
+                  ) {
+                    itemWillShow = true;
+                    return;
+                  }
+                });
+                return itemWillShow;
+              })
+            : products
+        }
         searchText={searchText}
         isLoading={productContext.isLoading}
       />

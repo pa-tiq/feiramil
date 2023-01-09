@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
 import { Alert } from 'react-native';
-//import bcrypt from 'bcryptjs';
 import CryptoJS from 'crypto-js';
 
 export const AuthContext = createContext({

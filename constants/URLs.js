@@ -26,5 +26,6 @@ export const URLs = {
   get_city_filters_url: `${baseURL}/user/filter`,
   add_city_filter_url: `${baseURL}/user/filter`,
   update_city_filter_url: `${baseURL}/user/filter`,
-  remove_city_filter_url: `${baseURL}/user/filter`
+  remove_city_filter_url: `${baseURL}/user/filter`,
+  apply_filtering_url: `${baseURL}/user/filtering`
 };

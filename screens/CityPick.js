@@ -66,7 +66,8 @@ const CityPick = ({ route, navigation }) => {
     navigation.navigate(route.params.parentScreen, {
       city: selectedCity.cidade,
       state: selectedCity.estado,
-      index: route.params.index
+      index: route.params.index,
+      id: route.params.id
     });
   };
 

@@ -4,11 +4,13 @@ import CityPickButton from '../components/ui/CItyPickButton';
 import FloatingButton from '../components/ui/FloatingButton';
 import Button from '../components/ui/Button';
 import { UserContext } from '../store/user-context';
+import { Colors } from '../constants/styles';
 
 const FiltersScreen = ({ route }) => {
   const userContext = useContext(UserContext);
   const { params } = route;
   const { filters } = userContext;
+  const [filtersChanged, setFiltersChanged] = useState(false);
 
   const [locationList, setLocationList] = useState([
     {
@@ -29,6 +31,14 @@ const FiltersScreen = ({ route }) => {
   }, [filters]);
 
   useEffect(() => {
+    if (filtersChanged) {
+      userContext.fetchFilters();
+      setFiltersChanged(false);
+    }
+  }, [filtersChanged]);
+
+  useEffect(() => {
+    console.log(params);
     if (params && params.city) {
       if (
         params.city === userContext.user.city &&
@@ -36,14 +46,12 @@ const FiltersScreen = ({ route }) => {
       ) {
         return;
       }
-      if (!newList[params.index]) {
+      if (!params.id) {
         userContext.addCityFilter(params.city, params.state);
+        setFiltersChanged(true);
       } else {
-        userContext.updateCityFilter(
-          newList[params.index].id,
-          params.city,
-          params.state
-        );
+        userContext.updateCityFilter(params.id, params.city, params.state);
+        setFiltersChanged(true);
       }
     }
   }, [params]);
@@ -65,6 +73,10 @@ const FiltersScreen = ({ route }) => {
     }
   };
 
+  const applyFiltering = () => {
+    userContext.applyFilters(!userContext.user.filter)
+  }
+
   return (
     <>
       <View style={styles.rootContainer}>
@@ -82,6 +94,7 @@ const FiltersScreen = ({ route }) => {
                 editable={item.editable}
                 label={item.label}
                 index={index}
+                id={item.id}
               />
               {index !== 0 && (
                 <View style={styles.buttonListItem}>
@@ -94,6 +107,13 @@ const FiltersScreen = ({ route }) => {
             </View>
           )}
         />
+        <Button
+          style={userContext.user.filter ? styles.buttonApplyFilters : styles.buttonNotApplyFilters}
+          icon={'checkmark-circle-outline'}
+          onPress={applyFiltering}
+        >
+          Aplicar Filtros
+        </Button>
       </View>
       <FloatingButton
         icon={'add'}
@@ -135,5 +155,15 @@ const styles = StyleSheet.create({
   buttonListItem: {
     marginHorizontal: 3,
     marginTop: 32,
+  },
+  buttonApplyFilters: {
+    marginTop: 10,
+    marginHorizontal: 13,
+  },
+  buttonNotApplyFilters: {
+    marginTop: 10,
+    marginHorizontal: 13,
+    borderColor: Colors.primary500,
+    backgroundColor: Colors.background,
   },
 });

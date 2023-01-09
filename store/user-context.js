@@ -16,6 +16,7 @@ export const UserContext = createContext({
   addCityFilter: async (city, state) => {},
   updateCityFilter: async (id, city, state) => {},
   removeCityFilter: async (city, state) => {},
+  applyFilters: async (filtering) => {},
 });
 
 const UserContextProvider = (props) => {
@@ -64,6 +65,7 @@ const UserContextProvider = (props) => {
         photo: response.user.photo,
         city: response.user.city,
         state: response.user.state,
+        filter: response.user.filter
       };
       setUser(loadedUser);
     };
@@ -160,7 +162,7 @@ const UserContextProvider = (props) => {
     const createTask = (response) => {
       if (response.status === 201) {
         let fil = filters;
-        fil.add({ id: response.filterId, city: city, state: state });
+        fil.push({ id: response.filterId, city: city, state: state });
         setFilters(fil);
       }
     };
@@ -219,6 +221,29 @@ const UserContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
+  };  
+  
+  const applyFilters = async (filtering) => {
+    const putConfig = {
+      url: URLs.apply_filtering_url,
+      method: 'PUT',
+      body: {
+        filtering: filtering,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+    };
+    const createTask = (response) => {
+      if (response.status === 200) {
+        setUserChanged(true);
+      }
+    };
+    await httpObj.sendRequest(putConfig, createTask);
+    if (httpObj.error) {
+      throw new Error(httpObj.error);
+    }
   };
 
   return (
@@ -236,6 +261,7 @@ const UserContextProvider = (props) => {
         addCityFilter: addCityFilter,
         updateCityFilter: updateCityFilter,
         removeCityFilter: removeCityFilter,
+        applyFilters: applyFilters,
       }}
     >
       {props.children}

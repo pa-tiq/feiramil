@@ -7,7 +7,7 @@ const CityPickButton = (props) => {
 
   const pickCityHandler = () => {
     navigation.navigate(props.cityPickToNavigate, {
-      parentScreen: props.parentScreen, index: props.index
+      parentScreen: props.parentScreen, index: props.index, id: props.id
     });
   };
 
