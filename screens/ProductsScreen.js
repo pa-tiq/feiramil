@@ -1,11 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { InteractionManager, StyleSheet, View } from 'react-native';
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
+import { InteractionManager, StyleSheet, Text, View } from 'react-native';
 import { interpolateNode } from 'react-native-reanimated';
 import FiltersModal from '../components/Modals/FiltersModal';
 import ProductsList from '../components/Products/ProductsList';
 import Button from '../components/ui/Button';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import SearchBar from '../components/ui/SearchBar';
+import { Colors } from '../constants/styles';
 import { ProductContext } from '../store/product-context';
 import { UserContext } from '../store/user-context';
 
@@ -63,6 +64,38 @@ const ProductsScreen = ({ route, navigation }) => {
     return <LoadingOverlay />;
   }
 
+  let filtersText = <></>;
+
+  if (userContext.user.filter){
+    filtersText = (
+      <View style={styles.topBar}>
+        <Text style={styles.normalText}>
+          Mostrando produtos em
+          <Text
+            style={styles.specialText}
+          >{` ${userContext.user.city}`}</Text>
+          <Text style={styles.normalText}> - </Text>
+          <Text
+            style={styles.specialText}
+          >{`${userContext.user.state}`}</Text>
+          <Text style={styles.normalText}>, </Text>
+          {userContext.filters.map((filter, idx) => (
+            <Fragment key={`filter_${idx}`}>
+              <Text style={styles.specialText}>{` ${filter.city}`}</Text>
+              <Text style={styles.normalText}> - </Text>
+              <Text style={styles.specialText}>{`${filter.state}`}</Text>
+              {userContext.filters.length - 1 === idx ? (
+                <Text style={styles.normalText}>.</Text>
+              ) : userContext.filters.length - 2 === idx ? (
+                <Text style={styles.normalText}> e</Text>
+              ) : (<Text style={styles.normalText}>, </Text>)}
+            </Fragment>
+          ))}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <>
       <View style={styles.topBar}>
@@ -82,6 +115,7 @@ const ProductsScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </View>
+      {userContext.user.filter ? filtersText : <></>}
       <ProductsList
         products={
           userContext.user.filter
@@ -134,5 +168,16 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 8,
+  },
+  specialText: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: Colors.primary50,
+  },
+  normalText: {
+    fontWeight: 'normal',
+    fontSize: 15,
+    color: 'white',
+    flexDirection: 'row',
   },
 });
