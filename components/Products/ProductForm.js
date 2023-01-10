@@ -27,9 +27,7 @@ const ProductForm = (props) => {
   const [enteredCity, setEnteredCity] = useState('');
   const [enteredState, setEnteredState] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-  //const [editingProduct, setEditingProduct] = useState(props.editingProduct);
-  //const [selectedCity, setSelectedCity] = useState(props.selectedCity);
-  //const [selectedState, setSelectedState] = useState(props.selectedState);
+  const [imagesArray, setImagesArray] = useState([null]);
 
   const { editingProduct, selectedCity, selectedState } = props;
 
@@ -41,18 +39,22 @@ const ProductForm = (props) => {
 
   useLayoutEffect(() => {
     onRefresh();
-  }, []);  
-  
+  }, []);
+
   useEffect(() => {
     if (!editingProduct) return;
     if (enteredTitle.length === 0) setEnteredTitle(editingProduct.title);
-    if (enteredDescription.length === 0)  setEnteredDescription(editingProduct.description);
+    if (enteredDescription.length === 0)
+      setEnteredDescription(editingProduct.description);
     setEnteredCity(selectedCity ? selectedCity : editingProduct.city);
-    setEnteredState(selectedState ? selectedState :  editingProduct.state);
-    if (enteredPrice.length === 0) setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
+    setEnteredState(selectedState ? selectedState : editingProduct.state);
+    if (enteredPrice.length === 0)
+      setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
     setSelectedImage(editingProduct.imageUri);
     onRefresh();
   }, [editingProduct, selectedCity, selectedState]);
+
+  useEffect(()=>{},[imagesArray]);
 
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
@@ -61,15 +63,14 @@ const ProductForm = (props) => {
     setEnteredDescription(enteredText);
   };
 
-  const changeCityHandler = (enteredText) => {
-    setEnteredCity(enteredText);
-  };
-
   const changePriceHandler = (enteredText) => {
     setEnteredPrice(enteredText);
   };
 
-  function imageTakenHandler(imageUri) {
+  function imageTakenHandler(imageUri,idx) {
+    let arr = imagesArray;
+    arr[idx] = imageUri;
+    setImagesArray(arr);
     setSelectedImage(imageUri);
   }
 
@@ -131,8 +132,18 @@ const ProductForm = (props) => {
   }
 
   const pickCityHandler = () => {
-    navigation.navigate('CityPick', {parentScreen: 'AddProduct'});
+    navigation.navigate('CityPick', { parentScreen: 'AddProduct' });
   };
+
+  const addImagePicker = () => {
+    console.log('imagesArray:',imagesArray);
+    let arr = imagesArray;
+    if(arr[arr.length-1] !== null){
+      arr.push(null);
+      setImagesArray(arr);
+      onRefresh();
+    }
+  }
 
   if (refreshing) {
     return <LoadingOverlay />;
@@ -152,7 +163,7 @@ const ProductForm = (props) => {
         </IconTextButton>
       </View>
     );
-  }  
+  }
   if (enteredCity.length !== 0 && enteredState.length !== 0) {
     cityView = (
       <View style={styles.cityButton}>
@@ -196,10 +207,19 @@ const ProductForm = (props) => {
           </View>
         </View>
       </View>
-      <ProductImagePicker
-        imagePicked={imageTakenHandler}
-        editingProductImageUri={selectedImage}
-      />
+      <ScrollView horizontal={true} overScrollMode={'always'}>
+        {imagesArray.map((image, idx) => {
+          return (
+            <ProductImagePicker
+              key={idx}
+              idx={idx}
+              imagePicked={imageTakenHandler}
+              editingProductImageUri={image}
+            />
+          );
+        })}
+        <Button icon={'add'} style={styles.addImageButton} onPress={addImagePicker}></Button>
+      </ScrollView>
       <View style={styles.buttonContainer}>
         <Button onPress={saveProductHandler}>
           {editingProduct ? 'Editar Produto' : 'Adicionar Produto'}
@@ -256,4 +276,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 4,
   },
+  addImageButton:{
+    marginHorizontal:5,
+    marginTop: 5
+  }
 });

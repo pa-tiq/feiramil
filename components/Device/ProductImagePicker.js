@@ -14,8 +14,6 @@ import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
-import useFileSystem from '../../hooks/use-FileSystem';
-import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 
 const ProductImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
@@ -25,23 +23,16 @@ const ProductImagePicker = (props) => {
     useCameraPermissions();
   const [libraryPermissionInformation, requestLibraryPermission] =
     useMediaLibraryPermissions();
-  const [editingProductImageUri, setEditingProductImageUri] = useState(
-    props.editingProductImageUri
-  );
+  //const [editingProductImageUri, setEditingProductImageUri] = useState(
+  //  props.editingProductImageUri
+  //);
+
+  const {editingProductImageUri} = props;
 
   const userContext = useContext(UserContext);
 
   useLayoutEffect(() => {
-    //async function getFile(){
-    //  try {
-    //    const uri = await findOrDownloadImage(editingProductImageUri);
-    //    setDowloadedImageURI(uri);
-    //  } catch (error) {
-    //    console.log(error);
-    //  }
-    //}
     if (editingProductImageUri){
-      //getFile();
       setDowloadedImageURI(editingProductImageUri);
     } 
   }, [editingProductImageUri]);
@@ -91,7 +82,7 @@ const ProductImagePicker = (props) => {
     if (!result.canceled) {
       setNewImage(result.assets[0]);
       setNewImagePicked(true);
-      props.imagePicked(result.assets[0].uri);
+      props.imagePicked(result.assets[0].uri, props.idx);
     }
   }
 
@@ -102,13 +93,12 @@ const ProductImagePicker = (props) => {
       mediaTypes: MediaTypeOptions.Images,
       base64: false,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 0.5,
     });
     if (!result.canceled) {
       setNewImage(result.assets[0]);
       setNewImagePicked(true);
-      props.imagePicked(result.assets[0].uri);
+      props.imagePicked(result.assets[0].uri, props.idx);
     }
   }
 
