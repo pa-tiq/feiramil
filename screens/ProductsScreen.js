@@ -62,19 +62,23 @@ const ProductsScreen = ({ route, navigation }) => {
 
   let filtersText = <></>;
 
-  if (userContext.user.filter){
+  if (userContext.user.filter) {
     filtersText = (
       <View style={styles.topBar}>
         <Text style={styles.normalText}>
           Mostrando produtos em
-          <Text
-            style={styles.specialText}
-          >{` ${userContext.user.city}`}</Text>
-          <Text style={styles.normalText}> - </Text>
-          <Text
-            style={styles.specialText}
-          >{`${userContext.user.state}`}</Text>
-          <Text style={styles.normalText}>, </Text>
+          {userContext.user.city && (
+            <Text>
+              <Text
+                style={styles.specialText}
+              >{` ${userContext.user.city}`}</Text>
+              <Text style={styles.normalText}> - </Text>
+              <Text
+                style={styles.specialText}
+              >{`${userContext.user.state}`}</Text>
+              <Text style={styles.normalText}>, </Text>
+            </Text>
+          )}
           {userContext.filters.map((filter, idx) => (
             <Fragment key={`filter_${idx}`}>
               <Text style={styles.specialText}>{` ${filter.city}`}</Text>
@@ -84,7 +88,9 @@ const ProductsScreen = ({ route, navigation }) => {
                 <Text style={styles.normalText}>.</Text>
               ) : userContext.filters.length - 2 === idx ? (
                 <Text style={styles.normalText}> e</Text>
-              ) : (<Text style={styles.normalText}>, </Text>)}
+              ) : (
+                <Text style={styles.normalText}>, </Text>
+              )}
             </Fragment>
           ))}
         </Text>

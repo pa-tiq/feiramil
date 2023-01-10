@@ -70,8 +70,8 @@ function UserDataForm(props) {
     );
     setEditForm(
       props.editForm ||
-        (props.selectedCity && props.selectedCity !== user.city) ||
-        (props.selectedCity && props.selectedState !== user.state)
+        (props.selectedCity ? props.selectedCity !== user.city : false) ||
+        (props.selectedCity ? props.selectedState !== user.state : false)
     );
   }, [user, props]);
 

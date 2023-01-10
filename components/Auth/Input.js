@@ -26,9 +26,7 @@ function Input({
         style={[
           styles.label,
           isInvalid && styles.labelInvalid,
-          !(editable === undefined || editable === null)
-            ? true
-            : editable && styles.labelNotEditable,
+          !editable && styles.labelNotEditable,
         ]}
       >
         {label}
@@ -38,9 +36,7 @@ function Input({
           style={[
             styles.input,
             isInvalid && styles.inputInvalid,
-            !(editable === undefined || editable === null)
-              ? true
-              : editable && styles.inputNotEditable,
+            !editable && styles.inputNotEditable
           ]}
           autoCapitalize={false}
           autoCapitalize='none'

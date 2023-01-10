@@ -91,6 +91,7 @@ const AuthContextProvider = ({ children }) => {
     setUserId(null);
     AsyncStorage.removeItem('token');
   };
+
   const signup = async (email, password, name, om) => {
     const hashedPassword = CryptoJS.SHA256(password);
     const putConfig = {
