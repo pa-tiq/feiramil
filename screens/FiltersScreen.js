@@ -38,7 +38,6 @@ const FiltersScreen = ({ route }) => {
   }, [filtersChanged]);
 
   useEffect(() => {
-    console.log(params);
     if (params && params.city) {
       if (
         params.city === userContext.user.city &&

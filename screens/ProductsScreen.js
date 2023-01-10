@@ -1,7 +1,5 @@
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
-import { InteractionManager, StyleSheet, Text, View } from 'react-native';
-import { interpolateNode } from 'react-native-reanimated';
-import FiltersModal from '../components/Modals/FiltersModal';
+import { StyleSheet, Text, View } from 'react-native';
 import ProductsList from '../components/Products/ProductsList';
 import Button from '../components/ui/Button';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -22,8 +20,6 @@ const ProductsScreen = ({ route, navigation }) => {
   const { params: routeParams } = route;
   const [searchText, setSearchText] = useState('');
   const [showFilter, setShowFilter] = useState(false);
-  const [cityStateList, setCityList] = useState([]);
-  const [stateList, setStateList] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
 
