@@ -32,9 +32,14 @@ const ProductForm = (props) => {
   const { editingProduct, selectedCity, selectedState } = props;
 
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshingImage, setRefreshingImage] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     wait(300).then(() => setRefreshing(false));
+  }, []);
+  const onRefreshImage = useCallback(() => {
+    setRefreshingImage(true);
+    wait(300).then(() => setRefreshingImage(false));
   }, []);
 
   useLayoutEffect(() => {
@@ -54,7 +59,7 @@ const ProductForm = (props) => {
     onRefresh();
   }, [editingProduct, selectedCity, selectedState]);
 
-  useEffect(()=>{},[imagesArray]);
+  useEffect(() => {}, [imagesArray]);
 
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
@@ -67,7 +72,7 @@ const ProductForm = (props) => {
     setEnteredPrice(enteredText);
   };
 
-  function imageTakenHandler(imageUri,idx) {
+  function imageTakenHandler(imageUri, idx) {
     let arr = imagesArray;
     arr[idx] = imageUri;
     setImagesArray(arr);
@@ -108,6 +113,7 @@ const ProductForm = (props) => {
       city: props.selectedCity ? props.selectedCity : editingProduct.city,
       state: props.selectedState ? props.selectedState : editingProduct.state,
       image: selectedImage,
+      images: imagesArray
     };
 
     if (editingProduct) {
@@ -136,14 +142,13 @@ const ProductForm = (props) => {
   };
 
   const addImagePicker = () => {
-    console.log('imagesArray:',imagesArray);
     let arr = imagesArray;
-    if(arr[arr.length-1] !== null){
+    if (arr[arr.length - 1] !== null) {
       arr.push(null);
       setImagesArray(arr);
-      onRefresh();
+      onRefreshImage();
     }
-  }
+  };
 
   if (refreshing) {
     return <LoadingOverlay />;
@@ -172,6 +177,30 @@ const ProductForm = (props) => {
         </IconTextButton>
       </View>
     );
+  }
+
+  let imagesScrollView = (
+    <ScrollView horizontal={true} overScrollMode={'always'} nestedScrollEnabled={true}>
+      {imagesArray.map((image, idx) => {
+        return (
+          <ProductImagePicker
+            key={idx}
+            idx={idx}
+            imagePicked={imageTakenHandler}
+            editingProductImageUri={image}
+          />
+        );
+      })}
+      <Button
+        icon={'add'}
+        style={styles.addImageButton}
+        onPress={addImagePicker}
+      ></Button>
+    </ScrollView>
+  );
+
+  if (refreshingImage) {
+    imagesScrollView = <LoadingOverlay style={{ height: 250 }} />;
   }
 
   return (
@@ -207,19 +236,7 @@ const ProductForm = (props) => {
           </View>
         </View>
       </View>
-      <ScrollView horizontal={true} overScrollMode={'always'}>
-        {imagesArray.map((image, idx) => {
-          return (
-            <ProductImagePicker
-              key={idx}
-              idx={idx}
-              imagePicked={imageTakenHandler}
-              editingProductImageUri={image}
-            />
-          );
-        })}
-        <Button icon={'add'} style={styles.addImageButton} onPress={addImagePicker}></Button>
-      </ScrollView>
+      {imagesScrollView}
       <View style={styles.buttonContainer}>
         <Button onPress={saveProductHandler}>
           {editingProduct ? 'Editar Produto' : 'Adicionar Produto'}
@@ -276,8 +293,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 4,
   },
-  addImageButton:{
-    marginHorizontal:5,
-    marginTop: 5
-  }
+  addImageButton: {
+    marginHorizontal: 5,
+    marginTop: 5,
+  },
 });

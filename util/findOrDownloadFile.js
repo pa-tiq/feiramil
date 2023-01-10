@@ -34,22 +34,32 @@ async function downloadImage(url, fileName, functionToUse) {
   }
 }
 
-export async function uploadProductImage(imageUri, authToken) {
-  const uploadResult = await FileSystem.uploadAsync(
-    URLs.add_product_image_url,
-    imageUri,
-    {
-      fieldName: 'photo',
-      httpMethod: 'PATCH',
-      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-      headers: {
-        Authorization: 'Bearer ' + authToken,
-      },
-    }
-  );
+export async function uploadProductImages(imageUriArr, authToken) {
 
-  const result = JSON.parse(uploadResult.body);
-  return result;
+  async function upload(imageUri){
+    const uploadResult = await FileSystem.uploadAsync(
+      URLs.add_product_image_url,
+      imageUri,
+      {
+        fieldName: 'photo',
+        httpMethod: 'PATCH',
+        uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+        headers: {
+          Authorization: 'Bearer ' + authToken,
+        },
+      }
+    );  
+    const result = await JSON.parse(uploadResult.body);
+    return result;
+  }
+
+  let uploadResultArr = [];
+  for (const imageUri of imageUriArr){
+    const result = await upload(imageUri);
+    uploadResultArr.push(result.path.substring(1, result.path.length));
+  }
+  
+  return uploadResultArr;
 }
 
 export async function uploadUserPhoto(imageUri, authToken) {

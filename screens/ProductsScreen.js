@@ -19,7 +19,6 @@ const ProductsScreen = ({ route, navigation }) => {
   const { products } = productContext;
   const { params: routeParams } = route;
   const [searchText, setSearchText] = useState('');
-  const [showFilter, setShowFilter] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -36,7 +35,7 @@ const ProductsScreen = ({ route, navigation }) => {
     }
   }, [routeParams]);
 
-  useEffect(() => {}, [user, filters]);
+  //useEffect(() => {}, [user, filters]);
 
   useEffect(() => {
     setRefreshing(true);
@@ -47,12 +46,7 @@ const ProductsScreen = ({ route, navigation }) => {
     setSearchText(enteredText);
   };
 
-  const updateFilters = (enteredFilters) => {
-    console.log(enteredFilters);
-  };
-
   const showFilterScreen = () => {
-    setShowFilter(true);
     navigation.navigate('FiltersScreen');
   };
 
@@ -76,7 +70,13 @@ const ProductsScreen = ({ route, navigation }) => {
               <Text
                 style={styles.specialText}
               >{`${userContext.user.state}`}</Text>
-              <Text style={styles.normalText}>, </Text>
+              <Text style={styles.normalText}>
+                {userContext.filters.length > 0
+                  ? userContext.filters.length === 1
+                    ? ' e'
+                    : ','
+                  : '.'}
+              </Text>
             </Text>
           )}
           {userContext.filters.map((filter, idx) => (
@@ -84,13 +84,13 @@ const ProductsScreen = ({ route, navigation }) => {
               <Text style={styles.specialText}>{` ${filter.city}`}</Text>
               <Text style={styles.normalText}> - </Text>
               <Text style={styles.specialText}>{`${filter.state}`}</Text>
-              {userContext.filters.length - 1 === idx ? (
-                <Text style={styles.normalText}>.</Text>
-              ) : userContext.filters.length - 2 === idx ? (
-                <Text style={styles.normalText}> e</Text>
-              ) : (
-                <Text style={styles.normalText}>, </Text>
-              )}
+              <Text style={styles.normalText}>
+                {userContext.filters.length - 1 === idx
+                  ? '.'
+                  : userContext.filters.length - 2 === idx
+                  ? ' e'
+                  : ','}
+              </Text>
             </Fragment>
           ))}
         </Text>

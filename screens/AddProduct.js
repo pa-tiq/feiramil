@@ -3,55 +3,62 @@ import { StyleSheet, Text } from 'react-native';
 import ProductForm from '../components/Products/ProductForm';
 import { ProductContext } from '../store/product-context';
 import { AuthContext } from '../store/auth-context';
-import { uploadProductImage } from '../util/findOrDownloadFile';
+import { uploadProductImages } from '../util/findOrDownloadFile';
 
 const AddProduct = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   const authContext = useContext(AuthContext);
-  const [editingProduct, setEditingProduct] = useState(route.params?.editingProduct);
-  console.log(route.params);
+  let editingProduct = route.params ? route.params.editingProduct : null;
 
-  useLayoutEffect(()=>{
-    if(!editingProduct) return;
+  useLayoutEffect(() => {
+    if (!editingProduct) return;
     navigation.setOptions({
       title: `Editando ${editingProduct.title}`,
     });
-  },[editingProduct]);
+  }, [editingProduct]);
 
-  async function uploadImage(imageUri){
-    const result = await uploadProductImage(imageUri, authContext.token);
+  async function uploadImageArr(imageUriArr) {
+    const result = await uploadProductImages(imageUriArr, authContext.token);
     return result;
   }
 
   async function createProductHandler(product) {
     try {
       const insertedProductId = await productContext.addProduct(product);
-      const result = await uploadImage(product.image);
-      const response = await productContext.addProductImagePath({
-        path: result.path.substring(1, result.path.length),
+      const imagePathArr = await uploadImageArr(product.images);
+      console.log(imagePathArr);
+      const response = await productContext.addProductImagePaths({
+        paths: imagePathArr,
         productId: insertedProductId,
       });
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate('UserProductsScreen', { triggerUserProductsReload: true });
-  }  
+    navigation.navigate('UserProductsScreen', {
+      triggerUserProductsReload: true,
+    });
+  }
 
   async function editProductHandler(product, newImageChosen) {
     try {
       const updateResult = await productContext.updateProduct(product);
-      if(newImageChosen){
+      if (newImageChosen) {
         const imageUploadResult = await uploadImage(product.image);
         const response = await productContext.updateProductImagePath({
-          path: imageUploadResult.path.substring(1, imageUploadResult.path.length),
+          path: imageUploadResult.path.substring(
+            1,
+            imageUploadResult.path.length
+          ),
           oldpath: editingProduct.imagePath,
           productId: `${product.id}`,
-        });        
+        });
       }
     } catch (error) {
       console.log(error);
     }
-    navigation.navigate('UserProductsScreen', { triggerUserProductsReload: true });
+    navigation.navigate('UserProductsScreen', {
+      triggerUserProductsReload: true,
+    });
   }
 
   return (

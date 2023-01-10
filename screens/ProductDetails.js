@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  Text,
-  ScrollView,
-  Image,
-} from 'react-native';
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
+import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -27,17 +27,13 @@ const ProductDetails = ({ route, navigation }) => {
   const [fetchedProduct, setFetchedProduct] = useState();
   const [currentUser, setCurrentUser] = useState();
   const [downloadedUserImageURI, setDowloadedUserImageURI] = useState(null);
-  const [downloadedProductImageURI, setDowloadedProductImageURI] =
-    useState(null);
   const productContext = useContext(ProductContext);
   let selectedProductId = route.params.productId;
   const userContext = useContext(UserContext);
-
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    wait(300).then(() => setRefreshing(false));
-  }, []); 
+  const [refreshingImage, setRefreshingImage] = useState(true);
+  const onRefreshImage = useCallback(() => {
+    wait(500).then(() => setRefreshingImage(false));
+  }, []);
 
   const setProductId = () => {
     selectedProductId = route.params.productId;
@@ -45,7 +41,9 @@ const ProductDetails = ({ route, navigation }) => {
 
   const removeProductHandler = async () => {
     productContext.removeProduct(selectedProductId);
-    navigation.navigate('UserProductsScreen', { triggerUserProductsReload: true });
+    navigation.navigate('UserProductsScreen', {
+      triggerUserProductsReload: true,
+    });
   };
 
   const favouriteProductHandler = async () => {
@@ -62,7 +60,6 @@ const ProductDetails = ({ route, navigation }) => {
     navigation.navigate('AddProduct', {
       editingProduct: {
         ...fetchedProduct,
-        imageUri: downloadedProductImageURI,
       },
     });
   };
@@ -91,11 +88,10 @@ const ProductDetails = ({ route, navigation }) => {
               />
             ),
           });
-        }
-        else{
-          if(productContext.userFavourites.includes(route.params.productId)){
+        } else {
+          if (productContext.userFavourites.includes(route.params.productId)) {
             setFavorite(true);
-          } else{
+          } else {
             setFavorite(false);
           }
         }
@@ -108,20 +104,8 @@ const ProductDetails = ({ route, navigation }) => {
             console.log(error);
           }
         }
-        async function getProductFile(path) {
-          try {
-            let uri;
-            uri = await findOrDownloadImage(path);
-            setDowloadedProductImageURI(uri);
-          } catch (error) {
-            console.log(error);
-          }
-        }
         if (product.userPhoto) {
           getUserFile(product.userPhoto);
-        }
-        if (product.imagePath) {
-          getProductFile(product.imagePath);
         }
       } catch (error) {
         navigation.setOptions({
@@ -164,7 +148,7 @@ const ProductDetails = ({ route, navigation }) => {
     }
   }, [favorite]);
 
-  if (isLoading || refreshing) {
+  if (isLoading) {
     return <LoadingOverlay />;
   }
 
@@ -172,7 +156,7 @@ const ProductDetails = ({ route, navigation }) => {
     return <ErrorOverlay reloadFunction={setProductId} />;
   }
 
-  let imagePreview = (
+  let imagesScrollView = (
     <Ionicons
       style={styles.icon}
       name={'images-outline'}
@@ -181,11 +165,24 @@ const ProductDetails = ({ route, navigation }) => {
     />
   );
 
-  if (downloadedProductImageURI) {
-    imagePreview = (
+  if (fetchedProduct.imageUris && fetchedProduct.imageUris.length > 0) {
+    //imagesScrollView = (
+    //  <ScrollView horizontal={true} >
+    //    {fetchedProduct.imageUris.map((imageUri, idx) => {
+    //      return (
+    //        <View style={styles.imagePreviewContainer} key={idx}>
+    //          <View style={styles.imagePreview}>
+    //            <Image style={styles.image} source={{ uri: imageUri }} />
+    //          </View>
+    //        </View>
+    //      );
+    //    })}
+    //  </ScrollView>
+    //);
+    imagesScrollView = (
       <Image
         style={styles.productImage}
-        source={{ uri: downloadedProductImageURI }}
+        source={{ uri: fetchedProduct.imageUris[1] }}
       />
     );
   }
@@ -202,9 +199,11 @@ const ProductDetails = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.rootComponent}>
-      <View style={styles.productImageContainer}>
-        <View style={styles.productImage}>{imagePreview}</View>
-      </View>
+        <View style={styles.productImageContainer}>
+          <View style={styles.productImage}>
+            {imagesScrollView}
+          </View>
+        </View>
       <View style={styles.descriptionContainer}>
         <Text style={styles.description}>
           {fetchedProduct.description
@@ -263,6 +262,7 @@ export default ProductDetails;
 
 const styles = StyleSheet.create({
   rootComponent: {
+    flex: 1,
     marginHorizontal: 20,
     marginVertical: 15,
   },
@@ -270,23 +270,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 25,
     marginRight: -20,
-  },
-  productImageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  productImage: {
-    width: '100%',
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.primary200,
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    marginVertical: 0,
   },
   descriptionContainer: {
     marginTop: 15,
@@ -358,5 +341,39 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     flexDirection: 'row',
+  },
+  imagePreviewContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    paddingHorizontal: 5,
+  },
+  imagePreview: {
+    width: '100%',
+    height: 200,
+    marginBottom: 15,
+    marginTop: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.primary200,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  productImageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  productImage: {
+    width: '100%',
+    height: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.primary200,
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    marginVertical: 0,
   },
 });

@@ -16,6 +16,11 @@ function Input({
 }) {
   const [viewSecure, setViewSecure] = useState(false);
 
+  let editableLocal = true;
+  if (editable === false) {
+    editableLocal = false;
+  }
+
   const changeViewSecure = () => {
     setViewSecure((previousValue) => !previousValue);
   };
@@ -26,7 +31,7 @@ function Input({
         style={[
           styles.label,
           isInvalid && styles.labelInvalid,
-          !editable && styles.labelNotEditable,
+          !editableLocal && styles.labelNotEditable,
         ]}
       >
         {label}
@@ -36,7 +41,7 @@ function Input({
           style={[
             styles.input,
             isInvalid && styles.inputInvalid,
-            !editable && styles.inputNotEditable
+            !editableLocal && styles.inputNotEditable,
           ]}
           autoCapitalize={false}
           autoCapitalize='none'
@@ -44,9 +49,7 @@ function Input({
           secureTextEntry={secure && !viewSecure}
           onChangeText={onUpdateValue}
           placeholder={placeholder}
-          editable={
-            editable === undefined || editable === null ? true : editable
-          }
+          editable={editableLocal}
           value={value}
         />
         {secure && (

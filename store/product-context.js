@@ -13,7 +13,7 @@ export const ProductContext = createContext({
   triggerUserProductsReload: () => {},
   triggerFeedReload: () => {},
   addProduct: async (product) => {},
-  addProductImagePath: async ({ path, productId }) => {},
+  addProductImagePaths: async ({ path, productId }) => {},
   updateProductImagePath: async ({ path, oldpath, productId }) => {},
   removeProduct: (productId) => {},
   updateProduct: async (product) => {},
@@ -152,13 +152,13 @@ const ProductContextProvider = (props) => {
     return productInsertId;
   };
 
-  const addProductImagePath = async ({ path, productId }) => {
+  const addProductImagePaths = async ({ paths, productId }) => {
     let loadedUser = {};
     const putConfig = {
       url: URLs.add_product_image_url + `/${productId}`,
       method: 'POST',
       body: {
-        path: path,
+        paths: paths,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
@@ -224,21 +224,23 @@ const ProductContextProvider = (props) => {
       },
     };
     const createTask = (response) => {
-      async function getFile(product) {
+      async function getFiles(product) {
         try {
-          let uri;
-          uri = await findOrDownloadImage(product.imagePath);
-          product.imageUri = uri;
+          product.imageUris = [];
+          for (const path of product.imagePaths.split(',')) {
+            const uri = await findOrDownloadImage(path);
+            product.imageUris.push(uri);
+          }
         } catch (error) {
           console.log(error);
         }
       }
       if (response.products) {
         let products = response.products.map((product) => {
-          if (!product.imagePath) {
-            product.imageUri = null;
+          if (!product.imagePaths) {
+            product.imageUris = null;
           } else {
-            getFile(product);
+            getFiles(product);
           }
           if (userFavourites.includes(product.id)) {
             product.favourite = true;
@@ -266,7 +268,26 @@ const ProductContextProvider = (props) => {
       },
     };
     const createTask = (response) => {
-      fetchedProduct = response.product;
+      let product = response.product;
+      async function getFiles(product) {
+        try {
+          product.imageUris = [];
+          for (const path of product.imagePaths.split(',')) {
+            const uri = await findOrDownloadImage(path);
+            product.imageUris.push(uri);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      if (product) {
+        if (!product.imagePaths) {
+          product.imageUris = null;
+        } else {
+          getFiles(product);
+        }
+      }
+      fetchedProduct = product;
     };
     await httpObj.sendRequest(getConfig, createTask);
     if (httpObj.error) {
@@ -284,21 +305,23 @@ const ProductContextProvider = (props) => {
       },
     };
     const createTask = (response) => {
-      async function getFile(product) {
+      async function getFiles(product) {
         try {
-          let uri;
-          uri = await findOrDownloadImage(product.imagePath);
-          product.imageUri = uri;
+          product.imageUris = [];
+          for (const path of product.imagePaths.split(',')) {
+            const uri = await findOrDownloadImage(path);
+            product.imageUris.push(uri);
+          }
         } catch (error) {
           console.log(error);
         }
       }
       if (response.products) {
         let products = response.products.map((product) => {
-          if (!product.imagePath) {
-            product.imageUri = null;
+          if (!product.imagePaths) {
+            product.imageUris = null;
           } else {
-            getFile(product);
+            getFiles(product);
           }
           return product;
         });
@@ -391,7 +414,7 @@ const ProductContextProvider = (props) => {
         triggerUserProductsReload: triggerUserProductsReload,
         triggerFeedReload: triggerFeedReload,
         addProduct: addProduct,
-        addProductImagePath: addProductImagePath,
+        addProductImagePaths: addProductImagePaths,
         updateProductImagePath: updateProductImagePath,
         removeProduct: removeProduct,
         updateProduct: updateProduct,
