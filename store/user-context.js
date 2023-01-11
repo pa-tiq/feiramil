@@ -84,8 +84,8 @@ const UserContextProvider = (props) => {
       url: URLs.update_user_url,
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
       },
       body: user,
     };

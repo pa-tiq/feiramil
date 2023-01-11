@@ -16,6 +16,7 @@ import { UserContext } from '../store/user-context';
 import Button from '../components/ui/Button';
 import { findOrDownloadImage } from '../util/findOrDownloadFile';
 import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
+import ImageViewer from '../components/Device/ImageViewer';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -32,7 +33,7 @@ const ProductDetails = ({ route, navigation }) => {
   const userContext = useContext(UserContext);
   const [refreshingImage, setRefreshingImage] = useState(true);
   const onRefreshImage = useCallback(() => {
-    wait(500).then(() => setRefreshingImage(false));
+    wait(1000).then(() => setRefreshingImage(false));
   }, []);
 
   const setProductId = () => {
@@ -64,7 +65,7 @@ const ProductDetails = ({ route, navigation }) => {
     });
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     async function loadProductData() {
       try {
         const product = await productContext.fetchProductDetail(
@@ -117,6 +118,7 @@ const ProductDetails = ({ route, navigation }) => {
     }
     setIsLoading(true);
     loadProductData();
+    onRefreshImage();
   }, [selectedProductId]);
 
   useEffect(() => {
@@ -165,25 +167,18 @@ const ProductDetails = ({ route, navigation }) => {
     />
   );
 
+  if(refreshingImage){
+    imagesScrollView = <LoadingOverlay style={{ height: 300 }} />;
+  }else 
   if (fetchedProduct.imageUris && fetchedProduct.imageUris.length > 0) {
-    //imagesScrollView = (
-    //  <ScrollView horizontal={true} >
-    //    {fetchedProduct.imageUris.map((imageUri, idx) => {
-    //      return (
-    //        <View style={styles.imagePreviewContainer} key={idx}>
-    //          <View style={styles.imagePreview}>
-    //            <Image style={styles.image} source={{ uri: imageUri }} />
-    //          </View>
-    //        </View>
-    //      );
-    //    })}
-    //  </ScrollView>
-    //);
     imagesScrollView = (
-      <Image
-        style={styles.productImage}
-        source={{ uri: fetchedProduct.imageUris[1] }}
-      />
+      <ScrollView
+        horizontal={true}
+      >
+        {fetchedProduct.imageUris.map((imageUri, idx) => {
+          return <ImageViewer key={idx} uri={imageUri} />;
+        })}
+      </ScrollView>
     );
   }
 
@@ -199,11 +194,7 @@ const ProductDetails = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.rootComponent}>
-        <View style={styles.productImageContainer}>
-          <View style={styles.productImage}>
-            {imagesScrollView}
-          </View>
-        </View>
+      {imagesScrollView}
       <View style={styles.descriptionContainer}>
         <Text style={styles.description}>
           {fetchedProduct.description
@@ -263,8 +254,8 @@ export default ProductDetails;
 const styles = StyleSheet.create({
   rootComponent: {
     flex: 1,
-    marginHorizontal: 20,
-    marginVertical: 15,
+    marginTop: 10,
+    paddingHorizontal: 24,
   },
   headerRightButton: {
     paddingVertical: 10,

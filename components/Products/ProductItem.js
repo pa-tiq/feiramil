@@ -40,9 +40,9 @@ const ProductItem = ({ product, onSelect }) => {
     </View>
   );
 
-  if (product.imageUri) {
+  if (product.imageUris && product.imageUris.length > 0) {
     imagePreview = (
-      <Image style={styles.image} source={{ uri: product.imageUri }} />
+      <Image style={styles.image} source={{ uri: product.imageUris[0] }} />
     );
   }
 

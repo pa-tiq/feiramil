@@ -8,16 +8,20 @@ import {
   MediaTypeOptions,
 } from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
-import { useContext, useLayoutEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
+
 const UserImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
+  const [newImageSaved, setNewImageSaved] = useState(false);
   const [newImage, setNewImage] = useState(null);
   const [downloadedImageURI, setDowloadedImageURI] = useState(null);
   const [cameraPermissionInformation, requestCameraPermission] =
@@ -28,8 +32,14 @@ const UserImagePicker = (props) => {
   const userContext = useContext(UserContext);
   const { user } = userContext;
 
+  const [refreshingImage, setRefreshingImage] = useState(false);
+  const onRefreshImage = useCallback(() => {
+    setRefreshingImage(true);
+    wait(500).then(() => setRefreshingImage(false));
+  }, []);
+
   useLayoutEffect(() => {
-    async function getFile(path){
+    async function getFile(path) {
       try {
         let uri;
         uri = await findOrDownloadImage(path);
@@ -38,10 +48,23 @@ const UserImagePicker = (props) => {
         console.log(error);
       }
     }
-    if (user.photo){
+    if (user.photo) {
       getFile(user.photo);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (newImagePicked) {
+      onRefreshImage();
+    }
+  }, [newImagePicked]); 
+
+  useEffect(() => {
+    if (newImageSaved) {
+      onRefreshImage();
+      setNewImageSaved(false);
+    }
+  }, [newImageSaved]);
 
   // needed only for iOS
   async function verifyCameraPermissions() {
@@ -110,6 +133,7 @@ const UserImagePicker = (props) => {
   function submitFormHandler() {
     props.onImageTaken(newImage);
     setNewImagePicked(false);
+    setNewImageSaved(true);
   }
 
   function cancelEditFormHandler() {
@@ -125,16 +149,20 @@ const UserImagePicker = (props) => {
     />
   );
 
-  if (newImage) {
-    imagePreview = (
-      <Image style={styles.image} source={{ uri: newImage.uri }} />
-    );
-  }
+  if (refreshingImage) {
+    imagePreview = <LoadingOverlay style={{ height: 230 }} />;
+  } else {
+    if (newImage) {
+      imagePreview = (
+        <Image style={styles.image} source={{ uri: newImage.uri }} />
+      );
+    }
 
-  if (downloadedImageURI && !newImagePicked) {
-    imagePreview = (
-      <Image style={styles.image} source={{ uri: downloadedImageURI }} />
-    );
+    if (downloadedImageURI && !newImagePicked) {
+      imagePreview = (
+        <Image style={styles.image} source={{ uri: downloadedImageURI }} />
+      );
+    }
   }
 
   if (userContext.isLoading) {
