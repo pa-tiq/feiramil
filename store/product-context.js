@@ -14,7 +14,7 @@ export const ProductContext = createContext({
   triggerFeedReload: () => {},
   addProduct: async (product) => {},
   addProductImagePaths: async ({ path, productId }) => {},
-  updateProductImagePath: async ({ path, oldpath, productId }) => {},
+  updateProductImagePaths: async ({ path, oldpath, productId }) => {},
   removeProduct: (productId) => {},
   updateProduct: async (product) => {},
   fetchProductsExeptUser: async () => {},
@@ -177,13 +177,13 @@ const ProductContextProvider = (props) => {
     return loadedUser;
   };
 
-  const updateProductImagePath = async ({ path, oldpath, productId }) => {
+  const updateProductImagePaths = async ({ paths, oldpaths, productId }) => {
     const putConfig = {
       url: URLs.update_product_image_url + `/${productId}`,
       method: 'PUT',
       body: {
-        path: path,
-        oldpath: oldpath,
+        paths: paths,
+        oldpaths: oldpaths,
       },
       headers: {
         Authorization: 'Bearer ' + authContext.token,
@@ -227,7 +227,7 @@ const ProductContextProvider = (props) => {
       async function getFiles(product) {
         try {
           product.imageUris = [];
-          for (const path of product.imagePaths.split(',')) {
+          for (const path of product.imagePaths) {
             const uri = await findOrDownloadImage(path);
             product.imageUris.push(uri);
           }
@@ -240,6 +240,8 @@ const ProductContextProvider = (props) => {
           if (!product.imagePaths) {
             product.imageUris = null;
           } else {
+            const imagePaths = product.imagePaths.split(',');
+            product.imagePaths = imagePaths;
             getFiles(product);
           }
           if (userFavourites.includes(product.id)) {
@@ -272,7 +274,7 @@ const ProductContextProvider = (props) => {
       async function getFiles(product) {
         try {
           product.imageUris = [];
-          for (const path of product.imagePaths.split(',')) {
+          for (const path of product.imagePaths) {
             const uri = await findOrDownloadImage(path);
             product.imageUris.push(uri);
           }
@@ -284,6 +286,8 @@ const ProductContextProvider = (props) => {
         if (!product.imagePaths) {
           product.imageUris = null;
         } else {
+          const imagePaths = product.imagePaths.split(',');
+          product.imagePaths = imagePaths;
           getFiles(product);
         }
       }
@@ -308,7 +312,7 @@ const ProductContextProvider = (props) => {
       async function getFiles(product) {
         try {
           product.imageUris = [];
-          for (const path of product.imagePaths.split(',')) {
+          for (const path of product.imagePaths) {
             const uri = await findOrDownloadImage(path);
             product.imageUris.push(uri);
           }
@@ -321,6 +325,8 @@ const ProductContextProvider = (props) => {
           if (!product.imagePaths) {
             product.imageUris = null;
           } else {
+            const imagePaths = product.imagePaths.split(',');
+            product.imagePaths = imagePaths;
             getFiles(product);
           }
           return product;
@@ -415,7 +421,7 @@ const ProductContextProvider = (props) => {
         triggerFeedReload: triggerFeedReload,
         addProduct: addProduct,
         addProductImagePaths: addProductImagePaths,
-        updateProductImagePath: updateProductImagePath,
+        updateProductImagePaths: updateProductImagePaths,
         removeProduct: removeProduct,
         updateProduct: updateProduct,
         fetchProductsExeptUser: fetchProductsExeptUser,

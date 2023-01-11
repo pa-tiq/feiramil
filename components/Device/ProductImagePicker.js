@@ -74,6 +74,7 @@ const ProductImagePicker = (props) => {
     const hasPermission = await verifyCameraPermissions();
     if (!hasPermission) return;
     const result = await launchCameraAsync({
+      mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
       base64: false,
       aspect: [4, 3],
@@ -93,6 +94,7 @@ const ProductImagePicker = (props) => {
       mediaTypes: MediaTypeOptions.Images,
       base64: false,
       allowsEditing: true,
+      aspect: [4, 3],
       quality: 0.5,
     });
     if (!result.canceled) {
@@ -119,7 +121,7 @@ const ProductImagePicker = (props) => {
   }
 
   if (userContext.isLoading) {
-    return <LoadingOverlay />;
+    return <LoadingOverlay style={{ margin: 5, height:240, width:240}}/>;
   }
 
   return (

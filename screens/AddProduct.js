@@ -1,5 +1,5 @@
-import { useContext, useLayoutEffect, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { useContext, useLayoutEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import ProductForm from '../components/Products/ProductForm';
 import { ProductContext } from '../store/product-context';
 import { AuthContext } from '../store/auth-context';
@@ -26,7 +26,6 @@ const AddProduct = ({ route, navigation }) => {
     try {
       const insertedProductId = await productContext.addProduct(product);
       const imagePathArr = await uploadImageArr(product.images);
-      console.log(imagePathArr);
       const response = await productContext.addProductImagePaths({
         paths: imagePathArr,
         productId: insertedProductId,
@@ -39,17 +38,33 @@ const AddProduct = ({ route, navigation }) => {
     });
   }
 
-  async function editProductHandler(product, newImageChosen) {
+  async function editProductHandler(product, newImagesChosen) {
     try {
       const updateResult = await productContext.updateProduct(product);
-      if (newImageChosen) {
-        const imageUploadResult = await uploadImage(product.image);
-        const response = await productContext.updateProductImagePath({
-          path: imageUploadResult.path.substring(
-            1,
-            imageUploadResult.path.length
-          ),
-          oldpath: editingProduct.imagePath,
+      if (
+        newImagesChosen.find((item) => {
+          return item === true;
+        })
+      ) {
+        const imagesToUpload = [];
+        product.images.forEach((image,idx) => {
+          if(newImagesChosen[idx] === true){
+            imagesToUpload.push(image);
+          }
+        });
+        const imagePathArr = await uploadImageArr(imagesToUpload);
+        const savedProduct = productContext.userProducts.find((prod) => {
+          return prod.id === product.id;
+        });
+        const imagePathsToDelete = [];
+        savedProduct.imagePaths.forEach((image,idx)=>{
+          if(newImagesChosen[idx] === true){
+            imagePathsToDelete.push(image);
+          }
+        })
+        const response = await productContext.updateProductImagePaths({
+          paths: imagePathArr,
+          oldpaths: imagePathsToDelete,
           productId: `${product.id}`,
         });
       }

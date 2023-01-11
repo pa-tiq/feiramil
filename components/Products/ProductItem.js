@@ -30,9 +30,8 @@ const ProductItem = ({ product, onSelect }) => {
   }
 
   let imagePreview = (
-    <View style={styles.imageContainer}>
+    <View style={styles.iconContainer}>
       <Ionicons
-        style={styles.icon}
         name={'image-outline'}
         color={'white'}
         size={30}
@@ -42,7 +41,7 @@ const ProductItem = ({ product, onSelect }) => {
 
   if (product.imageUris && product.imageUris.length > 0) {
     imagePreview = (
-      <Image style={styles.image} source={{ uri: product.imageUris[product.imageUris.length-1] }} />
+      <Image style={styles.image} source={{ uri: product.imageUris[0] }} />
     );
   }
 
@@ -86,8 +85,8 @@ export default ProductItem;
 
 const styles = StyleSheet.create({
   item: {
+    flex:1,
     flexDirection: 'row',
-    alignItems: 'flex-start',
     borderRadius: 6,
     marginVertical: 7,
     backgroundColor: Colors.primary500,
@@ -97,17 +96,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  icon: {
-    paddingVertical: 25,
-  },
   pressed: {
     opacity: 0.5,
   },
-  imageContainer: {
+  iconContainer: {
     flex: 1,
-    borderBottomLeftRadius: 4,
-    borderTopLeftRadius: 4,
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   image: {

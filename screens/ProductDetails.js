@@ -2,8 +2,7 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
-  useState,
+  useState
 } from 'react';
 import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
@@ -17,10 +16,7 @@ import Button from '../components/ui/Button';
 import { findOrDownloadImage } from '../util/findOrDownloadFile';
 import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
 import ImageViewer from '../components/Device/ImageViewer';
-
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
+import { wait } from '../util/wait';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +29,7 @@ const ProductDetails = ({ route, navigation }) => {
   const userContext = useContext(UserContext);
   const [refreshingImage, setRefreshingImage] = useState(true);
   const onRefreshImage = useCallback(() => {
-    wait(1000).then(() => setRefreshingImage(false));
+    wait(500).then(() => setRefreshingImage(false));
   }, []);
 
   const setProductId = () => {
@@ -159,12 +155,12 @@ const ProductDetails = ({ route, navigation }) => {
   }
 
   let imagesScrollView = (
+    <View style={styles.iconContainer}>
     <Ionicons
-      style={styles.icon}
       name={'images-outline'}
       color={'white'}
       size={30}
-    />
+    /></View>
   );
 
   if(refreshingImage){
@@ -261,6 +257,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 25,
     marginRight: -20,
+  },
+  iconContainer:{
+    flex:1,
+    alignItems:'center'
   },
   descriptionContainer: {
     marginTop: 15,

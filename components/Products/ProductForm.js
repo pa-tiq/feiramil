@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
   View,
   StyleSheet,
@@ -13,20 +19,18 @@ import Button from '../ui/Button';
 import IconTextButton from '../ui/IconTextButton';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { useNavigation } from '@react-navigation/native';
-
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
+import { wait } from '../../util/wait';
+import { ProductContext } from '../../store/product-context';
 
 const ProductForm = (props) => {
   const navigation = useNavigation();
+  const productContext = useContext(ProductContext);
 
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredPrice, setEnteredPrice] = useState('');
   const [enteredCity, setEnteredCity] = useState('');
   const [enteredState, setEnteredState] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
   const [imagesArray, setImagesArray] = useState([null]);
 
   const { editingProduct, selectedCity, selectedState } = props;
@@ -55,11 +59,13 @@ const ProductForm = (props) => {
     setEnteredState(selectedState ? selectedState : editingProduct.state);
     if (enteredPrice.length === 0)
       setEnteredPrice(`${editingProduct.price ? editingProduct.price : ''}`);
-    setSelectedImage(editingProduct.imageUri);
+    setImagesArray(editingProduct.imageUris);
     onRefresh();
   }, [editingProduct, selectedCity, selectedState]);
 
-  useEffect(() => {}, [imagesArray]);
+  useEffect(() => {
+    onRefreshImage();
+  }, [imagesArray]);
 
   const changeTitleHandler = (enteredText) => {
     setEnteredTitle(enteredText);
@@ -76,7 +82,6 @@ const ProductForm = (props) => {
     let arr = imagesArray;
     arr[idx] = imageUri;
     setImagesArray(arr);
-    setSelectedImage(imageUri);
   }
 
   function saveProductHandler() {
@@ -89,7 +94,7 @@ const ProductForm = (props) => {
         'Por favor, preencha os dados do produto.'
       );
       return;
-    } else if (!editingProduct && !selectedImage) {
+    } else if (!editingProduct && imagesArray.length === 0) {
       Alert.alert(
         'Nenhuma imagem escolhida',
         'Por favor, escolha uma imagem para cadastrar o produto.'
@@ -112,26 +117,37 @@ const ProductForm = (props) => {
       description: enteredDescription,
       city: props.selectedCity ? props.selectedCity : editingProduct.city,
       state: props.selectedState ? props.selectedState : editingProduct.state,
-      image: selectedImage,
-      images: imagesArray
+      images: imagesArray,
     };
 
     if (editingProduct) {
+
+      const savedProduct = productContext.userProducts.find((product) => {
+        return product.id === editingProduct.id;
+      });
+      let newImagesChosen = [];
+      productData.images.forEach((image) => {
+        const imageAlreadyInProduct = savedProduct.imageUris.find((ima) => {
+          return ima === image;
+        });
+        newImagesChosen.push(!imageAlreadyInProduct);
+      });
+
       if (
         productData.title === props.editingProduct.title &&
-        productData.price === `${props.editingProduct.price}` &&
+        productData.price ===
+          (props.editingProduct.price ? `${props.editingProduct.price}` : '') &&
         productData.description === props.editingProduct.description &&
         productData.city === props.editingProduct.city &&
         productData.state === props.editingProduct.state &&
-        productData.image === props.editingProduct.imageUri
+        !newImagesChosen.find((value) => value === true)
       ) {
         Alert.alert('Nenhuma alteração', 'Você não editou nada!');
         return;
       }
       productData.id = editingProduct.id;
-      const newImageChosen =
-        productData.image !== props.editingProduct.imageUri;
-      props.onEditProduct(productData, newImageChosen);
+
+      props.onEditProduct(productData, newImagesChosen);
     } else {
       props.onCreateProduct(productData);
     }
@@ -180,7 +196,11 @@ const ProductForm = (props) => {
   }
 
   let imagesScrollView = (
-    <ScrollView horizontal={true} overScrollMode={'always'} nestedScrollEnabled={true}>
+    <ScrollView
+      horizontal={true}
+      overScrollMode={'always'}
+      nestedScrollEnabled={true}
+    >
       {imagesArray.map((image, idx) => {
         return (
           <ProductImagePicker
