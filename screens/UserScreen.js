@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'stretch',
     flexDirection: 'column',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
   title: {
     fontSize: 20,

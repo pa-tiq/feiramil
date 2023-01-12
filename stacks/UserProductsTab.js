@@ -1,8 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import ProductsScreen from '../screens/ProductsScreen';
 import { Colors } from '../constants/styles';
-import IconButton from '../components/ui/IconButton';
 import AddProduct from '../screens/AddProduct';
 import UserProductsScreen from '../screens/UserProductsScreen';
 import ProductDetails from '../screens/ProductDetails';
@@ -17,7 +15,7 @@ export default function UserProductsTab() {
         headerStyle: { backgroundColor: Colors.background },
         headerTintColor: 'white',
         contentStyle: { backgroundColor: Colors.background },
-      }}
+      }}      
     >
       <Stack.Screen
         name='UserProductsScreen'

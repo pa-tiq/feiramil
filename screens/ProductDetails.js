@@ -12,6 +12,7 @@ import { findOrDownloadImage } from '../util/findOrDownloadFile';
 import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
 import ImageViewer from '../components/Device/ImageViewer';
 import { wait } from '../util/wait';
+import { SwipeContext } from '../store/swipe-context';
 
 const ProductDetails = ({ route, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ const ProductDetails = ({ route, navigation }) => {
   const productContext = useContext(ProductContext);
   let selectedProductId = route.params.productId;
   const userContext = useContext(UserContext);
+  const swipeContext = useContext(SwipeContext);
   const [refreshingImage, setRefreshingImage] = useState(true);
   const onRefreshImage = useCallback(() => {
     wait(500).then(() => setRefreshingImage(false));
@@ -166,6 +168,11 @@ const ProductDetails = ({ route, navigation }) => {
     imagesScrollView = (
       <ScrollView
         horizontal={true}
+        overScrollMode={'always'}
+        onTouchStart={swipeContext.disableSwipe}
+        onTouchEnd={swipeContext.enableSwipeDelay}
+        onScrollBeginDrag={swipeContext.disableSwipe}
+        onScrollEndDrag={swipeContext.enableSwipe}
         style={fetchedProduct.imageUris.length === 1 && styles.singleImage}
       >
         {fetchedProduct.imageUris.map((imageUri, idx) => {

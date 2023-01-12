@@ -8,23 +8,26 @@ import AuthStack from './AuthStack';
 import AuthenticatedStack from './AuthenticatedStack';
 import UserContextProvider from '../store/user-context';
 import ProductContextProvider from '../store/product-context';
+import SwipeContextProvider from '../store/swipe-context';
 
 export default function NavigationStack() {
   const authContext = useContext(AuthContext);
 
   if (authContext.isLoading) {
-    return <LoadingOverlay message={'Entrando...'}/>;
+    return <LoadingOverlay message={'Entrando...'} />;
   }
 
   return (
     <NavigationContainer>
       {!authContext.isAuthenticated && <AuthStack />}
       {authContext.isAuthenticated && (
-        <UserContextProvider>
-          <ProductContextProvider>
-            <AuthenticatedStack />
-          </ProductContextProvider>
-        </UserContextProvider>
+        <SwipeContextProvider>
+          <UserContextProvider>
+            <ProductContextProvider>
+              <AuthenticatedStack />
+            </ProductContextProvider>
+          </UserContextProvider>
+        </SwipeContextProvider>
       )}
     </NavigationContainer>
   );

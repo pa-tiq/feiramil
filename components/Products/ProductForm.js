@@ -167,7 +167,7 @@ const ProductForm = (props) => {
 
   const addImagePicker = () => {
     let arr = imagesArray;
-    if (arr[arr.length - 1] !== null) {
+    if (arr[arr.length - 1] !== null && arr.length < 6) {
       arr.push(null);
       setImagesArray(arr);
       onRefreshImage();
@@ -215,6 +215,7 @@ const ProductForm = (props) => {
   let imagesScrollView = (
     <ScrollView
       horizontal={true}
+      alwaysBounceHorizontal={true}
       overScrollMode={'always'}
       nestedScrollEnabled={true}
     >
