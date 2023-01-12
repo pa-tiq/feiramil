@@ -12,3 +12,6 @@ Open [Expo Go](https://play.google.com/store/apps/details?id=host.exp.exponent&h
 You should also install the Expo CLI:
 
 ### `npm install -g expo-cli`
+
+🤖 Open this link on your Android device to install the app:
+https://expo.dev/accounts/pa-tiq/projects/feiramil/builds/d34b2bd1-b978-4455-b834-bbb9d7fcecf1
