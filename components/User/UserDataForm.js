@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 12,
+    marginBottom:10
   },
   buttonLeft: {
     flex: 1,

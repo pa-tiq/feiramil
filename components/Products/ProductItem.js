@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 6,
     marginVertical: 7,
-    backgroundColor: Colors.primary500,
+    backgroundColor: Colors.productItem,
     elevation: 2,
     shadowColor: 'black',
     shadowOffset: { width: 1, height: 1 },

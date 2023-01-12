@@ -1,25 +1,12 @@
-import { useIsFocused } from '@react-navigation/native';
-import { useContext, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useContext } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import Button from '../components/ui/Button';
 import UserData from '../components/User/UserData';
-import { UserContext } from '../store/user-context';
+import { Colors } from '../constants/styles';
+import { AuthContext } from '../store/auth-context';
 
 function UserScreen({ route }) {
-  const [loadedUser, setLoadedUser] = useState({});
-  const isFocused = useIsFocused();
-  const userContext = useContext(UserContext);
-
-  //useEffect(() => {
-  //  async function loadUser() {
-  //    try {
-  //      const user = await userContext.fetchUser();
-  //      setLoadedUser(user);
-  //    } catch (err) {}
-  //  }
-  //  if (isFocused) {
-  //    loadUser();
-  //  }
-  //}, [isFocused]);
+  const authContext = useContext(AuthContext);
 
   return (
     <ScrollView>
@@ -28,6 +15,13 @@ function UserScreen({ route }) {
           selectedCity={route.params ? route.params.city : null}
           selectedState={route.params ? route.params.state : null}
         />
+        <Button
+          style={styles.logoutButton}
+          icon={'exit-outline'}
+          onPress={authContext.logout}
+        >
+          {'Sair'}
+        </Button>
       </View>
     </ScrollView>
   );
@@ -48,5 +42,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     color: 'white',
+  },
+  logoutButton: {
+    backgroundColor: Colors.primary800,
+    borderWidth: 0,
+    margin:20
   },
 });

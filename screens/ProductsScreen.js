@@ -35,7 +35,7 @@ const ProductsScreen = ({ route, navigation }) => {
     }
   }, [routeParams]);
 
-  //useEffect(() => {}, [user, filters]);
+  useEffect(() => {}, [user, filters]);
 
   useEffect(() => {
     setRefreshing(true);

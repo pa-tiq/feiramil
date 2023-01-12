@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
@@ -54,11 +49,16 @@ const ProductDetails = ({ route, navigation }) => {
   };
 
   const editProductHandler = async () => {
+    setIsLoading(true);
+    const product = await productContext.fetchProductDetail(
+      selectedProductId
+    );
     navigation.navigate('AddProduct', {
       editingProduct: {
-        ...fetchedProduct,
+        ...product,
       },
     });
+    wait(300).then(() => setIsLoading(false));;
   };
 
   useEffect(() => {
@@ -156,20 +156,17 @@ const ProductDetails = ({ route, navigation }) => {
 
   let imagesScrollView = (
     <View style={styles.iconContainer}>
-    <Ionicons
-      name={'images-outline'}
-      color={'white'}
-      size={30}
-    /></View>
+      <Ionicons name={'images-outline'} color={'white'} size={30} />
+    </View>
   );
 
-  if(refreshingImage){
+  if (refreshingImage) {
     imagesScrollView = <LoadingOverlay style={{ height: 300 }} />;
-  }else 
-  if (fetchedProduct.imageUris && fetchedProduct.imageUris.length > 0) {
+  } else if (fetchedProduct.imageUris && fetchedProduct.imageUris.length > 0) {
     imagesScrollView = (
       <ScrollView
         horizontal={true}
+        style={fetchedProduct.imageUris.length === 1 && styles.singleImage}
       >
         {fetchedProduct.imageUris.map((imageUri, idx) => {
           return <ImageViewer key={idx} uri={imageUri} />;
@@ -258,9 +255,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     marginRight: -20,
   },
-  iconContainer:{
-    flex:1,
-    alignItems:'center'
+  iconContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
   descriptionContainer: {
     marginTop: 15,
@@ -366,5 +363,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     marginVertical: 0,
+  },
+  singleImage: {
+    alignSelf: 'center',
   },
 });

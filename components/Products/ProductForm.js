@@ -164,6 +164,15 @@ const ProductForm = (props) => {
       setImagesArray(arr);
       onRefreshImage();
     }
+  };  
+  
+  const removeImagePicker = (id) => {
+    let arrSliced = imagesArray;
+    if (imagesArray.length > 1) {
+      arrSliced.splice(id,1);
+      setImagesArray(arrSliced);
+      onRefreshImage();
+    }
   };
 
   if (refreshing) {
@@ -206,6 +215,8 @@ const ProductForm = (props) => {
           <ProductImagePicker
             key={idx}
             idx={idx}
+            deletableImage={idx!=0}
+            deleteImage={removeImagePicker.bind(this,idx)}
             imagePicked={imageTakenHandler}
             editingProductImageUri={image}
           />

@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
-    backgroundColor: Colors.primary700
+    backgroundColor: Colors.background
   },
   message: {
     fontSize: 16,

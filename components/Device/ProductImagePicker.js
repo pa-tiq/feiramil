@@ -14,6 +14,7 @@ import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
+import FloatingButton from '../ui/FloatingButton';
 
 const ProductImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
@@ -27,14 +28,14 @@ const ProductImagePicker = (props) => {
   //  props.editingProductImageUri
   //);
 
-  const {editingProductImageUri} = props;
+  const { editingProductImageUri } = props;
 
   const userContext = useContext(UserContext);
 
   useLayoutEffect(() => {
-    if (editingProductImageUri){
+    if (editingProductImageUri) {
       setDowloadedImageURI(editingProductImageUri);
-    } 
+    }
   }, [editingProductImageUri]);
 
   // needed only for iOS
@@ -121,7 +122,7 @@ const ProductImagePicker = (props) => {
   }
 
   if (userContext.isLoading) {
-    return <LoadingOverlay style={{ margin: 5, height:240, width:240}}/>;
+    return <LoadingOverlay style={{ margin: 5, height: 240, width: 240 }} />;
   }
 
   return (
@@ -141,6 +142,17 @@ const ProductImagePicker = (props) => {
           </Button>
         </View>
       </View>
+      {props.deletableImage && (
+        <FloatingButton
+          icon={'close-outline'}
+          color={'white'}
+          size={24}
+          style={styles.floatingButtonRemoveImage}
+          onPress={() => {
+            props.deleteImage();
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -189,4 +201,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 2,
   },
+  floatingButtonRemoveImage:{
+    top:20,
+    left:20
+  }
 });

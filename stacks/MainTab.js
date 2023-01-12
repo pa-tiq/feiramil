@@ -2,8 +2,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import ProductsScreen from '../screens/ProductsScreen';
 import { Colors } from '../constants/styles';
-import IconButton from '../components/ui/IconButton';
-import AddProduct from '../screens/AddProduct';
 import ProductDetails from '../screens/ProductDetails';
 import FiltersScreen from '../screens/FiltersScreen';
 import CityPick from '../screens/CityPick';

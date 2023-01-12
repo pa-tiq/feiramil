@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     paddingHorizontal: 5,
+    paddingBottom: 5
   },
   imagePreviewContainer: {
     flex: 1,

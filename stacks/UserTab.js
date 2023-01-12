@@ -18,6 +18,7 @@ export default function UserTab() {
       name='User'
       component={UserScreen}
       options={{
+        headerShown: false,
         headerRight: ({ tintColor }) => (
           <IconButton
             icon='exit-outline'

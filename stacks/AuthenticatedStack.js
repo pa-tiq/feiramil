@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,8 +11,7 @@ import UserTab from './UserTab';
 import UserProductsTab from './UserProductsTab';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CustomTabBar from '../components/ui/CustomTabBar';
-import IconButton from '../components/ui/IconButton';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import UserFavouritesTab from './UserFavouritesTab';
 
 const Tab = createMaterialTopTabNavigator();
@@ -37,8 +36,6 @@ export default function AuthenticatedStack() {
       notificationUserInteractionListener.remove();
     };
   }, []);
-
-  let headerButtons = <View style={styles.headerButtonsContainer}></View>;
 
   return (
     <>
@@ -82,6 +79,7 @@ export default function AuthenticatedStack() {
               <Ionicons name='person-outline' color={color} size={size} />
             ),
             tabBarLabel: String.fromCharCode(9881),
+            //tabBarLabel: String.fromCodePoint(0x1F464),
             tabBarStyle: { flex: 0.5 },
           }}
         />
@@ -92,7 +90,7 @@ export default function AuthenticatedStack() {
 
 const styles = StyleSheet.create({
   headerButtonsContainer: {
-    backgroundColor: Colors.primary700,
+    backgroundColor: Colors.background,
     alignItems: 'flex-end',
     paddingTop: 20,
     paddingRight: 15,
