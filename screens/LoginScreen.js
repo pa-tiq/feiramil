@@ -11,14 +11,10 @@ function LoginScreen() {
     try {
       await authContext.login(email, password);
     } catch (error) {
-      if(!authContext.isAuthenticated)
+      if(!authContext.isAuthenticated && authContext.error)
         Alert.alert('Falha no login!', error.message);
     }
   }
-
-  //if (authContext.isLoading) {
-  //  return <LoadingOverlay message='Entrando...' />;
-  //}
 
   return (
     <ScrollView>

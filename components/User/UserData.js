@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
-import UserImagePicker from '../Device/UserImagePicker';
+import UserImagePicker from '../Images/UserImagePicker'
 import UserDataForm from './UserDataForm';
 import { AuthContext } from '../../store/auth-context';
 import { ProductContext } from '../../store/product-context';

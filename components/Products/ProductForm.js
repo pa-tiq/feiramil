@@ -14,7 +14,7 @@ import {
   Alert,
 } from 'react-native';
 import { Colors } from '../../constants/styles';
-import ProductImagePicker from '../Device/ProductImagePicker';
+import ProductImagePicker from '../Images/ProductImagePicker';
 import Button from '../ui/Button';
 import IconTextButton from '../ui/IconTextButton';
 import LoadingOverlay from '../ui/LoadingOverlay';

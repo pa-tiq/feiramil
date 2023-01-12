@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import FlatButton from '../ui/FlatButton';
 import AuthForm from './AuthForm';
@@ -17,7 +17,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
   });
 
   function switchAuthModeHandler() {
-    if(isLogin){
+    if (isLogin) {
       navigation.navigate('Signup'); // navigate has a back button, replace doesn't
     } else {
       navigation.navigate('Login');
@@ -40,7 +40,10 @@ function AuthContent({ isLogin, onAuthenticate }) {
       !passwordIsValid ||
       (!isLogin && (!emailsAreEqual || !passwordsAreEqual))
     ) {
-      Alert.alert('Dados inválidos', 'Por favor, verifique os dados inseridos.');
+      Alert.alert(
+        'Dados inválidos',
+        'Por favor, verifique os dados inseridos.'
+      );
       setCredentialsInvalid({
         email: !emailIsValid,
         confirmEmail: !emailIsValid || !emailsAreEqual,
@@ -53,16 +56,21 @@ function AuthContent({ isLogin, onAuthenticate }) {
   }
 
   return (
-    <View style={styles.authContent}>
-      <AuthForm
-        isLogin={isLogin}
-        onSubmit={submitHandler}
-        credentialsInvalid={credentialsInvalid}
-      />
-      <View style={styles.buttons}>
-        <FlatButton onPress={switchAuthModeHandler}>
-          {isLogin ? 'Criar um novo usuário' : 'Fazer login'}
-        </FlatButton>
+    <View style={styles.rootContainer}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Feiramil</Text>
+      </View>
+      <View style={styles.authContent}>
+        <AuthForm
+          isLogin={isLogin}
+          onSubmit={submitHandler}
+          credentialsInvalid={credentialsInvalid}
+        />
+        <View style={styles.buttons}>
+          <FlatButton onPress={switchAuthModeHandler}>
+            {isLogin ? 'Criar um novo usuário' : 'Fazer login'}
+          </FlatButton>
+        </View>
       </View>
     </View>
   );
@@ -71,8 +79,23 @@ function AuthContent({ isLogin, onAuthenticate }) {
 export default AuthContent;
 
 const styles = StyleSheet.create({
+  rootContainer:{
+    marginVertical:40,
+    justifyContent: 'center',
+    alignItems: 'stretch',
+  },
+  titleContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 25
+  },
   authContent: {
-    marginTop: 64,
+    justifyContent: 'center',
+    marginTop: 30,
     marginHorizontal: 32,
     padding: 16,
     borderRadius: 8,

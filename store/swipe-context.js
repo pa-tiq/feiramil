@@ -12,14 +12,20 @@ const SwipeContextProvider = ({ children }) => {
   const [swipe , setSwipe] = useState(true);
 
   const disableSwipe = () => {
-    setSwipe(false);
+    if(swipe){
+      setSwipe(false);
+    }
   }  
   
   const enableSwipe = () => {
-    setSwipe(true);
+    if(!swipe){
+      setSwipe(true);
+    }
   }  
   const enableSwipeDelay = () => {
-    wait(1000).then(() => setSwipe(true));
+    if(!swipe){
+      wait(1000).then(() => setSwipe(true));
+    }
   }
 
   const value = {

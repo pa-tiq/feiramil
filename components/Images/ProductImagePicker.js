@@ -24,9 +24,6 @@ const ProductImagePicker = (props) => {
     useCameraPermissions();
   const [libraryPermissionInformation, requestLibraryPermission] =
     useMediaLibraryPermissions();
-  //const [editingProductImageUri, setEditingProductImageUri] = useState(
-  //  props.editingProductImageUri
-  //);
 
   const { editingProductImageUri } = props;
 
@@ -77,8 +74,7 @@ const ProductImagePicker = (props) => {
     const result = await launchCameraAsync({
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
-      base64: false,
-      aspect: [4, 3],
+      aspect: [3, 3],
       quality: 0.5,
     });
     if (!result.canceled) {
@@ -93,9 +89,8 @@ const ProductImagePicker = (props) => {
     if (!hasPermission) return;
     const result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
-      base64: false,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 3],
       quality: 0.5,
     });
     if (!result.canceled) {

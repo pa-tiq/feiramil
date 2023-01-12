@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   imagePreview: {
     width: '100%',
     minWidth: 300,
-    minHeight: 280,
+    minHeight: 300,
     marginBottom: 15,
     marginTop: 5,
     justifyContent: 'center',
@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
   },
-  image: {
-    width: '100%',
+  image: {    
     height: '100%',
+    width: '100%',
     marginVertical: 8,
   },
 });

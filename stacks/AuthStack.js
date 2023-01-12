@@ -14,8 +14,16 @@ export default function AuthStack() {
         contentStyle: { backgroundColor: Colors.primary700 },
       }}
     >
-      <Stack.Screen name='Login' component={LoginScreen} />
-      <Stack.Screen name='Signup' component={SignupScreen} />
+      <Stack.Screen
+        name='Login'
+        component={LoginScreen}
+        options={{ title: '', }}
+      />
+      <Stack.Screen
+        name='Signup'
+        component={SignupScreen}
+        options={{ title: '', }}
+      />
     </Stack.Navigator>
   );
 }

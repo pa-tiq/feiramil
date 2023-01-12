@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import ProductsList from '../components/Products/ProductsList';
 import FloatingButton from '../components/ui/FloatingButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';

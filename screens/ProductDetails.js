@@ -10,7 +10,7 @@ import { UserContext } from '../store/user-context';
 import Button from '../components/ui/Button';
 import { findOrDownloadImage } from '../util/findOrDownloadFile';
 import { mySQLTimeStampToDate } from '../util/mySQLTimeStampToDate';
-import ImageViewer from '../components/Device/ImageViewer';
+import ImageViewer from '../components/Images/ImageViewer';
 import { wait } from '../util/wait';
 import { SwipeContext } from '../store/swipe-context';
 
@@ -169,10 +169,9 @@ const ProductDetails = ({ route, navigation }) => {
       <ScrollView
         horizontal={true}
         overScrollMode={'always'}
-        onTouchStart={swipeContext.disableSwipe}
-        onTouchEnd={swipeContext.enableSwipeDelay}
-        onScrollBeginDrag={swipeContext.disableSwipe}
-        onScrollEndDrag={swipeContext.enableSwipe}
+        //onTouchStart={swipeContext.disableSwipe}
+        //onTouchEnd={swipeContext.enableSwipeDelay}
+        //onScrollEndDrag={swipeContext.enableSwipe}
         style={fetchedProduct.imageUris.length === 1 && styles.singleImage}
       >
         {fetchedProduct.imageUris.map((imageUri, idx) => {
