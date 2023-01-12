@@ -1,7 +1,7 @@
 const private_ip_manaus = 'http://192.168.1.8';
 const private_ip_bsb = 'http://192.168.1.253';
 const private_ip_4cta = 'http://10.0.0.177';
-const baseURL = `${private_ip_manaus}:8080`;
+const baseURL = `${private_ip_4cta}:8080`;
 
 export const URLs = {
   base_url: baseURL,
@@ -15,6 +15,7 @@ export const URLs = {
   update_product_url: `${baseURL}/feed/product`,
   update_product_image_url: `${baseURL}/feed/image`,
   add_product_image_url: `${baseURL}/feed/image`,
+  remove_product_image_url: `${baseURL}/feed/image`,
   get_products_url: `${baseURL}/feed/products`,
   get_products_exept_user_url: `${baseURL}/feed`,
   get_user_products_url: `${baseURL}/feed/products`,

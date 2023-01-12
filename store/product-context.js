@@ -13,8 +13,9 @@ export const ProductContext = createContext({
   triggerUserProductsReload: () => {},
   triggerFeedReload: () => {},
   addProduct: async (product) => {},
-  addProductImagePaths: async ({ path, productId }) => {},
-  updateProductImagePaths: async ({ path, oldpath, productId }) => {},
+  addProductImagePaths: async ({ paths, productId }) => {},
+  updateProductImagePaths: async ({ paths, oldpaths, productId }) => {},
+  removeProductImagePaths: async ({ paths, productId }) => {},
   removeProduct: (productId) => {},
   updateProduct: async (product) => {},
   fetchProductsExeptUser: async () => {},
@@ -199,6 +200,24 @@ const ProductContextProvider = (props) => {
     if (httpObj.error) {
       throw new Error(httpObj.error);
     }
+  };
+
+  const removeProductImagePaths = async ({paths, productId}) => {
+    const deleteConfig = {
+      url: `${URLs.remove_product_image_url}/${productId}`,
+      method: 'DELETE',
+      body: {
+        paths: paths,
+      },
+      headers: {
+        Authorization: 'Bearer ' + authContext.token,
+        'Content-Type': 'application/json',
+      },
+    };
+    const createTask = () => {
+      setProductsChanged(true);
+    };
+    httpObj.sendRequest(deleteConfig, createTask);
   };
 
   const removeProduct = async (productId) => {
@@ -422,6 +441,7 @@ const ProductContextProvider = (props) => {
         addProduct: addProduct,
         addProductImagePaths: addProductImagePaths,
         updateProductImagePaths: updateProductImagePaths,
+        removeProductImagePaths: removeProductImagePaths,
         removeProduct: removeProduct,
         updateProduct: updateProduct,
         fetchProductsExeptUser: fetchProductsExeptUser,

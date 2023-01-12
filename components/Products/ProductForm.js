@@ -117,21 +117,27 @@ const ProductForm = (props) => {
       description: enteredDescription,
       city: props.selectedCity ? props.selectedCity : editingProduct.city,
       state: props.selectedState ? props.selectedState : editingProduct.state,
-      images: imagesArray,
+      images: imagesArray.filter((item)=> item!==null),
     };
 
     if (editingProduct) {
-
       const savedProduct = productContext.userProducts.find((product) => {
         return product.id === editingProduct.id;
       });
       let newImagesChosen = [];
-      productData.images.forEach((image) => {
-        const imageAlreadyInProduct = savedProduct.imageUris.find((ima) => {
-          return ima === image;
-        });
-        newImagesChosen.push(!imageAlreadyInProduct);
+      let imagesToDelete = [];
+      savedProduct.imageUris.forEach((image, idx) => {
+        if(productData.images[idx]){
+          const imageAlreadyInProduct = productData.images.find((ima) => {
+            return ima === image;
+          });
+          newImagesChosen.push(!imageAlreadyInProduct);
+          imagesToDelete.push(false);
+        } else {
+          imagesToDelete.push(true);
+        }
       });
+
 
       if (
         productData.title === props.editingProduct.title &&
@@ -140,14 +146,16 @@ const ProductForm = (props) => {
         productData.description === props.editingProduct.description &&
         productData.city === props.editingProduct.city &&
         productData.state === props.editingProduct.state &&
-        !newImagesChosen.find((value) => value === true)
+        !newImagesChosen.find((value) => value === true) &&
+        !imagesToDelete.find((value) => value === true) &&
+        productData.images.length === newImagesChosen.length
       ) {
         Alert.alert('Nenhuma alteração', 'Você não editou nada!');
         return;
       }
       productData.id = editingProduct.id;
 
-      props.onEditProduct(productData, newImagesChosen);
+      props.onEditProduct(productData, newImagesChosen, imagesToDelete);
     } else {
       props.onCreateProduct(productData);
     }

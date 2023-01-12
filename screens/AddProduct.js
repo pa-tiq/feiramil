@@ -38,35 +38,67 @@ const AddProduct = ({ route, navigation }) => {
     });
   }
 
-  async function editProductHandler(product, newImagesChosen) {
+  async function editProductHandler(product, newImagesChosen, imagesToDelete) {
     try {
       const updateResult = await productContext.updateProduct(product);
+      const savedProduct = productContext.userProducts.find((prod) => {
+        return prod.id === product.id;
+      });
       if (
         newImagesChosen.find((item) => {
           return item === true;
         })
       ) {
-        const imagesToUpload = [];
-        product.images.forEach((image,idx) => {
-          if(newImagesChosen[idx] === true){
+        const imagesToUpdate = [];
+        product.images.forEach((image, idx) => {
+          if (newImagesChosen[idx] === true) {
+            imagesToUpdate.push(image);
+          }
+          if(idx > (newImagesChosen.length - 1)){
             imagesToUpload.push(image);
           }
         });
-        const imagePathArr = await uploadImageArr(imagesToUpload);
-        const savedProduct = productContext.userProducts.find((prod) => {
-          return prod.id === product.id;
-        });
+        if (imagesToUpdate.length > 0){
+          const imagePathArr = await uploadImageArr(imagesToUpdate);
+          const imagePathsToDelete = [];
+          savedProduct.imagePaths.forEach((image, idx) => {
+            if (newImagesChosen[idx] === true) {
+              imagePathsToDelete.push(image);
+            }
+          });
+          const response = await productContext.updateProductImagePaths({
+            paths: imagePathArr,
+            oldpaths: imagePathsToDelete,
+            productId: `${product.id}`,
+          });
+        }
+      }
+      if(imagesToDelete.length > 0){
         const imagePathsToDelete = [];
-        savedProduct.imagePaths.forEach((image,idx)=>{
-          if(newImagesChosen[idx] === true){
+        savedProduct.imagePaths.forEach((image, idx) => {
+          if (imagesToDelete[idx] === true) {
             imagePathsToDelete.push(image);
           }
-        })
-        const response = await productContext.updateProductImagePaths({
-          paths: imagePathArr,
-          oldpaths: imagePathsToDelete,
-          productId: `${product.id}`,
         });
+        await productContext.removeProductImagePaths({
+          paths: imagePathsToDelete,
+          productId: `${product.id}`
+        });
+      }
+      if (product.images.length > newImagesChosen.length){
+        const imagesToUpload = [];
+        product.images.forEach((image, idx) => {
+          if(idx > (newImagesChosen.length - 1)){
+            imagesToUpload.push(image);
+          }
+        });
+        if (imagesToUpload.length > 0){
+          const imagePathArr = await uploadImageArr(imagesToUpload);
+          const response = await productContext.addProductImagePaths({
+            paths: imagePathArr,
+            productId: `${product.id}`,
+          });
+        }
       }
     } catch (error) {
       console.log(error);
