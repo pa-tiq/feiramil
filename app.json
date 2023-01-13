@@ -18,13 +18,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "É necessário permitir o app a acessar suas fotos.",
+        "NSPhotoLibraryAddUsageDescription": "É necessário permitir o app a salvar fotos no seu celular."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.patiq.feiramil"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,6 +47,11 @@
           "isAccessMediaLocationEnabled": false
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0c888a2d-ae91-4a5a-ad9c-a704a3a3a5d7"
+      }
+    }
   }
 }
