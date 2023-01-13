@@ -9,6 +9,7 @@ export const AuthContext = createContext({
   token: '',
   userId: -1,
   isAuthenticated: false,
+  emailConfirmed: false,
   isLoading: false,
   error: null,
   authenticate: () => {},
@@ -21,6 +22,7 @@ const AuthContextProvider = ({ children }) => {
   const httpObj = useHttp();
   const [authToken, setAuthToken] = useState();
   const [userId, setUserId] = useState(null);
+  const [emailConfirmed, setEmailConfirmed] = useState(true);
 
   useEffect(() => {
     async function getToken() {
@@ -59,7 +61,7 @@ const AuthContextProvider = ({ children }) => {
     AsyncStorage.setItem('token', token);
   };
 
-  const login = async (email, password) => {
+  const login = async (email, password, confirmationCode) => {
     const hashedPassword = CryptoJS.SHA256(password);
     const postConfig = {
       url: URLs.login_url,
@@ -70,12 +72,19 @@ const AuthContextProvider = ({ children }) => {
       body: {
         email: email,
         password: hashedPassword.toString(CryptoJS.enc.Hex),
+        confirmationCode: confirmationCode
       },
     };
     const createTask = (response) => {
-      setAuthToken(response.token);
-      setUserId(response.userId);
-      AsyncStorage.setItem('token', response.token);
+      if(response.emailConfirmed){
+        setEmailConfirmed(true);
+        setAuthToken(response.token);
+        setUserId(response.userId);
+        AsyncStorage.setItem('token', response.token);
+      }
+      else{
+        setEmailConfirmed(false);
+      }
     };
     await httpObj.sendRequest(postConfig, createTask);
   };
@@ -108,6 +117,7 @@ const AuthContextProvider = ({ children }) => {
     token: authToken,
     userId: userId,
     isAuthenticated: !!authToken,
+    emailConfirmed: emailConfirmed,
     isLoading: httpObj.isLoading,
     error: httpObj.error,
     authenticate: authenticate,

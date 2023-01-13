@@ -23,7 +23,7 @@ export default function AuthStack() {
         name='Signup'
         component={SignupScreen}
         options={{ title: '', }}
-      />
+      />      
     </Stack.Navigator>
   );
 }

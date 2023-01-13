@@ -1,21 +1,31 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { AuthContext } from '../../store/auth-context';
 
 import Button from '../ui/Button';
 import Input from './Input';
 
 function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
+  const authContent = useContext(AuthContext);
+
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredConfirmEmail, setEnteredConfirmEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
   const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
+  const [enteredConfirmationCode, setEnteredConfirmationCode] = useState('');
 
   const {
     email: emailIsInvalid,
     confirmEmail: emailsDontMatch,
     password: passwordIsInvalid,
     confirmPassword: passwordsDontMatch,
+    confirmationCode: confirmationCodeIsInvalid,
   } = credentialsInvalid;
+
+  function confirmationCodeMask(input) {
+    input = input.replace(/\D/g, '');
+    return input;
+  }
 
   function updateInputValueHandler(inputType, enteredValue) {
     switch (inputType) {
@@ -31,6 +41,9 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
       case 'confirmPassword':
         setEnteredConfirmPassword(enteredValue);
         break;
+      case 'confirmationCode':
+        setEnteredConfirmationCode(confirmationCodeMask(enteredValue));
+        break;
     }
   }
 
@@ -40,6 +53,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
       confirmEmail: enteredConfirmEmail,
       password: enteredPassword,
       confirmPassword: enteredConfirmPassword,
+      confirmationCode: enteredConfirmationCode,
     });
   }
 
@@ -47,31 +61,43 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
     <View style={styles.form}>
       <View>
         <Input
-          label="E-mail"
+          label='E-mail'
           onUpdateValue={updateInputValueHandler.bind(this, 'email')}
           value={enteredEmail}
-          keyboardType="email-address"
+          keyboardType='email-address'
           isInvalid={emailIsInvalid}
         />
         {!isLogin && (
           <Input
-            label="Confirme seu e-mail"
+            label='Confirme seu e-mail'
             onUpdateValue={updateInputValueHandler.bind(this, 'confirmEmail')}
             value={enteredConfirmEmail}
-            keyboardType="email-address"
+            keyboardType='email-address'
             isInvalid={emailsDontMatch}
           />
         )}
         <Input
-          label="Senha"
+          label='Senha'
           onUpdateValue={updateInputValueHandler.bind(this, 'password')}
           secure
           value={enteredPassword}
           isInvalid={passwordIsInvalid}
         />
+        {isLogin && !authContent.emailConfirmed && (
+          <Input
+            label='Código de confirmação de e-mail'
+            onUpdateValue={updateInputValueHandler.bind(
+              this,
+              'confirmationCode'
+            )}
+            value={enteredConfirmationCode}
+            isInvalid={confirmationCodeIsInvalid}
+            maxLength={5}
+          />
+        )}
         {!isLogin && (
           <Input
-            label="Confirme sua senha"
+            label='Confirme sua senha'
             onUpdateValue={updateInputValueHandler.bind(
               this,
               'confirmPassword'
