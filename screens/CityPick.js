@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Button from '../components/ui/Button';
 import { Colors } from '../constants/styles';
-const cidades_IBGE = require('../constants/cidades.json');
+import { Cidades_IBGE } from '../constants/cidades';
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -76,7 +76,7 @@ const CityPick = ({ route, navigation }) => {
     let cidades = [];
     let estados = [];
     if (selectedState) {
-      cidades_IBGE.estados
+      Cidades_IBGE.estados
         .filter((item) => {
           return item.sigla === selectedState.sigla;
         })
@@ -94,7 +94,7 @@ const CityPick = ({ route, navigation }) => {
           });
         });
     } else {
-      cidades_IBGE.estados.forEach((estado) => {
+      Cidades_IBGE.estados.forEach((estado) => {
         if (
           estado.nome
             .normalize('NFD')
@@ -113,7 +113,7 @@ const CityPick = ({ route, navigation }) => {
 
   let stateList = (
     <FlatList
-      data={cidades_IBGE.estados}
+      data={Cidades_IBGE.estados}
       keyExtractor={(item) => item.sigla}
       renderItem={({ item }) => (
         <Pressable
