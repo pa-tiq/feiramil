@@ -18,7 +18,8 @@ function LoginScreen() {
 
   return (
     <ScrollView>
-      {authContext.isLoading && <LoadingOverlay message='Entrando...' />}
+      {(authContext.isLoading && isLogin) && <LoadingOverlay message='Entrando...' />}
+      {(authContext.isLoading && !isLogin) && <LoadingOverlay message='Criando usuário...' />}
       <AuthContent isLogin onAuthenticate={loginHandler} />
     </ScrollView>
   );
