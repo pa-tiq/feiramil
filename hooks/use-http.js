@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 const useHttp = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   const sendRequest = useCallback(async (requestConfig, functionToUse) => {
     setIsLoading(true);
@@ -18,14 +18,10 @@ const useHttp = () => {
         .then((result) => {
           return { ...result, status: response.status };
         })
-        .catch((err) => {
-          console.log('vixe maria');
-          console.log(err);
-        });
       if (!response.ok) {
-        if (requestConfig.method === 'POST') {
+        if (requestConfig.method === 'POST' || requestConfig.method === 'PUT') {
           if (response.status === 422) {
-            if (data && data.message) throw new Error(data.message);
+            if (data && data.msg) throw new Error(data.msg);
             else throw new Error('Esse e-mail já está sendo usado.');
           }
           if (response.status === 401) {
@@ -46,6 +42,8 @@ const useHttp = () => {
       functionToUse(data, response.status);
     } catch (err) {
       setError(err.message || 'Something went wrong!');
+      setIsLoading(false);
+      throw new Error(err.message);
     }
     setIsLoading(false);
   }, []);

@@ -1,6 +1,5 @@
-import { useContext, useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import Input from '../Auth/Input';
 import { UserContext } from '../../store/user-context';
@@ -8,6 +7,7 @@ import LoadingOverlay from '../ui/LoadingOverlay';
 import ErrorOverlay from '../ui/ErrorOverlay';
 import IconTextButton from '../ui/IconTextButton';
 import { useNavigation } from '@react-navigation/native';
+import { wait } from '../../util/wait';
 
 function UserDataForm(props) {
   const navigation = useNavigation();
@@ -23,6 +23,12 @@ function UserDataForm(props) {
   const [editForm, setEditForm] = useState(false);
   const [error, setError] = useState(null);
 
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(500).then(() => setRefreshing(false));
+  }, []);
+
   function editFormHandler() {
     setEditForm(true);
   }
@@ -34,34 +40,56 @@ function UserDataForm(props) {
     setEnteredPhone(user.phone);
     setEnteredCity(user.city);
     setEnteredState(user.state);
-    navigation.navigate('User', {
-      city: user.city,
-      state: user.state,
-    });
+    if(!editForm){
+      navigation.navigate('User', {
+        city: user.city,
+        state: user.state,
+      });
+    }
   }
 
   const userContext = useContext(UserContext);
   const { user } = userContext;
 
-  useLayoutEffect(() => {
-    setEnteredEmail(
-      props.credentials && props.credentials.email
-        ? props.credentials.email
-        : user.email
-    );
-    setEnteredName(
-      props.credentials && props.credentials.name
-        ? props.credentials.name
-        : user.name
-    );
-    setEnteredOm(
-      props.credentials && props.credentials.om ? props.credentials.om : user.om
-    );
-    setEnteredPhone(
-      props.credentials && props.credentials.phone
-        ? props.credentials.phone
-        : user.phone
-    );
+  useEffect(() => {
+    setEnteredEmail(user.email);
+    setEnteredName(user.name);
+    setEnteredOm(user.om);
+    setEnteredPhone(user.phone);
+    setEnteredCity(user.city);
+    setEnteredState(user.state);
+  }, [user]);
+
+  useEffect(() => {
+    if (!enteredEmail || enteredEmail.length === 0) {
+      setEnteredEmail(
+        props.credentials && props.credentials.email
+          ? props.credentials.email
+          : user.email
+      );
+    }
+
+    if (!enteredName || enteredName.length === 0) {
+      setEnteredName(
+        props.credentials && props.credentials.name
+          ? props.credentials.name
+          : user.name
+      );
+    }
+    if (!enteredOm || enteredOm.length === 0) {
+      setEnteredOm(
+        props.credentials && props.credentials.om
+          ? props.credentials.om
+          : user.om
+      );
+    }
+    if (!enteredPhone || enteredPhone.length === 0) {
+      setEnteredPhone(
+        props.credentials && props.credentials.phone
+          ? props.credentials.phone
+          : user.phone
+      );
+    }
     setEnteredCity(
       props.selectedCity ? props.selectedCity : user.city ? user.city : ''
     );
@@ -83,6 +111,13 @@ function UserDataForm(props) {
     phone: phoneIsInvalid,
   } = props.credentialsInvalid;
 
+  function phoneMask(input) {
+    input = input.replace(/\D/g, '');
+    input = input.replace(/^(\d{2})(\d)/g, '($1)$2');
+    input = input.replace(/(\d)(\d{4})$/, '$1-$2');
+    return input;
+  }
+
   function updateInputValueHandler(inputType, enteredValue) {
     switch (inputType) {
       case 'email':
@@ -98,7 +133,7 @@ function UserDataForm(props) {
         setEnteredOm(enteredValue);
         break;
       case 'phone':
-        setEnteredPhone(enteredValue);
+        setEnteredPhone(phoneMask(enteredValue));
         break;
     }
   }
@@ -145,8 +180,8 @@ function UserDataForm(props) {
     navigation.navigate('UserCityPick', { parentScreen: 'User' });
   };
 
-  if (userContext.isLoading) {
-    return <LoadingOverlay />;
+  if (userContext.isLoading || refreshing) {
+    return <LoadingOverlay style={{ height: 500 }} />;
   }
 
   if (!userContext.isLoading && error) {
@@ -206,6 +241,7 @@ function UserDataForm(props) {
         keyboardType='email-address'
         isInvalid={emailIsInvalid}
         editable={editForm}
+        autoComplete={'email'}
       />
       <Input
         label='Senha'
@@ -223,6 +259,7 @@ function UserDataForm(props) {
         keyboardType='text'
         isInvalid={nameIsInvalid}
         editable={editForm}
+        autoComplete={'name'}
       />
       <Input
         label='Organização Militar'
@@ -236,9 +273,12 @@ function UserDataForm(props) {
         label='Número de celular'
         onUpdateValue={updateInputValueHandler.bind(this, 'phone')}
         value={enteredPhone}
-        keyboardType='phone-pad'
+        keyboardType='numeric'
         isInvalid={phoneIsInvalid}
         editable={editForm}
+        maxLength={14}
+        autoComplete={'tel'}
+        placeholder={'(99)99999-9999'}
       />
       <View style={styles.city}>
         <Text style={styles.label}>Cidade</Text>
@@ -270,7 +310,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 12,
-    marginBottom:10
+    marginBottom: 10,
   },
   buttonLeft: {
     flex: 1,

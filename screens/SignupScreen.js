@@ -12,7 +12,6 @@ function SignupScreen() {
       await authContext.signup(email, password, name, om);
     } catch (error) {
       Alert.alert('Criação de usuário falhou.', error.message);
-      return;
     }
   }
 

@@ -4,6 +4,7 @@ import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
 import { Alert } from 'react-native';
 import CryptoJS from 'crypto-js';
+import { wait } from '../util/wait';
 
 export const AuthContext = createContext({
   token: '',
@@ -21,7 +22,6 @@ const AuthContextProvider = ({ children }) => {
   const httpObj = useHttp();
   const [authToken, setAuthToken] = useState();
   const [userId, setUserId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getToken() {
@@ -42,16 +42,15 @@ const AuthContextProvider = ({ children }) => {
           setUserId(response.userId);
         }
       };
-      setIsLoading(true);
-      await httpObj.sendRequest(getConfig, createTask);
-      if (httpObj.error) {
+      try {
+        await httpObj.sendRequest(getConfig, createTask);
+      } catch (error) {
         await AsyncStorage.removeItem('token');
         Alert.alert(
           'Autenticação falhou',
           'Não foi possível realizar a autenticação rápida. Por favor, faça login novamente.'
         );
       }
-      setIsLoading(false);
     }
     getToken();
   }, []);
@@ -63,7 +62,7 @@ const AuthContextProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const hashedPassword = CryptoJS.SHA256(password);
-    const postConfig = {  
+    const postConfig = {
       url: URLs.login_url,
       method: 'POST',
       headers: {
@@ -79,13 +78,7 @@ const AuthContextProvider = ({ children }) => {
       setUserId(response.userId);
       AsyncStorage.setItem('token', response.token);
     };
-    setIsLoading(true);
     await httpObj.sendRequest(postConfig, createTask);
-    setIsLoading(false);
-    if (httpObj.error) {
-      throw new Error(httpObj.error);
-    }
-    return;
   };
   const logout = async () => {
     setAuthToken(null);
@@ -109,20 +102,14 @@ const AuthContextProvider = ({ children }) => {
       },
     };
     const createTask = (response) => {};
-    setIsLoading(true);
     await httpObj.sendRequest(putConfig, createTask);
-    setIsLoading(false);
-    if (httpObj.error) {
-      throw new Error(httpObj.error);
-    }
-    return;
   };
 
   const value = {
     token: authToken,
     userId: userId,
     isAuthenticated: !!authToken,
-    isLoading: isLoading,
+    isLoading: httpObj.isLoading,
     error: httpObj.error,
     authenticate: authenticate,
     login: login,

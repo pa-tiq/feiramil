@@ -8,16 +8,19 @@ import {
   MediaTypeOptions,
 } from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { Colors } from '../../constants/styles';
 import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { findOrDownloadImage } from '../../util/findOrDownloadFile';
-
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
+import { wait } from '../../util/wait';
 
 const UserImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
@@ -57,7 +60,7 @@ const UserImagePicker = (props) => {
     if (newImagePicked) {
       onRefreshImage();
     }
-  }, [newImagePicked]); 
+  }, [newImagePicked]);
 
   useEffect(() => {
     if (newImageSaved) {
@@ -105,7 +108,7 @@ const UserImagePicker = (props) => {
     const result = await launchCameraAsync({
       allowsEditing: true,
       base64: false,
-      aspect: [4, 3],
+      aspect: [3, 3],
       quality: 0.5,
     });
     if (!result.canceled) {
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     paddingHorizontal: 5,
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   imagePreviewContainer: {
     flex: 1,

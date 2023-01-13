@@ -10,10 +10,7 @@ import { ProductContext } from '../../store/product-context';
 import { uploadUserPhoto } from '../../util/findOrDownloadFile';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { useNavigation } from '@react-navigation/core';
-
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
+import { wait } from '../../util/wait';
 
 function UserData(props) {
   const navigation = useNavigation();

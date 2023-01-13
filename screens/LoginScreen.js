@@ -11,7 +11,7 @@ function LoginScreen() {
     try {
       await authContext.login(email, password);
     } catch (error) {
-      if(!authContext.isAuthenticated && authContext.error)
+      if(!authContext.isAuthenticated)
         Alert.alert('Falha no login!', error.message);
     }
   }

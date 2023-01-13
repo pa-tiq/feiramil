@@ -13,6 +13,8 @@ function Input({
   isInvalid,
   editable,
   placeholder,
+  maxLength,
+  autoComplete
 }) {
   const [viewSecure, setViewSecure] = useState(false);
 
@@ -51,6 +53,8 @@ function Input({
           placeholder={placeholder}
           editable={editableLocal}
           value={value}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
         />
         {secure && (
           <IconButton
