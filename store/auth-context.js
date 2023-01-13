@@ -4,7 +4,6 @@ import { URLs } from '../constants/URLs';
 import useHttp from '../hooks/use-http';
 import { Alert } from 'react-native';
 import CryptoJS from 'crypto-js';
-import { wait } from '../util/wait';
 
 export const AuthContext = createContext({
   token: '',
