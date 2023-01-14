@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import FlatButton from '../ui/FlatButton';
 import AuthForm from './AuthForm';
 import { Colors } from '../../constants/styles';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../../store/auth-context';
 
 function AuthContent({ isLogin, onAuthenticate }) {
+  const authContext = useContext(AuthContext);
   const navigation = useNavigation();
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
@@ -25,7 +27,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
   }
 
   function submitHandler(credentials) {
-    let { email, confirmEmail, password, confirmPassword } = credentials;
+    let { email, confirmEmail, password, confirmPassword, confirmationCode} = credentials;
 
     email = email.trim();
     password = password.trim();
@@ -34,11 +36,13 @@ function AuthContent({ isLogin, onAuthenticate }) {
     const passwordIsValid = password.length > 6;
     const emailsAreEqual = email === confirmEmail;
     const passwordsAreEqual = password === confirmPassword;
+    const confirmationCodeIsValid = confirmationCode.length > 0;
 
     if (
       !emailIsValid ||
       !passwordIsValid ||
-      (!isLogin && (!emailsAreEqual || !passwordsAreEqual))
+      (!isLogin && (!emailsAreEqual || !passwordsAreEqual)) ||
+      ((!isLogin && !authContext.emailConfirmed) && !confirmationCodeIsValid)
     ) {
       Alert.alert(
         'Dados inválidos',
@@ -49,10 +53,11 @@ function AuthContent({ isLogin, onAuthenticate }) {
         confirmEmail: !emailIsValid || !emailsAreEqual,
         password: !passwordIsValid,
         confirmPassword: !passwordIsValid || !passwordsAreEqual,
+        confirmationCode: !confirmationCodeIsValid
       });
       return;
     }
-    onAuthenticate({ email, password });
+    onAuthenticate({ email, password, confirmationCode });
   }
 
   return (

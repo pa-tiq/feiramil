@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AuthContext } from '../../store/auth-context';
 
@@ -6,13 +6,19 @@ import Button from '../ui/Button';
 import Input from './Input';
 
 function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
-  const authContent = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  const { enteredEmail : contextEmail, enteredPassword: contextPassword } = authContext;
 
   const [enteredEmail, setEnteredEmail] = useState('');
   const [enteredConfirmEmail, setEnteredConfirmEmail] = useState('');
   const [enteredPassword, setEnteredPassword] = useState('');
   const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
   const [enteredConfirmationCode, setEnteredConfirmationCode] = useState('');
+
+  useEffect(()=>{
+    setEnteredEmail(contextEmail);
+    setEnteredPassword(contextPassword);
+  },[contextEmail, contextPassword]);
 
   const {
     email: emailIsInvalid,
@@ -83,7 +89,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
           value={enteredPassword}
           isInvalid={passwordIsInvalid}
         />
-        {isLogin && !authContent.emailConfirmed && (
+        {isLogin && !authContext.emailConfirmed && (
           <Input
             label='Código de confirmação de e-mail'
             onUpdateValue={updateInputValueHandler.bind(

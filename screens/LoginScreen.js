@@ -7,11 +7,11 @@ import { AuthContext } from '../store/auth-context';
 function LoginScreen() {
   const authContext = useContext(AuthContext);
 
-  async function loginHandler({ email, password }) {
+  async function loginHandler({ email, password, confirmationCode }) {
     try {
-      await authContext.login(email, password);
+      await authContext.login(email, password, confirmationCode);
     } catch (error) {
-      if(!authContext.isAuthenticated)
+      if (!authContext.isAuthenticated)
         Alert.alert('Falha no login!', error.message);
     }
   }
