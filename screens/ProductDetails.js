@@ -1,5 +1,12 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Image,
+  Linking,
+} from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -29,6 +36,11 @@ const ProductDetails = ({ route, navigation }) => {
     wait(500).then(() => setRefreshingImage(false));
   }, []);
 
+  const getNumbers = (input) => {
+    input = input.replace(/\D/g, '');
+    return input;
+  };
+
   const setProductId = () => {
     selectedProductId = route.params.productId;
   };
@@ -52,15 +64,13 @@ const ProductDetails = ({ route, navigation }) => {
 
   const editProductHandler = async () => {
     setIsLoading(true);
-    const product = await productContext.fetchProductDetail(
-      selectedProductId
-    );
+    const product = await productContext.fetchProductDetail(selectedProductId);
     navigation.navigate('AddProduct', {
       editingProduct: {
         ...product,
       },
     });
-    wait(300).then(() => setIsLoading(false));;
+    wait(300).then(() => setIsLoading(false));
   };
 
   useEffect(() => {
@@ -230,7 +240,23 @@ const ProductDetails = ({ route, navigation }) => {
             )}`}</Text>
             <Text style={styles.normalText}>{'.'}</Text>
           </Text>
-          <Text style={[styles.line, styles.normalText]} selectable={true}>
+          <Text
+            onPress={() => {
+              const phoneNumber = getNumbers(fetchedProduct.userPhone);
+              if (
+                phoneNumber &&
+                (phoneNumber.length === 10 || phoneNumber.length === 11)
+              ) {
+                Linking.openURL(
+                  `https://wa.me/55${phoneNumber}?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20seu%20produto%20${encodeURI(
+                    fetchedProduct.title
+                  )}`
+                );
+              }
+            }}
+            style={[styles.line, styles.normalText, styles.link]}
+            selectable={true}
+          >
             {'Telefone: '}
             <Text
               style={styles.specialText}
@@ -329,6 +355,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
     color: Colors.primary50,
+  },
+  link: {
+    textDecorationLine: 'underline',
   },
   normalText: {
     fontWeight: 'normal',
