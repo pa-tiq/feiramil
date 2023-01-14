@@ -32,6 +32,7 @@ function UserData(props) {
     }
     updatePhoto();
     productContext.triggerUserProductsReload();
+    onRefresh();
   }
 
   const [refreshing, setRefreshing] = useState(false);
@@ -122,7 +123,7 @@ function UserData(props) {
   }
 
   if (refreshing) {
-    return <LoadingOverlay />;
+    return <LoadingOverlay style={{width: '100%', height:900}}/>;
   }
 
   return (

@@ -153,7 +153,7 @@ const UserImagePicker = (props) => {
   );
 
   if (refreshingImage) {
-    imagePreview = <LoadingOverlay style={{ height: 230 }} />;
+    imagePreview = <LoadingOverlay style={{ height: '100%', width: '100%' }} />;
   } else {
     if (newImage) {
       imagePreview = (
@@ -169,7 +169,7 @@ const UserImagePicker = (props) => {
   }
 
   if (userContext.isLoading) {
-    return <LoadingOverlay />;
+    return <LoadingOverlay style={{ height: '100%', width: '100%' }} />;
   }
 
   return (
