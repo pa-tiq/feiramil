@@ -110,6 +110,13 @@ const ProductForm = (props) => {
         return;
       }
     }
+    if(imagesArray.length === 0){
+      Alert.alert(
+        'Produto sem foto!',
+        'Por favor, insira uma imagem para o produto.'
+      );
+      return;
+    }
 
     const productData = {
       title: enteredTitle,
