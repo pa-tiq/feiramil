@@ -11,15 +11,6 @@ import Button from '../components/ui/Button';
 import { Colors } from '../constants/styles';
 import { Cidades_IBGE } from '../constants/cidades';
 
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
-
-async function wait2(timeout, waiting) {
-  if (waiting) timeout = 1;
-  await new Promise((resolve) => setTimeout(resolve, timeout));
-}
-
 const CityPick = ({ route, navigation }) => {
   const [cityInput, setCityInput] = useState('');
   const [selectedState, setSelectedState] = useState(null);
@@ -28,30 +19,50 @@ const CityPick = ({ route, navigation }) => {
   const [filteredStates, setFilteredStates] = useState([]);
   const [filter, setFilter] = useState(false);
 
-  const [waiting, setWaiting] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(() => {
-    if (refreshing) return;
-    setRefreshing(true);
-    setWaiting(true);
-    wait2(100, waiting).then(() => {
-      setRefreshing(false);
-      setFilter(true);
-    });
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   const changeCityHandler = (enteredText) => {
     setCityInput(enteredText);
-    //if (!refreshing) {
-    //  onRefresh();
-    //}
-    setFilter(true);
+    let estados = [];
+    setIsLoading(true);
+    Cidades_IBGE.estados.forEach((estado) => {
+      if (
+        estado.nome
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .includes(enteredText.toLowerCase())
+      ) {
+        estados.push({ sigla: estado.sigla, nome: estado.nome });
+      }
+    });
+    setIsLoading(false);
+    setFilteredStates(estados);
   };
 
   const selectCityHandler = (item) => {
     setSelectedCity(item);
   };
   const selectStateHandler = (sigla, nome) => {
+    let cidades = [];
+    Cidades_IBGE.estados
+      .filter((item) => {
+        return item.sigla === selectedState.sigla;
+      })
+      .forEach((estado) => {
+        estado.cidades.forEach((cidade) => {
+          if (
+            cidade
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .toLowerCase()
+              .includes(cityInput.toLowerCase())
+          ) {
+            cidades.push({ estado: estado.sigla, cidade: cidade });
+          }
+        });
+      });
+    setFilteredCities(cidades);
     setSelectedState({ sigla, nome });
     setCityInput('');
   };
@@ -67,7 +78,7 @@ const CityPick = ({ route, navigation }) => {
       city: selectedCity.cidade,
       state: selectedCity.estado,
       index: route.params.index,
-      id: route.params.id
+      id: route.params.id,
     });
   };
 
@@ -241,8 +252,19 @@ const CityPick = ({ route, navigation }) => {
         )}
         {input}
       </View>
-      {selectedState && <View style={[styles.cityListContainer, selectedCity && {marginTop: 0, marginHorizontal:5}]}>{cityList}</View>}
-      {!selectedState && <View style={styles.stateListContainer}>{stateList}</View>}
+      {selectedState && (
+        <View
+          style={[
+            styles.cityListContainer,
+            selectedCity && { marginTop: 0, marginHorizontal: 5 },
+          ]}
+        >
+          {cityList}
+        </View>
+      )}
+      {!selectedState && (
+        <View style={styles.stateListContainer}>{stateList}</View>
+      )}
     </View>
   );
 };
@@ -287,7 +309,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 10,
     paddingBottom: 200,
-  },  
+  },
   stateListContainer: {
     marginHorizontal: 10,
     marginVertical: 10,
@@ -321,13 +343,11 @@ const styles = StyleSheet.create({
   buttonLeft: {
     flex: 1,
     marginRight: 2,
-    minHeight:50,
-
+    minHeight: 50,
   },
   buttonRight: {
     flex: 1,
     marginLeft: 2,
-    minHeight:50,
-
+    minHeight: 50,
   },
 });
