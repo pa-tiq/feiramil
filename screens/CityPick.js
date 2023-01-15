@@ -12,59 +12,73 @@ import { Colors } from '../constants/styles';
 import { Cidades_IBGE } from '../constants/cidades';
 
 const CityPick = ({ route, navigation }) => {
-  const [cityInput, setCityInput] = useState('');
+  const [userInput, setUserInput] = useState('');
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [filteredCities, setFilteredCities] = useState([]);
   const [filteredStates, setFilteredStates] = useState([]);
-  const [filter, setFilter] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const changeCityHandler = (enteredText) => {
-    setCityInput(enteredText);
-    let estados = [];
-    setIsLoading(true);
-    Cidades_IBGE.estados.forEach((estado) => {
-      if (
-        estado.nome
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .toLowerCase()
-          .includes(enteredText.toLowerCase())
-      ) {
-        estados.push({ sigla: estado.sigla, nome: estado.nome });
-      }
-    });
-    setIsLoading(false);
-    setFilteredStates(estados);
+  const changeInputHandler = (enteredText) => {
+    setUserInput(enteredText);
+    if (!selectedState) {
+      let estados = [];
+      setIsLoading(true);
+      Cidades_IBGE.estados.forEach((estado) => {
+        if (
+          estado.nome
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .includes(enteredText.toLowerCase())
+        ) {
+          estados.push({ sigla: estado.sigla, nome: estado.nome });
+        }
+      });
+      setIsLoading(false);
+      setFilteredStates(estados);
+    } else {
+      let cidades = [];
+      Cidades_IBGE.estados
+        .filter((item) => {
+          return item.sigla === selectedState.sigla;
+        })
+        .forEach((estado) => {
+          estado.cidades.forEach((cidade) => {
+            if (
+              cidade
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .includes(enteredText.toLowerCase())
+            ) {
+              cidades.push({ estado: estado.sigla, cidade: cidade });
+            }
+          });
+        });
+      setFilteredCities(cidades);
+    }
   };
 
   const selectCityHandler = (item) => {
     setSelectedCity(item);
   };
+  
   const selectStateHandler = (sigla, nome) => {
     let cidades = [];
     Cidades_IBGE.estados
       .filter((item) => {
-        return item.sigla === selectedState.sigla;
+        return item.sigla === sigla;
       })
       .forEach((estado) => {
         estado.cidades.forEach((cidade) => {
-          if (
-            cidade
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '')
-              .toLowerCase()
-              .includes(cityInput.toLowerCase())
-          ) {
-            cidades.push({ estado: estado.sigla, cidade: cidade });
-          }
+          cidades.push({ estado: estado.sigla, cidade: cidade });
         });
       });
     setFilteredCities(cidades);
     setSelectedState({ sigla, nome });
-    setCityInput('');
+    setUserInput('');
   };
   const cancelSelectCityHandler = () => {
     setSelectedCity(null);
@@ -81,46 +95,6 @@ const CityPick = ({ route, navigation }) => {
       id: route.params.id,
     });
   };
-
-  useEffect(() => {
-    if (!filter && !selectedState) return;
-    let cidades = [];
-    let estados = [];
-    if (selectedState) {
-      Cidades_IBGE.estados
-        .filter((item) => {
-          return item.sigla === selectedState.sigla;
-        })
-        .forEach((estado) => {
-          estado.cidades.forEach((cidade) => {
-            if (
-              cidade
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-                .includes(cityInput.toLowerCase())
-            ) {
-              cidades.push({ estado: estado.sigla, cidade: cidade });
-            }
-          });
-        });
-    } else {
-      Cidades_IBGE.estados.forEach((estado) => {
-        if (
-          estado.nome
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase()
-            .includes(cityInput.toLowerCase())
-        ) {
-          estados.push({ sigla: estado.sigla, nome: estado.nome });
-        }
-      });
-    }
-    setFilteredCities(cidades);
-    setFilteredStates(estados);
-    setFilter(false);
-  }, [filter, selectedState]);
 
   let stateList = (
     <FlatList
@@ -142,7 +116,7 @@ const CityPick = ({ route, navigation }) => {
     />
   );
 
-  if (cityInput && !selectedState) {
+  if (userInput && !selectedState) {
     stateList = (
       <FlatList
         data={filteredStates}
@@ -186,7 +160,7 @@ const CityPick = ({ route, navigation }) => {
             <View>
               <Text
                 style={styles.item}
-              >{`${item.estado} - ${item.cidade}`}</Text>
+              >{`${item.cidade}`}</Text>
             </View>
           </Pressable>
         )}
@@ -214,8 +188,8 @@ const CityPick = ({ route, navigation }) => {
   let input = (
     <TextInput
       style={styles.input}
-      onChangeText={changeCityHandler}
-      value={cityInput}
+      onChangeText={changeInputHandler}
+      value={userInput}
     />
   );
 
