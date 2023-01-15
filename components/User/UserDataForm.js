@@ -13,7 +13,6 @@ function UserDataForm(props) {
   const navigation = useNavigation();
 
   const [enteredEmail, setEnteredEmail] = useState('');
-  const [enteredPassword, setEnteredPassword] = useState('');
   const [enteredName, setEnteredName] = useState('');
   const [enteredOm, setEnteredOm] = useState('');
   const [enteredPhone, setEnteredPhone] = useState('');
@@ -105,7 +104,6 @@ function UserDataForm(props) {
 
   let {
     email: emailIsInvalid,
-    password: passwordIsInvalid,
     name: nameIsInvalid,
     om: omIsInvalid,
     phone: phoneIsInvalid,
@@ -125,9 +123,6 @@ function UserDataForm(props) {
         break;
       case 'name':
         setEnteredName(enteredValue);
-        break;
-      case 'password':
-        setEnteredPassword(enteredValue);
         break;
       case 'om':
         setEnteredOm(enteredValue);
@@ -162,7 +157,6 @@ function UserDataForm(props) {
 
     props.onSubmit({
       email: enteredEmail,
-      password: enteredPassword,
       name: enteredName,
       om: enteredOm,
       phone: enteredPhone,
@@ -242,15 +236,6 @@ function UserDataForm(props) {
         isInvalid={emailIsInvalid}
         editable={editForm}
         autoComplete={'email'}
-      />
-      <Input
-        label='Senha'
-        onUpdateValue={updateInputValueHandler.bind(this, 'password')}
-        secure
-        value={enteredPassword}
-        isInvalid={passwordIsInvalid}
-        editable={editForm}
-        placeholder={'Edite para trocar de senha'}
       />
       <Input
         label='Nome'

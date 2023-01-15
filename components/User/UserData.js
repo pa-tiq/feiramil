@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import { Colors } from '../../constants/styles';
 import { UserContext } from '../../store/user-context';
-import UserImagePicker from '../Images/UserImagePicker'
+import UserImagePicker from '../Images/UserImagePicker';
 import UserDataForm from './UserDataForm';
 import { AuthContext } from '../../store/auth-context';
 import { ProductContext } from '../../store/product-context';
@@ -43,27 +43,24 @@ function UserData(props) {
 
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
-    password: false,
     name: false,
     om: false,
     phone: false,
   });
 
-  const [credentials, setCredentials] = useState(null)
+  const [credentials, setCredentials] = useState(null);
 
   async function submitHandler(insertedCredentials) {
-    let { email, password, name, om, phone, city, state } = insertedCredentials;
+    let { email, name, om, phone, city, state } = insertedCredentials;
 
     email = email.trim();
-    password = password.trim();
     name = name ? name.trim() : '';
     om = om ? om.trim() : '';
     phone = phone ? phone.trim() : '';
     city = city ? city.trim() : '';
-    state = state ? state.trim(): '';
+    state = state ? state.trim() : '';
 
     const emailIsValid = email.includes('@');
-    const passwordIsValid = password.length > 6 || password.length === 0;
     const nameIsValid = name.length > 2;
     const omIsValid = om.length > 1;
     const phoneIsValid = phone.length > 9;
@@ -78,7 +75,6 @@ function UserData(props) {
       Alert.alert('Dados inválidos', 'Por favor verifique os dados inseridos.');
       setCredentialsInvalid({
         email: !emailIsValid,
-        password: !passwordIsValid,
         name: !nameIsValid,
         om: !omIsValid,
         phone: !phoneIsValid,
@@ -86,31 +82,20 @@ function UserData(props) {
       setCredentials(insertedCredentials);
       return;
     }
-    const updatedUser =
-      password.length === 0
-        ? {
-            email: email,
-            name: name,
-            password: null,
-            om: om,
-            phone: phone,
-            city: city,
-            state: state,
-          }
-        : {
-            email: email,
-            name: name,
-            password: password,
-            om: om,
-            phone: phone,
-            city: city,
-            state: state,
-          };
+    const updatedUser = {
+      email: email,
+      name: name,
+      password: null,
+      om: om,
+      phone: phone,
+      city: city,
+      state: state,
+    };
+
     await userContext.updateUser(updatedUser);
     productContext.triggerUserProductsReload();
     setCredentialsInvalid({
       email: !emailIsValid,
-      password: !passwordIsValid,
       name: !nameIsValid,
       om: !omIsValid,
       phone: !phoneIsValid,
@@ -123,7 +108,7 @@ function UserData(props) {
   }
 
   if (refreshing) {
-    return <LoadingOverlay style={{width: '100%', height:900}}/>;
+    return <LoadingOverlay style={{ width: '100%', height: 900 }} />;
   }
 
   return (
@@ -135,8 +120,8 @@ function UserData(props) {
         <UserDataForm
           onSubmit={submitHandler}
           credentialsInvalid={credentialsInvalid}
-          credentials = {credentials}
-          editForm = {!!credentials}
+          credentials={credentials}
+          editForm={!!credentials}
           selectedCity={props.selectedCity}
           selectedState={props.selectedState}
         />
