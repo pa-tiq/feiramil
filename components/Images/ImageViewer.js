@@ -1,10 +1,19 @@
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Colors } from '../../constants/styles';
 import LoadingOverlay from '../ui/LoadingOverlay';
+import ImageModal from './ImageModal';
+import { useState } from 'react';
 
 const ImageViewer = (props) => {
+  const [showImageModal, setShowImageModal] = useState(false);
+  const openImageModal = () => {
+    setShowImageModal(true);
+  }  
+  const closeImageModal = () => {
+    setShowImageModal(false);
+  }
   let imagePreview = (
     <Ionicons name={'images-outline'} color={'white'} size={30} />
   );
@@ -20,9 +29,11 @@ const ImageViewer = (props) => {
 
   return (
     <View style={styles.rootContainer}>
+      <Pressable onPress={openImageModal}>
       <View style={styles.imagePreviewContainer}>
         <View style={styles.imagePreview}>{imagePreview}</View>
-      </View>
+      </View></Pressable>
+      <ImageModal isVisible={showImageModal} onClose={closeImageModal} imageUri={props.uri} />
     </View>
   );
 };

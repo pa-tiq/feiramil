@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, ToastAndroid } from 'react-native';
 import CityPickButton from '../components/ui/CItyPickButton';
 import FloatingButton from '../components/ui/FloatingButton';
 import Button from '../components/ui/Button';
@@ -24,6 +24,10 @@ const FiltersScreen = ({ route }) => {
   useEffect(() => {
     let filterList = [];
     filterList[0] = locationList[0];
+    if (!filterList[0].city) {
+      filterList[0].label = 'Você ainda não definiu a sua cidade!';
+      filterList[0].editable = false;
+    }
     filters.forEach((filter) => {
       filterList.push(filter);
     });
@@ -56,7 +60,10 @@ const FiltersScreen = ({ route }) => {
   }, [params]);
 
   const addLocation = () => {
-    if (locationList[locationList.length - 1].city != null) {
+    if (
+      locationList[locationList.length - 1].city != null ||
+      locationList.length === 1
+    ) {
       setLocationList((prevValue) => {
         return [...prevValue, { city: null, state: null, editable: true }];
       });
@@ -65,16 +72,49 @@ const FiltersScreen = ({ route }) => {
 
   const removeLocation = (locationId) => {
     if (locationList.length > 1) {
-      userContext.removeCityFilter(locationList[locationId].id);
+      if (locationList[locationId].city) {
+        userContext.removeCityFilter(locationList[locationId].id);
+      }
       setLocationList((prevValue) => {
         return [...prevValue.filter((item, idx) => idx !== locationId)];
       });
     }
   };
 
+  const showToast = () => {
+    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+  };
+
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      'All Your Base Are Belong To Us',
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
+
+  const showToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      'A wild toast appeared!',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
+
   const applyFiltering = () => {
-    userContext.applyFilters(!userContext.user.filter)
-  }
+    let validFilters = false;
+    locationList.forEach((item) => {
+      if (item.city) validFilters = true;
+    });
+    if (validFilters){
+      userContext.applyFilters(!userContext.user.filter);
+    }
+    else{
+      ToastAndroid.show('Nenhum filtro válido.', ToastAndroid.SHORT);
+    }
+  };
 
   return (
     <>
@@ -107,7 +147,11 @@ const FiltersScreen = ({ route }) => {
           )}
         />
         <Button
-          style={userContext.user.filter ? styles.buttonApplyFilters : styles.buttonNotApplyFilters}
+          style={
+            userContext.user.filter
+              ? styles.buttonApplyFilters
+              : styles.buttonNotApplyFilters
+          }
           icon={'checkmark-circle-outline'}
           onPress={applyFiltering}
         >

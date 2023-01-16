@@ -9,12 +9,9 @@ import { View, StyleSheet, Text, FlatList, RefreshControl } from 'react-native';
 import { ProductContext } from '../../store/product-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import ProductItem from './ProductItem';
+import { wait } from '../../util/wait';
 
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
-
-const ProductsList = ({ products, searchText, isLoading }) => {
+const ProductsList = ({ products, searchText, isLoading, isUserProducts }) => {
   const [productList, setProductList] = useState([]);
   const navigation = useNavigation();
   function selectProductHandler(id) {
@@ -25,9 +22,14 @@ const ProductsList = ({ products, searchText, isLoading }) => {
   const productContext = useContext(ProductContext);
 
   const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = useCallback(() => {
+  const onRefreshUserProducts = useCallback(() => {
     setRefreshing(true);
     productContext.triggerUserProductsReload();
+    wait(1000).then(() => setRefreshing(false));
+  }, []);  
+  const onRefreshFeed = useCallback(() => {
+    setRefreshing(true);
+    productContext.triggerFeedReload();
     wait(1000).then(() => setRefreshing(false));
   }, []);
 
@@ -65,7 +67,7 @@ const ProductsList = ({ products, searchText, isLoading }) => {
         />
       )}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl refreshing={refreshing} onRefresh={isUserProducts ? onRefreshUserProducts : onRefreshFeed} />
       }
     />
   );

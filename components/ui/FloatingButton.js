@@ -8,7 +8,7 @@ function FloatingButton({ icon, color, size, onPress, style }) {
       style={({ pressed }) => [styles.button, style, pressed && styles.pressed]}
       onPress={onPress}
     >
-      <Ionicons name={icon} color={color} size={size} />
+      <Ionicons name={icon} color={color ? color : 'white'} size={size ? size : 24} />
     </Pressable>
   );
 }

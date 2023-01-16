@@ -19,7 +19,7 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function AuthenticatedStack() {
   const navigation = useNavigation();
-  const swipeContext = useContext(SwipeContext)
+  const swipeContext = useContext(SwipeContext);
 
   useEffect(() => {
     const notificationGenerationListener =
@@ -43,17 +43,16 @@ export default function AuthenticatedStack() {
     <>
       <Tab.Navigator
         tabBar={(props) => <CustomTabBar {...props} />}
-        screenOptions={{ swipeEnabled: swipeContext.swipe }}
+        //screenOptions={{ swipeEnabled: swipeContext.swipe }}
       >
         <Tab.Screen
-          name='UserProductsTab'
-          component={UserProductsTab}
+          name='MainTab'
+          component={MainTab}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name='layers-outline' color={color} size={size} />
+              <Ionicons name='home-outline' color={color} size={size} />
             ),
-            tabBarLabel: 'Seus produtos',
-            tabBarStyle: { flex: 1.5 },
+            tabBarLabel: 'Produtos',
           }}
         />
         <Tab.Screen
@@ -67,15 +66,17 @@ export default function AuthenticatedStack() {
           }}
         />
         <Tab.Screen
-          name='MainTab'
-          component={MainTab}
+          name='UserProductsTab'
+          component={UserProductsTab}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name='home-outline' color={color} size={size} />
+              <Ionicons name='layers-outline' color={color} size={size} />
             ),
-            tabBarLabel: 'Produtos',
+            tabBarLabel: 'Seus produtos',
+            tabBarStyle: { flex: 1.5 },
           }}
         />
+
         <Tab.Screen
           name='UserTab'
           component={UserTab}

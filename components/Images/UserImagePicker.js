@@ -23,9 +23,7 @@ import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 import { wait } from '../../util/wait';
 
 const UserImagePicker = (props) => {
-  const [newImagePicked, setNewImagePicked] = useState(false);
   const [newImageSaved, setNewImageSaved] = useState(false);
-  const [newImage, setNewImage] = useState(null);
   const [downloadedImageURI, setDowloadedImageURI] = useState(null);
   const [cameraPermissionInformation, requestCameraPermission] =
     useCameraPermissions();
@@ -55,12 +53,6 @@ const UserImagePicker = (props) => {
       getFile(user.photo);
     }
   }, [user]);
-
-  useEffect(() => {
-    if (newImagePicked) {
-      onRefreshImage();
-    }
-  }, [newImagePicked]);
 
   useEffect(() => {
     if (newImageSaved) {
@@ -112,8 +104,7 @@ const UserImagePicker = (props) => {
       quality: 0.5,
     });
     if (!result.canceled) {
-      setNewImage(result.assets[0]);
-      setNewImagePicked(true);
+      submitFormHandler(result.assets[0]);
     }
   }
 
@@ -128,19 +119,13 @@ const UserImagePicker = (props) => {
       quality: 0.5,
     });
     if (!result.canceled) {
-      setNewImage(result.assets[0]);
-      setNewImagePicked(true);
+      submitFormHandler(result.assets[0]);
     }
   }
 
-  function submitFormHandler() {
-    props.onImageTaken(newImage);
-    setNewImagePicked(false);
+  function submitFormHandler(uri) {
+    props.onImageTaken(uri);
     setNewImageSaved(true);
-  }
-
-  function cancelEditFormHandler() {
-    setNewImagePicked(false);
   }
 
   let imagePreview = (
@@ -155,13 +140,7 @@ const UserImagePicker = (props) => {
   if (refreshingImage) {
     imagePreview = <LoadingOverlay style={{ height: '100%', width: '100%' }} />;
   } else {
-    if (newImage) {
-      imagePreview = (
-        <Image style={styles.image} source={{ uri: newImage.uri }} />
-      );
-    }
-
-    if (downloadedImageURI && !newImagePicked) {
+    if (downloadedImageURI) {
       imagePreview = (
         <Image style={styles.image} source={{ uri: downloadedImageURI }} />
       );
@@ -179,22 +158,14 @@ const UserImagePicker = (props) => {
       </View>
       <View style={styles.imageButtonsContainer}>
         <View style={styles.buttonLeft}>
-          {newImagePicked ? (
-            <Button onPress={cancelEditFormHandler}>{'Cancelar'}</Button>
-          ) : (
-            <Button icon='camera' onPress={takeImageHandler}>
-              Tirar foto
-            </Button>
-          )}
+          <Button icon='camera' onPress={takeImageHandler}>
+            Tirar foto
+          </Button>
         </View>
         <View style={styles.buttonRight}>
-          {newImagePicked ? (
-            <Button onPress={submitFormHandler}>{'Salvar'}</Button>
-          ) : (
-            <Button icon='document' onPress={getFileHandler}>
-              Escolher foto
-            </Button>
-          )}
+          <Button icon='document' onPress={getFileHandler}>
+            Escolher foto
+          </Button>
         </View>
       </View>
     </View>

@@ -6,9 +6,11 @@ const CityPickButton = (props) => {
   const navigation = useNavigation();
 
   const pickCityHandler = () => {
-    navigation.navigate(props.cityPickToNavigate, {
-      parentScreen: props.parentScreen, index: props.index, id: props.id
-    });
+    if(props.editable){
+      navigation.navigate(props.cityPickToNavigate, {
+        parentScreen: props.parentScreen, index: props.index, id: props.id
+      });
+    }
   };
 
   let cityView = (

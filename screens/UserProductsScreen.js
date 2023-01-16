@@ -43,6 +43,7 @@ const UserProductsScreen = ({ route, navigation }) => {
       <ProductsList
         products={userProducts}
         isLoading={productContext.isLoading}
+        isUserProducts={true}
       />      
       <FloatingButton
         icon={'add'}
