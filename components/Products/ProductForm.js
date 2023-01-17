@@ -50,6 +50,13 @@ const ProductForm = (props) => {
     onRefresh();
   }, []);
 
+  function priceMask(input) {
+    input = input.replace(/\D/g, '');
+    //input = input.replace(/^(\d{2})(\d)/g, '($1)$2');
+    input = input.replace(/(\d)(\d{2})$/, '$1,$2');
+    return input;
+  }
+
   useEffect(() => {
     if (!editingProduct) return;
     if (enteredTitle.length === 0) setEnteredTitle(editingProduct.title);
@@ -75,7 +82,7 @@ const ProductForm = (props) => {
   };
 
   const changePriceHandler = (enteredText) => {
-    setEnteredPrice(enteredText);
+    setEnteredPrice(priceMask(enteredText));
   };
 
   function imageTakenHandler(imageUri, idx) {
@@ -110,22 +117,31 @@ const ProductForm = (props) => {
         return;
       }
     }
-    if(imagesArray.length === 0){
+    if(imagesArray.length === 0 || imagesArray[0] === null){
       Alert.alert(
         'Produto sem foto!',
-        'Por favor, insira uma imagem para o produto.'
+        'Por favor, insira pelo menos uma imagem para o produto.'
       );
       return;
     }
+
 
     const productData = {
       title: enteredTitle,
       price: enteredPrice,
       description: enteredDescription,
-      city: props.selectedCity ? props.selectedCity : editingProduct.city,
-      state: props.selectedState ? props.selectedState : editingProduct.state,
+      city: props.selectedCity ? props.selectedCity : (editingProduct ? editingProduct.city : null),
+      state: props.selectedState ? props.selectedState : (editingProduct ? editingProduct.state : null),
       images: imagesArray.filter((item)=> item!==null),
     };
+
+    if(!productData.city){
+      Alert.alert(
+        'Produto sem localização!',
+        'Por favor, escolha uma localização para o produto.'
+      );
+      return;
+    }
 
     if (editingProduct) {
       const savedProduct = productContext.userProducts.find((product) => {
@@ -273,7 +289,7 @@ const ProductForm = (props) => {
             <TextInput
               style={[styles.input]}
               onChangeText={changePriceHandler}
-              value={enteredPrice}
+              value={'R$'+enteredPrice}
               keyboardType={'number-pad'}
             />
           </View>

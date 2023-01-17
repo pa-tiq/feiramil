@@ -61,7 +61,7 @@ const ProductItem = ({ product, onSelect }) => {
         <View style={styles.userData}>
           <Text style={[styles.line, styles.normalText]}>
             {`Postado por `}
-            <Text style={styles.specialText}>{`${productItem.userName}`}</Text>
+            <Text style={styles.specialText}>{productItem.userName ? `${productItem.userName}` : (productItem.userEmail ? `${productItem.userEmail.split('@')[0]}` : '?')}</Text>
             <Text style={styles.normalText}>{` em `}</Text>
             <Text style={styles.specialText}>{`${mySQLTimeStampToDate(
               productItem.created_at

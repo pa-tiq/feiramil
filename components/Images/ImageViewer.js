@@ -5,7 +5,6 @@ import { Colors } from '../../constants/styles';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import ImageModal from './ImageModal';
 import { useState } from 'react';
-import PinchableImageBox from '../ui/PinchableImageBox';
 
 const ImageViewer = (props) => {
   const [showImageModal, setShowImageModal] = useState(false);
@@ -22,11 +21,7 @@ const ImageViewer = (props) => {
   if (props.isLoading) {
     return <LoadingOverlay />;
   } else if (props.uri) {
-    //imagePreview = <PinchableImageBox style={styles.image} imageUri={props.uri} />;
     imagePreview = <Image style={styles.image} source={{ uri: props.uri }} />;
-    //imagePreview = (
-    //  <Ionicons name={'images-outline'} color={'white'} size={30} />
-    //);
   }
 
   return (
@@ -43,13 +38,7 @@ const ImageViewer = (props) => {
       />
     </View>
   );  
-  //return (
-  //  <View style={styles.rootContainer}>
-  //      <View style={styles.imagePreviewContainer}>
-  //        <View style={styles.imagePreview}>{imagePreview}</View>
-  //      </View>
-  //  </View>
-  //);
+
 };
 
 export default ImageViewer;
