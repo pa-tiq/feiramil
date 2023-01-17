@@ -2,7 +2,6 @@ import { Dimensions, Image, StyleSheet } from 'react-native';
 import {
   GestureHandlerRootView,
   PinchGestureHandler,
-  State,
 } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedGestureHandler,

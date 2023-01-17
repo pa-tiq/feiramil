@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert, Image } from 'react-native';
+import { View, StyleSheet, Alert, Image, Pressable } from 'react-native';
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -21,6 +21,7 @@ import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 import { wait } from '../../util/wait';
+import ImageModal from './ImageModal';
 
 const UserImagePicker = (props) => {
   const [newImageSaved, setNewImageSaved] = useState(false);
@@ -29,6 +30,14 @@ const UserImagePicker = (props) => {
     useCameraPermissions();
   const [libraryPermissionInformation, requestLibraryPermission] =
     useMediaLibraryPermissions();
+
+  const [showImageModal, setShowImageModal] = useState(false);
+  const openImageModal = () => {
+    setShowImageModal(true);
+  };
+  const closeImageModal = () => {
+    setShowImageModal(false);
+  };
 
   const userContext = useContext(UserContext);
   const { user } = userContext;
@@ -143,7 +152,6 @@ const UserImagePicker = (props) => {
     if (downloadedImageURI) {
       imagePreview = (
         <Image style={styles.image} source={{ uri: downloadedImageURI }} />
-        //<PinchableImageBox style={styles.image} imageUri={downloadedImageURI} />
       );
     }
   }
@@ -154,9 +162,16 @@ const UserImagePicker = (props) => {
 
   return (
     <View style={styles.rootContainer}>
-      <View style={styles.imagePreviewContainer}>
-        <View style={styles.imagePreview}>{imagePreview}</View>
-      </View>
+      <Pressable onPress={openImageModal}>
+        <View style={styles.imagePreviewContainer}>
+          <View style={styles.imagePreview}>{imagePreview}</View>
+        </View>
+      </Pressable>
+      <ImageModal
+        isVisible={showImageModal}
+        onClose={closeImageModal}
+        imageUri={downloadedImageURI}
+      />
       <View style={styles.imageButtonsContainer}>
         <View style={styles.buttonLeft}>
           <Button icon='camera' onPress={takeImageHandler}>
