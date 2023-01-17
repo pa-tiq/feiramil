@@ -5,15 +5,16 @@ import { Colors } from '../../constants/styles';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import ImageModal from './ImageModal';
 import { useState } from 'react';
+import PinchableImageBox from '../ui/PinchableImageBox';
 
 const ImageViewer = (props) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const openImageModal = () => {
     setShowImageModal(true);
-  }  
+  };
   const closeImageModal = () => {
     setShowImageModal(false);
-  }
+  };
   let imagePreview = (
     <Ionicons name={'images-outline'} color={'white'} size={30} />
   );
@@ -21,6 +22,7 @@ const ImageViewer = (props) => {
   if (props.isLoading) {
     return <LoadingOverlay />;
   } else if (props.uri) {
+    //imagePreview = <PinchableImageBox style={styles.image} imageUri={props.uri} />;
     imagePreview = <Image style={styles.image} source={{ uri: props.uri }} />;
     //imagePreview = (
     //  <Ionicons name={'images-outline'} color={'white'} size={30} />
@@ -30,12 +32,24 @@ const ImageViewer = (props) => {
   return (
     <View style={styles.rootContainer}>
       <Pressable onPress={openImageModal}>
-      <View style={styles.imagePreviewContainer}>
-        <View style={styles.imagePreview}>{imagePreview}</View>
-      </View></Pressable>
-      <ImageModal isVisible={showImageModal} onClose={closeImageModal} imageUri={props.uri} />
+        <View style={styles.imagePreviewContainer}>
+          <View style={styles.imagePreview}>{imagePreview}</View>
+        </View>
+      </Pressable>
+      <ImageModal
+        isVisible={showImageModal}
+        onClose={closeImageModal}
+        imageUri={props.uri}
+      />
     </View>
-  );
+  );  
+  //return (
+  //  <View style={styles.rootContainer}>
+  //      <View style={styles.imagePreviewContainer}>
+  //        <View style={styles.imagePreview}>{imagePreview}</View>
+  //      </View>
+  //  </View>
+  //);
 };
 
 export default ImageViewer;
@@ -64,7 +78,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
   },
-  image: {    
+  image: {
     height: '100%',
     width: '100%',
     marginVertical: 8,

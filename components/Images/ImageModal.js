@@ -1,37 +1,19 @@
-import { useRef } from 'react';
-import { Dimensions, Modal, StyleSheet } from 'react-native';
-import {
-  PanGestureHandler,
-  PinchGestureHandler,
-} from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
-import FloatingButton from '../ui/FloatingButton';
+import { Dimensions, Modal, Pressable, StyleSheet } from 'react-native';
+import { Colors } from '../../constants/styles';
+import PinchableImageBox from '../ui/PinchableImageBox';
 
-const { width } = Dimensions.get('window');
+const screen = Dimensions.get('window');
 
 export default function ImageModal({ isVisible, onClose, imageUri }) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
-  const handlePinch = Animated.event([{ nativeEvent: { scale } }]);
-  const handlePan = Animated.event([
-    { nativeEvent: { translationX: translateX } },
-  ]);
   return (
-    <Modal animationType='fade' transparent={true} visible={isVisible}>
-      <PanGestureHandler onGestureEvent={handlePan}>
-        <Animated.View style={styles.modalContent}>
-          <PinchGestureHandler onGestureEvent={handlePinch}>
-            <Animated.Image
-              style={[
-                styles.image,
-                { transform: [{ scale: scale }, { translateX: translateX }] },
-              ]}
-              source={{ uri: imageUri }}
-            />
-          </PinchGestureHandler>
-        </Animated.View>
-      </PanGestureHandler>
-      <FloatingButton icon={'close'} onPress={onClose} style={{ top: 40 }} />
+    <Modal
+      animationType='fade'
+      transparent={false}
+      visible={isVisible}
+    >
+      <Pressable style={{ flex: 1, backgroundColor:Colors.background }} onPress={onClose}>
+        <PinchableImageBox imageUri={imageUri} />
+      </Pressable>
     </Modal>
   );
 }
@@ -49,7 +31,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    height: width,
-    width: width,
+    height: 300,
+    width: screen.width,
   },
 });

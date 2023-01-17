@@ -143,6 +143,7 @@ const UserImagePicker = (props) => {
     if (downloadedImageURI) {
       imagePreview = (
         <Image style={styles.image} source={{ uri: downloadedImageURI }} />
+        //<PinchableImageBox style={styles.image} imageUri={downloadedImageURI} />
       );
     }
   }
