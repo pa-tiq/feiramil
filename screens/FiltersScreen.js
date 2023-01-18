@@ -81,28 +81,6 @@ const FiltersScreen = ({ route }) => {
     }
   };
 
-  const showToast = () => {
-    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
-  };
-
-  const showToastWithGravity = () => {
-    ToastAndroid.showWithGravity(
-      'All Your Base Are Belong To Us',
-      ToastAndroid.SHORT,
-      ToastAndroid.CENTER
-    );
-  };
-
-  const showToastWithGravityAndOffset = () => {
-    ToastAndroid.showWithGravityAndOffset(
-      'A wild toast appeared!',
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-      25,
-      50
-    );
-  };
-
   const applyFiltering = () => {
     let validFilters = false;
     locationList.forEach((item) => {

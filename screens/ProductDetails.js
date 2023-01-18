@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   Linking,
+  ToastAndroid,
 } from 'react-native';
 import ErrorOverlay from '../components/ui/ErrorOverlay';
 import IconButton from '../components/ui/IconButton';
@@ -223,17 +224,27 @@ const ProductDetails = ({ route, navigation }) => {
       </View>
       <View style={styles.userData}>
         <View style={styles.userImageContainer}>
-          <Image
-            style={styles.userImage}
-            source={{ uri: downloadedUserImageURI }}
-          />
+          {downloadedUserImageURI ? (
+            <Image
+              style={styles.userImage}
+              source={{ uri: downloadedUserImageURI }}
+            />
+          ) : (
+            <View style={styles.userImage}>
+              <Ionicons name={'person-outline'} color={'white'} size={30} />
+            </View>
+          )}
         </View>
         <View style={styles.userTextContainer}>
           <Text style={[styles.line, styles.normalText]}>
             {`Postado por `}
-            <Text
-              style={styles.specialText}
-            >{`${fetchedProduct.userName}`}</Text>
+            <Text style={styles.specialText}>
+              {fetchedProduct.userName
+                ? `${fetchedProduct.userName}`
+                : fetchedProduct.userEmail
+                ? `${fetchedProduct.userEmail.split('@')[0]}`
+                : '?'}
+            </Text>
             <Text style={styles.normalText}>{` em `}</Text>
             <Text style={styles.specialText}>{`${mySQLTimeStampToDate(
               fetchedProduct.created_at
@@ -242,6 +253,10 @@ const ProductDetails = ({ route, navigation }) => {
           </Text>
           <Text
             onPress={() => {
+              if (!fetchedProduct.userPhone){
+                ToastAndroid.show('Sem número de telefone.', ToastAndroid.SHORT);
+                return;
+              }
               const phoneNumber = getNumbers(fetchedProduct.userPhone);
               if (
                 phoneNumber &&
@@ -258,14 +273,15 @@ const ProductDetails = ({ route, navigation }) => {
             selectable={true}
           >
             {'Telefone: '}
-            <Text
-              style={styles.specialText}
-              selectable={true}
-            >{`${fetchedProduct.userPhone}`}</Text>
+            <Text style={styles.specialText} selectable={true}>
+              {fetchedProduct.userPhone ? `${fetchedProduct.userPhone}` : '?'}
+            </Text>
           </Text>
           <Text style={[styles.line, styles.normalText]}>
             {'Organização Militar: '}
-            <Text style={styles.specialText}>{`${fetchedProduct.userOm}`}</Text>
+            <Text style={styles.specialText}>
+              {fetchedProduct.userOm ? `${fetchedProduct.userOm}` : '?'}
+            </Text>
           </Text>
         </View>
       </View>
