@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors } from '../constants/styles';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 
@@ -22,6 +23,11 @@ export default function AuthStack() {
       <Stack.Screen
         name='Signup'
         component={SignupScreen}
+        options={{ title: '', }}
+      />         
+      <Stack.Screen
+        name='ForgotPassword'
+        component={ForgotPasswordScreen}
         options={{ title: '', }}
       />      
     </Stack.Navigator>

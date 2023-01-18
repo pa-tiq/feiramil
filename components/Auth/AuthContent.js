@@ -24,6 +24,10 @@ function AuthContent({ isLogin, onAuthenticate }) {
     } else {
       navigation.navigate('Login');
     }
+  }  
+  
+  function forgotPasswordHandler() {
+    navigation.navigate('ForgotPassword');      
   }
 
   function submitHandler(credentials) {
@@ -74,6 +78,9 @@ function AuthContent({ isLogin, onAuthenticate }) {
         <View style={styles.buttons}>
           <FlatButton onPress={switchAuthModeHandler}>
             {isLogin ? 'Criar um novo usuário' : 'Fazer login'}
+          </FlatButton>          
+          <FlatButton onPress={forgotPasswordHandler}>
+            {'Esqueceu sua senha?'}
           </FlatButton>
         </View>
       </View>

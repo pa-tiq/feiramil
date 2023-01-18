@@ -8,7 +8,6 @@ import AuthStack from './AuthStack';
 import AuthenticatedStack from './AuthenticatedStack';
 import UserContextProvider from '../store/user-context';
 import ProductContextProvider from '../store/product-context';
-import SwipeContextProvider from '../store/swipe-context';
 
 export default function NavigationStack() {
   const authContext = useContext(AuthContext);
@@ -21,13 +20,11 @@ export default function NavigationStack() {
     <NavigationContainer>
       {!authContext.isAuthenticated && <AuthStack />}
       {authContext.isAuthenticated && (
-        <SwipeContextProvider>
-          <UserContextProvider>
-            <ProductContextProvider>
-              <AuthenticatedStack />
-            </ProductContextProvider>
-          </UserContextProvider>
-        </SwipeContextProvider>
+        <UserContextProvider>
+          <ProductContextProvider>
+            <AuthenticatedStack />
+          </ProductContextProvider>
+        </UserContextProvider>
       )}
     </NavigationContainer>
   );

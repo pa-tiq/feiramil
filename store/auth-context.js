@@ -19,6 +19,7 @@ export const AuthContext = createContext({
   login: async () => {},
   signup: async () => {},
   logout: () => {},
+  forgotPasswordRequest: async (email) => {},
 });
 
 const AuthContextProvider = ({ children }) => {
@@ -73,6 +74,7 @@ const AuthContextProvider = ({ children }) => {
 
   const login = async (email, password, confirmationCode) => {
     const hashedPassword = CryptoJS.SHA256(password);
+    const hashedConfirmationCode = confirmationCode ? CryptoJS.SHA256(confirmationCode) : null;
     const postConfig = {
       url: URLs.login_url,
       method: 'POST',
@@ -82,7 +84,7 @@ const AuthContextProvider = ({ children }) => {
       body: {
         email: email,
         password: hashedPassword.toString(CryptoJS.enc.Hex),
-        confirmationCode: confirmationCode,
+        confirmationCode: hashedConfirmationCode ? hashedPassword.toString(CryptoJS.enc.Hex) : null,
       },
     };
     const createTask = (response) => {
@@ -125,6 +127,21 @@ const AuthContextProvider = ({ children }) => {
     await httpObj.sendRequest(putConfig, createTask);
   };
 
+  const forgotPasswordRequest = async (email) => {
+    const getConfig = {
+      url: URLs.changepasswordconfirm_url,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        email: email,
+      },
+    };
+    const createTask = (response) => {};
+    await httpObj.sendRequest(getConfig, createTask);
+  };
+
   const value = {
     token: authToken,
     userId: userId,
@@ -139,6 +156,7 @@ const AuthContextProvider = ({ children }) => {
     login: login,
     signup: signup,
     logout: logout,
+    forgotPasswordRequest: forgotPasswordRequest,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -13,13 +13,11 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import CustomTabBar from '../components/ui/CustomTabBar';
 import { StyleSheet } from 'react-native';
 import UserFavouritesTab from './UserFavouritesTab';
-import { SwipeContext } from '../store/swipe-context';
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function AuthenticatedStack() {
   const navigation = useNavigation();
-  const swipeContext = useContext(SwipeContext);
 
   useEffect(() => {
     const notificationGenerationListener =
@@ -43,7 +41,6 @@ export default function AuthenticatedStack() {
     <>
       <Tab.Navigator
         tabBar={(props) => <CustomTabBar {...props} />}
-        //screenOptions={{ swipeEnabled: swipeContext.swipe }}
       >
         <Tab.Screen
           name='MainTab'
