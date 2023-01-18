@@ -10,6 +10,7 @@ export const AuthContext = createContext({
   userId: -1,
   isAuthenticated: false,
   emailConfirmed: false,
+  requestedPasswordChange: false,
   enteredEmail: '',
   enteredPassword: '',
   isLoading: false,
@@ -29,6 +30,7 @@ const AuthContextProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState();
   const [userId, setUserId] = useState(null);
   const [emailConfirmed, setEmailConfirmed] = useState(true);
+  const [requestedPasswordChange, setRequestedPasswordChange] = useState(false);
 
   useEffect(() => {
     async function getToken() {
@@ -138,7 +140,9 @@ const AuthContextProvider = ({ children }) => {
         email: email,
       },
     };
-    const createTask = (response) => {};
+    const createTask = (response) => {
+      setRequestedPasswordChange(true);
+    };
     await httpObj.sendRequest(getConfig, createTask);
   };
 
@@ -149,6 +153,7 @@ const AuthContextProvider = ({ children }) => {
     emailConfirmed: emailConfirmed,
     enteredEmail: enteredEmail,
     enteredPassword: enteredPassword,
+    requestedPasswordChange: requestedPasswordChange,
     isLoading: httpObj.isLoading,
     error: httpObj.error,
     setEnteredEmailAndPassword: setEnteredEmailAndPassword,

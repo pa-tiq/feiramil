@@ -10,7 +10,6 @@ function ForgotPasswordScreen() {
   const authContext = useContext(AuthContext);
   const [enteredConfirmationCode, setEnteredConfirmationCode] = useState('');
   const [enteredEmail, setEnteredEmail] = useState('');
-  const [emailSent, setEmailSent] = useState(false);
 
   async function forgotPasswordRequest() {
     try {
@@ -20,7 +19,6 @@ function ForgotPasswordScreen() {
           'Código de confirmação enviado!',
           'Insira o código de confirmação para alterar a sua senha'
         );
-        setEmailSent(true);
       }
       else{
         Alert.alert(
@@ -28,7 +26,6 @@ function ForgotPasswordScreen() {
           'Insira um e-mail válido para continuar.'
         );
       }
-
     } catch (error) {
       Alert.alert('Falha na alteração de senha', error.message);
     }
@@ -49,10 +46,10 @@ function ForgotPasswordScreen() {
       {authContext.isLoading && <LoadingOverlay message='Carregando...' />}
       <View style={styles.rootContainer}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Confirme o seu e-mail</Text>
+          <Text style={styles.title}>{authContext.requestedPasswordChange ? 'Insira o código de confirmação enviado ao seu e-mail' : 'Confirme o seu e-mail'}</Text>
         </View>
         <View style={styles.authContent}>
-          {!emailSent ? (
+          {!authContext.requestedPasswordChange ? (
             <>
               <Input
                 label='E-mail'
@@ -62,7 +59,7 @@ function ForgotPasswordScreen() {
               />
               <View style={styles.buttons}>
                 <Button onPress={forgotPasswordRequest}>
-                  {'Enviar código de confirmação'}
+                  {'Enviar código de confirmação para o e-mail'}
                 </Button>
               </View>
             </>
@@ -98,6 +95,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 4
   },
   title: {
     fontWeight: 'bold',
