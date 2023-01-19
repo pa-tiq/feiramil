@@ -24,14 +24,15 @@ function AuthContent({ isLogin, onAuthenticate }) {
     } else {
       navigation.navigate('Login');
     }
-  }  
-  
+  }
+
   function forgotPasswordHandler() {
-    navigation.navigate('ForgotPassword');      
+    navigation.navigate('ForgotPassword');
   }
 
   function submitHandler(credentials) {
-    let { email, confirmEmail, password, confirmPassword, confirmationCode} = credentials;
+    let { email, confirmEmail, password, confirmPassword, confirmationCode } =
+      credentials;
 
     email = email.trim();
     password = password.trim();
@@ -46,7 +47,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
       !emailIsValid ||
       !passwordIsValid ||
       (!isLogin && (!emailsAreEqual || !passwordsAreEqual)) ||
-      ((!isLogin && !authContext.emailConfirmed) && !confirmationCodeIsValid)
+      (!isLogin && !authContext.emailConfirmed && !confirmationCodeIsValid)
     ) {
       Alert.alert(
         'Dados inválidos',
@@ -57,7 +58,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
         confirmEmail: !emailIsValid || !emailsAreEqual,
         password: !passwordIsValid,
         confirmPassword: !passwordIsValid || !passwordsAreEqual,
-        confirmationCode: !confirmationCodeIsValid
+        confirmationCode: !confirmationCodeIsValid,
       });
       return;
     }
@@ -78,7 +79,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
         <View style={styles.buttons}>
           <FlatButton onPress={switchAuthModeHandler}>
             {isLogin ? 'Criar um novo usuário' : 'Fazer login'}
-          </FlatButton>          
+          </FlatButton>
           <FlatButton onPress={forgotPasswordHandler}>
             {'Esqueceu sua senha?'}
           </FlatButton>
@@ -91,8 +92,8 @@ function AuthContent({ isLogin, onAuthenticate }) {
 export default AuthContent;
 
 const styles = StyleSheet.create({
-  rootContainer:{
-    marginVertical:40,
+  rootContainer: {
+    marginVertical: 40,
     justifyContent: 'center',
     alignItems: 'stretch',
   },
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     color: 'white',
-    fontSize: 25
+    fontSize: 25,
   },
   authContent: {
     justifyContent: 'center',

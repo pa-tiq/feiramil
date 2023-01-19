@@ -10,6 +10,7 @@ export default function ImageModal({ isVisible, onClose, imageUri }) {
       animationType='fade'
       transparent={false}
       visible={isVisible}
+      onRequestClose={onClose}
     >
       <Pressable style={{ flex: 1, backgroundColor:Colors.background }} onPress={onClose}>
         <PinchableImageBox imageUri={imageUri} />

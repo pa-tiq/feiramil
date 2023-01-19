@@ -21,6 +21,8 @@ export const AuthContext = createContext({
   signup: async () => {},
   logout: () => {},
   forgotPasswordRequest: async (email) => {},
+  cancelForgotPasswordRequest: async () => {},
+  changePassword: async (email, password, confirmationCode) => {},
 });
 
 const AuthContextProvider = ({ children }) => {
@@ -76,7 +78,9 @@ const AuthContextProvider = ({ children }) => {
 
   const login = async (email, password, confirmationCode) => {
     const hashedPassword = CryptoJS.SHA256(password);
-    const hashedConfirmationCode = confirmationCode ? CryptoJS.SHA256(confirmationCode) : null;
+    const hashedConfirmationCode = confirmationCode
+      ? CryptoJS.SHA256(confirmationCode)
+      : null;
     const postConfig = {
       url: URLs.login_url,
       method: 'POST',
@@ -86,7 +90,9 @@ const AuthContextProvider = ({ children }) => {
       body: {
         email: email,
         password: hashedPassword.toString(CryptoJS.enc.Hex),
-        confirmationCode: hashedConfirmationCode ? hashedPassword.toString(CryptoJS.enc.Hex) : null,
+        confirmationCode: hashedConfirmationCode
+          ? hashedPassword.toString(CryptoJS.enc.Hex)
+          : null,
       },
     };
     const createTask = (response) => {
@@ -131,7 +137,7 @@ const AuthContextProvider = ({ children }) => {
 
   const forgotPasswordRequest = async (email) => {
     const getConfig = {
-      url: URLs.changepasswordconfirm_url,
+      url: URLs.changepasswordrequest_url,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,6 +148,30 @@ const AuthContextProvider = ({ children }) => {
     };
     const createTask = (response) => {
       setRequestedPasswordChange(true);
+    };
+    await httpObj.sendRequest(getConfig, createTask);
+  };
+
+  const cancelForgotPasswordRequest = () => {
+    setRequestedPasswordChange(false);
+  }
+
+  const changePassword = async (email, password, confirmationCode) => {
+    const hashedPassword = CryptoJS.SHA256(password);
+    const getConfig = {
+      url: URLs.changepassword_url,
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        email: email,
+        password: hashedPassword.toString(CryptoJS.enc.Hex),
+        confirmationCode: confirmationCode,
+      },
+    };
+    const createTask = (response) => {
+      setRequestedPasswordChange(false);
     };
     await httpObj.sendRequest(getConfig, createTask);
   };
@@ -162,6 +192,8 @@ const AuthContextProvider = ({ children }) => {
     signup: signup,
     logout: logout,
     forgotPasswordRequest: forgotPasswordRequest,
+    cancelForgotPasswordRequest: cancelForgotPasswordRequest,
+    changePassword: changePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

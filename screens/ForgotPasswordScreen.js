@@ -1,5 +1,6 @@
-import { useContext, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useContext, useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, ToastAndroid, View } from 'react-native';
 import Input from '../components/Auth/Input';
 import Button from '../components/ui/Button';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -10,17 +11,27 @@ function ForgotPasswordScreen() {
   const authContext = useContext(AuthContext);
   const [enteredConfirmationCode, setEnteredConfirmationCode] = useState('');
   const [enteredEmail, setEnteredEmail] = useState('');
+  const [enteredPassword, setEnteredPassword] = useState('');
+  const [enteredPasswordConfirm, setEnteredPasswordConfirm] = useState('');
+  const [passwordsDontMatch, setPasswordsDontMatch] = useState(false);
+  const [confirmationCodeInvalid, setConfirmationCodeInvalid] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(()=>{
+    if((!enteredEmail || enteredEmail.length === 0) && authContext.requestedPasswordChange){
+      authContext.cancelForgotPasswordRequest();
+    }
+  },[])
 
   async function forgotPasswordRequest() {
     try {
-      if (enteredEmail.includes('@')){
+      if (enteredEmail.includes('@')) {
         await authContext.forgotPasswordRequest(enteredEmail);
         Alert.alert(
           'Código de confirmação enviado!',
           'Insira o código de confirmação para alterar a sua senha'
         );
-      }
-      else{
+      } else {
         Alert.alert(
           'E-mail inválido',
           'Insira um e-mail válido para continuar.'
@@ -31,22 +42,84 @@ function ForgotPasswordScreen() {
     }
   }
 
+  function confirmationCodeMask(input) {
+    input = input.replace(/\D/g, '');
+    return input;
+  }
+
   const confirmationCodeChangeHandler = (value) => {
-    setEnteredConfirmationCode(value);
+    setConfirmationCodeInvalid(false);
+    setEnteredConfirmationCode(confirmationCodeMask(value));
   };
 
   const emailChangeHandler = (value) => {
     setEnteredEmail(value);
   };
 
-  const changePasswordHandler = () => {};
+  const passwordChangeHandler = (value) => {
+    setPasswordsDontMatch(false);
+    setEnteredPassword(value);
+  };
+
+  const passwordConfirmChangeHandler = (value) => {
+    setPasswordsDontMatch(false);
+    setEnteredPasswordConfirm(value);
+  };
+
+  const changePasswordHandler = async () => {
+    if (!enteredConfirmationCode || enteredConfirmationCode.length !== 5) {
+      setConfirmationCodeInvalid(true);
+      Alert.alert(
+        'Código de confirmação inválido',
+        'Insira o código de confirmação enviado ao seu e-mail.'
+      );
+      return;
+    }
+    if (
+      !enteredPassword ||
+      !enteredPasswordConfirm ||
+      enteredPassword.length === 0 ||
+      enteredPasswordConfirm.length === 0
+    ) {
+      Alert.alert('Senha inválida', 'Insira uma senha válida para continuar.');
+      return;
+    }
+    if (enteredPassword !== enteredPasswordConfirm) {
+      setPasswordsDontMatch(true);
+      Alert.alert('Senha inválida', 'As senhas não são iguais.');
+      return;
+    }
+
+    try {
+      await authContext.changePassword(
+        enteredEmail,
+        enteredPassword,
+        enteredConfirmationCode,
+      );
+      navigation.navigate('Login');
+      ToastAndroid.show('Senha alterada.', ToastAndroid.SHORT);
+    } catch (error) {
+      Alert.alert('Falha na alteração de senha', error.message);
+    }
+  };
+
+  if (authContext.isLoading && !authContext.requestedPasswordChange) {
+    return <LoadingOverlay message='Enviando e-mail...' />;
+  }
+
+  if (authContext.isLoading && authContext.requestedPasswordChange) {
+    return <LoadingOverlay message='Alterando senha...' />;
+  }
 
   return (
     <ScrollView>
-      {authContext.isLoading && <LoadingOverlay message='Carregando...' />}
       <View style={styles.rootContainer}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{authContext.requestedPasswordChange ? 'Insira o código de confirmação enviado ao seu e-mail' : 'Confirme o seu e-mail'}</Text>
+          <Text style={styles.title}>
+            {authContext.requestedPasswordChange
+              ? 'Insira o código de confirmação enviado ao seu e-mail'
+              : 'Confirme o seu e-mail'}
+          </Text>
         </View>
         <View style={styles.authContent}>
           {!authContext.requestedPasswordChange ? (
@@ -66,14 +139,35 @@ function ForgotPasswordScreen() {
           ) : (
             <>
               <Input
+                label='E-mail'
+                editable={false}
+                value={enteredEmail}
+                keyboardType='email-address'
+              />
+              <Input
                 label='Código de confirmação'
                 onUpdateValue={confirmationCodeChangeHandler}
                 value={enteredConfirmationCode}
                 maxLength={5}
+                isInvalid={confirmationCodeInvalid}
+              />
+              <Input
+                label='Nova senha'
+                onUpdateValue={passwordChangeHandler}
+                secure
+                value={enteredPassword}
+                isInvalid={passwordsDontMatch}
+              />
+              <Input
+                label='Confirme sua nova senha'
+                onUpdateValue={passwordConfirmChangeHandler}
+                secure
+                value={enteredPasswordConfirm}
+                isInvalid={passwordsDontMatch}
               />
               <View style={styles.buttons}>
                 <Button onPress={changePasswordHandler}>
-                  {'Prosseguir com alteração de senha'}
+                  {'Alterar senha'}
                 </Button>
               </View>
             </>
@@ -95,7 +189,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 4
+    marginHorizontal: 4,
   },
   title: {
     fontWeight: 'bold',
