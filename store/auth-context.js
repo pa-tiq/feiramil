@@ -91,7 +91,7 @@ const AuthContextProvider = ({ children }) => {
         email: email,
         password: hashedPassword.toString(CryptoJS.enc.Hex),
         confirmationCode: hashedConfirmationCode
-          ? hashedPassword.toString(CryptoJS.enc.Hex)
+          ? hashedConfirmationCode.toString(CryptoJS.enc.Hex)
           : null,
       },
     };
