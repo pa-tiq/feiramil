@@ -16,9 +16,9 @@ export const AuthContext = createContext({
   isLoading: false,
   error: null,
   setEnteredEmailAndPassword: (email, password) => {},
-  authenticate: () => {},
-  login: async () => {},
-  signup: async () => {},
+  authenticate: (token) => {},
+  login: async (email, password, confirmationCode) => {},
+  signup: async (email, password) => {},
   logout: () => {},
   forgotPasswordRequest: async (email) => {},
   cancelForgotPasswordRequest: async () => {},
@@ -78,9 +78,6 @@ const AuthContextProvider = ({ children }) => {
 
   const login = async (email, password, confirmationCode) => {
     const hashedPassword = CryptoJS.SHA256(password);
-    const hashedConfirmationCode = confirmationCode
-      ? CryptoJS.SHA256(confirmationCode)
-      : null;
     const postConfig = {
       url: URLs.login_url,
       method: 'POST',
@@ -90,8 +87,8 @@ const AuthContextProvider = ({ children }) => {
       body: {
         email: email,
         password: hashedPassword.toString(CryptoJS.enc.Hex),
-        confirmationCode: hashedConfirmationCode
-          ? hashedConfirmationCode.toString(CryptoJS.enc.Hex)
+        confirmationCode: confirmationCode
+          ? confirmationCode
           : null,
       },
     };
@@ -116,7 +113,7 @@ const AuthContextProvider = ({ children }) => {
     AsyncStorage.removeItem('token');
   };
 
-  const signup = async (email, password, name, om) => {
+  const signup = async (email, password) => {
     const hashedPassword = CryptoJS.SHA256(password);
     const putConfig = {
       url: URLs.signup_url,
@@ -127,8 +124,6 @@ const AuthContextProvider = ({ children }) => {
       body: {
         email: email,
         password: hashedPassword.toString(CryptoJS.enc.Hex),
-        name: name,
-        om: om,
       },
     };
     const createTask = (response) => {};

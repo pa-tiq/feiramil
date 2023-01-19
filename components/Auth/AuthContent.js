@@ -47,7 +47,10 @@ function AuthContent({ isLogin, onAuthenticate }) {
       !emailIsValid ||
       !passwordIsValid ||
       (!isLogin && (!emailsAreEqual || !passwordsAreEqual)) ||
-      (!isLogin && !authContext.emailConfirmed && !confirmationCodeIsValid)
+      (!isLogin &&
+        !authContext.emailConfirmed &&
+        !confirmationCodeIsValid &&
+        (!confirmEmail || confirmEmail.length === 0))
     ) {
       Alert.alert(
         'Dados inválidos',

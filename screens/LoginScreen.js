@@ -9,6 +9,7 @@ function LoginScreen() {
 
   async function loginHandler({ email, password, confirmationCode }) {
     try {
+      authContext.setEnteredEmailAndPassword(email,password);
       await authContext.login(email, password, confirmationCode);
     } catch (error) {
       if (!authContext.isAuthenticated)
