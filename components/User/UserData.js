@@ -67,7 +67,6 @@ function UserData(props) {
 
     if (
       !emailIsValid ||
-      !passwordIsValid ||
       !nameIsValid ||
       !omIsValid ||
       !phoneIsValid
