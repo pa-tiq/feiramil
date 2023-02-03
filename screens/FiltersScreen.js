@@ -90,6 +90,7 @@ const FiltersScreen = ({ route }) => {
       userContext.applyFilters(!userContext.user.filter);
     }
     else{
+      userContext.applyFilters(false);
       ToastAndroid.show('Nenhum filtro válido.', ToastAndroid.SHORT);
     }
   };

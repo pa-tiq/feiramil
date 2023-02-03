@@ -26,9 +26,26 @@ const ImageViewer = (props) => {
 
   return (
     <View style={styles.rootContainer}>
-      <Pressable onPress={openImageModal}>
-        <View style={styles.imagePreviewContainer}>
-          <View style={styles.imagePreview}>{imagePreview}</View>
+      <Pressable
+        onPress={!props.disableModal ? (props.uri ? openImageModal : props.onPressNoImage) : null}
+        style={({ pressed }) => [(pressed && !props.disableModal) && styles.pressed]}
+      >
+        <View
+          style={
+            props.imagePreviewContainerStyle
+              ? props.imagePreviewContainerStyle
+              : styles.imagePreviewContainer
+          }
+        >
+          <View
+            style={
+              props.imagePreviewStyle
+                ? props.imagePreviewStyle
+                : styles.imagePreview
+            }
+          >
+            {imagePreview}
+          </View>
         </View>
       </Pressable>
       <ImageModal
@@ -37,8 +54,7 @@ const ImageViewer = (props) => {
         imageUri={props.uri}
       />
     </View>
-  );  
-
+  );
 };
 
 export default ImageViewer;
@@ -49,6 +65,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     paddingHorizontal: 5,
+  },
+  pressed: {
+    opacity: 0.7,
   },
   imagePreviewContainer: {
     flex: 1,

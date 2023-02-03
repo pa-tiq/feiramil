@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, View } from 'react-native';
 
 import FlatButton from '../ui/FlatButton';
 import AuthForm from './AuthForm';
@@ -7,7 +7,11 @@ import { Colors } from '../../constants/styles';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../store/auth-context';
 
+import feiramilLogo from '../../assets/finimalism.png';
+import ImageViewer from '../Images/ImageViewer';
+
 function AuthContent({ isLogin, onAuthenticate }) {
+  const feiramilLogoUri = Image.resolveAssetSource(feiramilLogo).uri;
   const authContext = useContext(AuthContext);
   const navigation = useNavigation();
 
@@ -71,7 +75,12 @@ function AuthContent({ isLogin, onAuthenticate }) {
   return (
     <View style={styles.rootContainer}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Feiramil</Text>
+        <ImageViewer
+          uri={feiramilLogoUri}
+          imagePreviewContainerStyle={styles.imagePreviewContainer}
+          imagePreviewStyle={styles.imagePreview}
+          disableModal={true}
+        />
       </View>
       <View style={styles.authContent}>
         <AuthForm
@@ -96,7 +105,7 @@ export default AuthContent;
 
 const styles = StyleSheet.create({
   rootContainer: {
-    marginVertical: 40,
+    marginVertical: 10,
     justifyContent: 'center',
     alignItems: 'stretch',
   },
@@ -111,7 +120,7 @@ const styles = StyleSheet.create({
   },
   authContent: {
     justifyContent: 'center',
-    marginTop: 30,
+    marginTop: 10,
     marginHorizontal: 32,
     padding: 16,
     borderRadius: 8,
@@ -124,5 +133,22 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 8,
+  },
+  imagePreviewContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    marginBottom: 15,
+    marginTop: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.primary200,
+    borderRadius: 500,
+    padding:20,
+    overflow: 'hidden',
   },
 });

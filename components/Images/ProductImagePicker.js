@@ -15,6 +15,7 @@ import Button from '../ui/Button';
 import { UserContext } from '../../store/user-context';
 import LoadingOverlay from '../ui/LoadingOverlay';
 import FloatingButton from '../ui/FloatingButton';
+import ImageViewer from './ImageViewer';
 
 const ProductImagePicker = (props) => {
   const [newImagePicked, setNewImagePicked] = useState(false);
@@ -100,31 +101,24 @@ const ProductImagePicker = (props) => {
     }
   }
 
-  let imagePreview = (
-    <Ionicons name={'images-outline'} color={'white'} size={30} />
-  );
-
-  if (newImage) {
-    imagePreview = (
-      <Image style={styles.image} source={{ uri: newImage.uri }} />
-    );
-  }
-
-  if (downloadedImageURI && !newImagePicked) {
-    imagePreview = (
-      <Image style={styles.image} source={{ uri: downloadedImageURI }} />
-    );
-  }
-
   if (userContext.isLoading) {
     return <LoadingOverlay style={{ margin: 5, height: 240, width: 240 }} />;
   }
 
   return (
     <View style={styles.rootContainer}>
-      <View style={styles.imagePreviewContainer}>
-        <View style={styles.imagePreview}>{imagePreview}</View>
-      </View>
+      <ImageViewer
+        uri={
+          downloadedImageURI && !newImagePicked
+            ? downloadedImageURI
+            : newImage
+            ? newImage.uri
+            : null
+        }
+        onPressNoImage={getFileHandler}
+        imagePreviewContainerStyle={styles.imagePreviewContainer}
+        imagePreviewStyle={styles.imagePreview}
+      />
       <View style={styles.imageButtonsContainer}>
         <View style={styles.buttonLeft}>
           <Button icon='camera' onPress={takeImageHandler}>
@@ -196,8 +190,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 2,
   },
-  floatingButtonRemoveImage:{
-    top:20,
-    left:20
-  }
+  floatingButtonRemoveImage: {
+    top: 20,
+    left: 20,
+  },
 });

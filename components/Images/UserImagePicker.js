@@ -22,6 +22,7 @@ import LoadingOverlay from '../ui/LoadingOverlay';
 import { findOrDownloadImage } from '../../util/findOrDownloadFile';
 import { wait } from '../../util/wait';
 import ImageModal from './ImageModal';
+import ImageViewer from './ImageViewer';
 
 const UserImagePicker = (props) => {
   const [newImageSaved, setNewImageSaved] = useState(false);
@@ -146,31 +147,19 @@ const UserImagePicker = (props) => {
     />
   );
 
-  if (refreshingImage) {
-    imagePreview = <LoadingOverlay style={{ height: '100%', width: '100%' }} />;
-  } else {
-    if (downloadedImageURI) {
-      imagePreview = (
-        <Image style={styles.image} source={{ uri: downloadedImageURI }} />
-      );
-    }
-  }
-
-  if (userContext.isLoading) {
-    return <LoadingOverlay style={{ height: '100%', width: '100%' }} />;
-  }
-
   return (
     <View style={styles.rootContainer}>
-      <Pressable onPress={openImageModal}>
-        <View style={styles.imagePreviewContainer}>
-          <View style={styles.imagePreview}>{imagePreview}</View>
-        </View>
-      </Pressable>
-      <ImageModal
-        isVisible={showImageModal}
-        onClose={closeImageModal}
-        imageUri={downloadedImageURI}
+      <ImageViewer
+        uri={
+          refreshingImage
+            ? null
+            : downloadedImageURI
+            ? downloadedImageURI
+            : null
+        }
+        onPressNoImage={getFileHandler}
+        imagePreviewContainerStyle={styles.imagePreviewContainer}
+        imagePreviewStyle={styles.imagePreview}
       />
       <View style={styles.imageButtonsContainer}>
         <View style={styles.buttonLeft}>
