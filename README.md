@@ -14,4 +14,4 @@ You should also install the Expo CLI:
 ### `npm install -g expo-cli`
 
 🤖 Open this link on your Android device to install the app:
-https://expo.dev/accounts/pa-tiq/projects/feiramil/builds/b41f79c4-f45e-4d67-9847-e77751dc8abd 
+https://expo.dev/accounts/pa-tiq/projects/feiramil/builds/4047ab57-bfe3-4109-a039-b9f1934b6074
