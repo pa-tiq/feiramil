@@ -1,7 +1,7 @@
 const private_ip_manaus = 'http://192.168.1.8';
 const private_ip_bsb = 'http://192.168.1.253';
 const private_ip_4cta = 'http://10.0.0.177';
-const public_ip_aws_ec2 = 'http://52.67.230.209';
+const public_ip_aws_ec2 = 'http://18.228.241.253';
 const baseURL = `${public_ip_aws_ec2}:8080`;
 
 export const URLs = {
@@ -31,5 +31,5 @@ export const URLs = {
   add_city_filter_url: `${baseURL}/user/filter`,
   update_city_filter_url: `${baseURL}/user/filter`,
   remove_city_filter_url: `${baseURL}/user/filter`,
-  apply_filtering_url: `${baseURL}/user/filtering`
+  apply_filtering_url: `${baseURL}/user/filtering`,
 };
